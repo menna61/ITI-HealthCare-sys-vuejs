@@ -1,0 +1,83 @@
+@import "tailwindcss";
+
+.header {
+
+    position: relative;
+
+}
+
+.header nav {
+    position: absolute;
+    left: 30%;
+    top: 35px;
+}
+
+.header nav a {
+    margin-left: 40px;
+}
+
+.header .btns {
+    position: absolute;
+    left: 72%;
+    top: 25px;
+
+}
+
+.header .btn-lo,
+.btn-si {
+
+    width: 129px;
+    cursor: pointer;
+    height: 48px;
+    margin-left: 10px;
+}
+
+.header .btn-lo {
+
+border:1px solid  #0d6efd;
+border-radius: 5px;
+  
+}
+
+
+.header .btn-si {
+background-color:  #3a87fa;;
+
+}
+
+.header .btn-si, .btn-lo:hover {
+    background-color:  #3988ff;;
+    transition: 0.3s;
+    
+    }
+.home {
+
+    padding-left: 80px;
+    font-size: 24px;
+    font-weight:bold;
+    font-family: 'Times New Roman', Times, serif;
+    width: 100%;
+
+
+}
+.home .text{
+   position: relative;
+  top: 60px;
+  }
+  
+
+
+.home .text .two{
+    color: dimgray;
+    font-size: 16px;
+  
+  }
+  .home .text button{
+    background-color: #0d6efd;
+color: white;
+cursor: pointer;
+margin-top: 20px;
+width: 160px;
+border-radius: 5px;
+  
+  }
