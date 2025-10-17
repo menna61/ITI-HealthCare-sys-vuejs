@@ -1,0 +1,67 @@
+mutation CreateSeedData @transaction @auth(level: USER, insecureReason: "Seed data creation requires no user context.") {
+  user_insertMany(data: [
+    {
+      id: "550e8400-e29b-41d4-a716-446655440000",
+      username: "demouser1",
+      email: "demouser1@example.com",
+      passwordHash: "hashed_password_1",
+      role: "patient",
+      createdAt: "2024-01-01T00:00:00Z"
+    },
+    {
+      id: "550e8400-e29b-41d4-a716-446655440001",
+      username: "demouser2",
+      email: "demouser2@example.com",
+      passwordHash: "hashed_password_2",
+      role: "staff",
+      createdAt: "2024-01-02T00:00:00Z"
+    }
+  ])
+  patient_insertMany(data: [
+    {
+      id: "650e8400-e29b-41d4-a716-446655440002",
+      userId: "550e8400-e29b-41d4-a716-446655440000",
+      firstName: "Demo",
+      lastName: "User1",
+      email: "demouser1@example.com",
+      dateOfBirth: "1990-01-01",
+      contactNumber: "123-456-7890",
+      address: "123 Main St",
+      createdAt: "2024-01-03T00:00:00Z"
+    }
+  ])
+  staff_insertMany(data: [
+    {
+      id: "750e8400-e29b-41d4-a716-446655440003",
+      userId: "550e8400-e29b-41d4-a716-446655440001",
+      firstName: "Demo",
+      lastName: "Staff1",
+      contactNumber: "456-789-0123",
+      role: "nurse",
+      createdAt: "2024-01-04T00:00:00Z"
+    }
+  ])
+  appointment_insertMany(data: [
+    {
+      id: "850e8400-e29b-41d4-a716-446655440004",
+      patientId: "650e8400-e29b-41d4-a716-446655440002",
+      staffId: "750e8400-e29b-41d4-a716-446655440003",
+      appointmentDate: "2024-02-01",
+      appointmentTime: "10:00",
+      reasonForVisit: "Checkup",
+      status: "Scheduled",
+      createdAt: "2024-01-05T00:00:00Z"
+    }
+  ])
+  medicalRecord_insertMany(data: [
+    {
+      id: "950e8400-e29b-41d4-a716-446655440005",
+      creatorId: "550e8400-e29b-41d4-a716-446655440000",
+      patientId: "650e8400-e29b-41d4-a716-446655440002",
+      recordDate: "2024-02-01",
+      type: "Checkup",
+      description: "Patient is healthy",
+      createdAt: "2024-01-06T00:00:00Z"
+    }
+  ])
+}
