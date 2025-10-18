@@ -58,7 +58,7 @@
                 </div>
         </div>     
         <div class="btn w-full flex justify-end gap-4">            
-            <router-link to="/dashboard">
+            <router-link to="/doctorDashboard">
                 <button class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer">
                     <p>Login</p>
                 </button>

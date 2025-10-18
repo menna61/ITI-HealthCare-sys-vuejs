@@ -34,7 +34,7 @@
                             <p class="text-gray-500">Online consultations with doctors</p>
                         </div>
                     </div>
-                    <button class="w-full bg-[#5271FF] border-none rounded-lg font-semibold h-12 text-white cursor-pointer">Sign up as a user</button>
+                    <router-link to="/patientSignup"><button class="w-full bg-[#5271FF] border-none rounded-lg font-semibold h-12 text-white cursor-pointer">Sign up as a user</button></router-link>
                 </div>
             </div>
             

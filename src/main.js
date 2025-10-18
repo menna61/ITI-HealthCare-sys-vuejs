@@ -6,7 +6,8 @@ import DoctorSignup from './Components/Pages/DoctorSignup.vue'
 import SignupCards from './Components/Pages/SignupCards.vue'
 import AccountCreated from './Components/Pages/AccountCreated.vue'
 import LogIn from './Components/Pages/LogIn.vue'
-import PatientDashboard from './Components/Pages/PatientDashboard.vue'
+import PatientSignup from './Components/Pages/PatientSignup.vue'
+import DoctorDashboard from './Components/Pages/DoctorDashboard.vue'
 
 const routes = [
     {path:"/",component:SignupCards},
@@ -14,7 +15,8 @@ const routes = [
     {path:"/:pathMatch(.*)*",component:NotFound},
     {path:"/success",component:AccountCreated},
     {path:"/login",component:LogIn},
-    {path:"/dashboard",component:PatientDashboard}
+    {path:"/doctorDashbaord",component:DoctorDashboard},
+    {path:"/patientSignup",component:PatientSignup}
 ]
 
 const router = createRouter({history:createWebHashHistory(),routes})
