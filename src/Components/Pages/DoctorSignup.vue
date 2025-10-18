@@ -1,12 +1,9 @@
 <template>
     <div class="cont h-full p-8 bg-white rounded-2xl flex flex-col gap-10">
         <div class="top flex flex-col gap-10">
-            <div class="back flex gap-2 items-center justify-start">
-                <div class="icon">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M73.4 297.4C60.9 309.9 60.9 330.2 73.4 342.7L233.4 502.7C245.9 515.2 266.2 515.2 278.7 502.7C291.2 490.2 291.2 469.9 278.7 457.4L173.3 352L544 352C561.7 352 576 337.7 576 320C576 302.3 561.7 288 544 288L173.3 288L278.7 182.6C291.2 170.1 291.2 149.8 278.7 137.3C266.2 124.8 245.9 124.8 233.4 137.3L73.4 297.3z"/></svg>
-                </div>
-                <p class="text-xl">Back</p>
-            </div>
+
+            <back-btn/>
+
             <div class="stepper flex flex-col gap-8">
                 <div class="top flex flex-col gap-4">
                     <h1 class="text-4xl font-bold">Sign up as a doctor</h1>
@@ -45,7 +42,7 @@
 
             </div>
         </div>
-        <div class="bottom flex gap-10" v-if="currentStep===1">
+        <div class="bottom flex flex-col items-center justify-center xl:flex-row xl:items-start gap-10" v-if="currentStep===1">
             <!--Upload image-->
             <div class="left w-fit">
                 <div class="cam  w-36 h-36 rounded-full bg-gray-50 flex items-center justify-center">
@@ -67,7 +64,7 @@
 
                         <div class="flex flex-col gap-8 items-end">
                             <div class="inputs w-full flex flex-col gap-4">
-                                <div class="name flex gap-4 items-center w-full">
+                                <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="fname flex flex-col gap-2 w-full">
                                         <label for="">First name</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center ">
@@ -83,7 +80,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="phone,email flex gap-4 items-center w-full">
+                                <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="email flex flex-col gap-2 w-full">
                                         <label for="">Email</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center ">
@@ -99,7 +96,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pass flex gap-4 items-center w-full">
+                                <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="pass flex flex-col gap-2 w-full">
                                         <label for="">Password</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center ">
@@ -127,7 +124,7 @@
                     <form class="flex flex-col gap-6" action="">
                         <div class="flex flex-col gap-8 items-end">
                             <div class="inputs w-full flex flex-col gap-4">
-                                <div class="name flex gap-4 items-center w-full">
+                                <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="fname flex flex-col gap-2 w-full">
                                         <label for="">Years of experience</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center ">
@@ -141,7 +138,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="phone,email flex gap-4 items-center w-full">
+                                <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="email flex flex-col gap-2 w-full">
                                         <label for="">Clinic name</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center ">
@@ -155,7 +152,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="pass flex gap-4 items-center w-full">
+                                <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
                                     <div class="pass flex flex-col gap-2 w-full relative">
                                         <label for="">Degree</label>
                                         <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center" @click="showDegrees">
@@ -221,9 +218,10 @@
 </template>
 
 <script>
+import BackBtn from '../BackBtn.vue';
 import GoogleCard from '../GoogleCard.vue';
     export default {
-        components:{GoogleCard},
+        components:{GoogleCard,BackBtn},
         name:"DoctorSignup",
         data(){
             return{
