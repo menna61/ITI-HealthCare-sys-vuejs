@@ -1,8 +1,6 @@
 <template>
 
   <div id="app">
-    <h1>Auth demo</h1>
-    <AuthButton />
     <nav-bar/>
     <div>
       <RouterView></RouterView>
@@ -20,14 +18,12 @@
 
 <script>
 
-import AuthButton from './Components/AuthButton.vue'
 import NavBar from './Components/Layouts/NavBar.vue';
 // import SignupCards from './Components/Pages/SignupCards.vue';
 
 export default {
     components:{
       NavBar,
-      AuthButton
       // SignupCards
     }
 }

@@ -55,19 +55,19 @@ const auth = {
 
 const vueApp = createApp(App)
 vueApp.config.globalProperties.$auth = auth
-vueApp.mount('#app')
 
 
 
 const routes = [
-    {path:"/",component:SignupCards},
-    {path:"/doctorSignup",component:DoctorSignup},
-    {path:"/:pathMatch(.*)*",component:NotFound},
-    {path:"/success",component:AccountCreated},
-    {path:"/login",component:LogIn},
-    {path:"/doctorDashbaord",component:DoctorDashboard},
-    {path:"/patientSignup",component:PatientSignup}
+  {path:"/",component:SignupCards},
+  {path:"/doctorSignup",component:DoctorSignup},
+  {path:"/success",component:AccountCreated},
+  {path:"/login",component:LogIn},
+  {path:"/doctorDashboard",component:DoctorDashboard},
+  {path:"/patientSignup",component:PatientSignup},
+  {path:"/:pathMatch(.*)*",component:NotFound}
 ]
 
 const router = createRouter({history:createWebHashHistory(),routes})
-createApp(App).use(router).mount('#app')
+vueApp.use(router)
+vueApp.mount('#app')
