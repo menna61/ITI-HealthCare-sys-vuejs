@@ -3,8 +3,8 @@
         <img src="../assets/google.svg" alt="">
         <p v-if="isSignup" class="text-gray-500">Sign up with google</p>
         <p v-else class="text-gray-500">Continue with google</p>
-    </div>
     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
+    </div>
 
 </template>
 
