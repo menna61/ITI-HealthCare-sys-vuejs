@@ -71,3 +71,4 @@ const auth = {
 const vueApp = createApp(App)
 vueApp.config.globalProperties.$auth = auth
 vueApp.use(router).mount('#app')
+
