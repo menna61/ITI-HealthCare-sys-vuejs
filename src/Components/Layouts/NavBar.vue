@@ -7,9 +7,10 @@
                 </div>
                 <div class="right flex gap-4">
                     <div class="lang w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer" @click="showLang">
-                        <img src="../../assets/usa-flag.svg" alt="">
-                         <div class="degrees w-fit p-4 shadow-xl rounded-lg absolute top-14 flex flex-col gap-4 bg-white" v-show="langShow">
-                            <div class="hover:bg-gray-100 cursor-pointer p-4 rounded-lg wrap flex items-center gap-2" v-for="(language,index) in languages" :key="index" >
+                        <img :src="currentLanguage.img" alt="">
+                         <div class="degrees w-fit p-4 shadow-xl rounded-lg absolute top-14 left-0 flex flex-col gap-4 bg-white" v-show="langShow">
+                            <!-- Add .stop to prevent event bubbling -->
+                            <div  @click.stop="changeLanguage(language)" class="hover:bg-gray-100 cursor-pointer p-4 rounded-lg wrap flex items-center gap-2" v-for="(language,index) in languages" :key="index" >
                                 <p class="order-2">{{language.lang}}</p>
                                 <div class="img w-8 h-8 border-gray-200 order-1">
                                     <img :src="language.img" alt="">
@@ -18,10 +19,10 @@
                         </div>
                     </div>
                     <router-link to="/" v-if="isLoginPage">
-                        <button  class="h-12 rounded-lg border border-[#5271FF] px-10 text-[#5271FF] font-semibold cursor-pointer">Sign up</button>
+                        <button  class="h-12 rounded-lg border border-[#5271FF] px-10 text-[#5271FF] font-semibold cursor-pointer">{{ $t('signup') }}</button>
                     </router-link>
                     <router-link to="/login" v-else>
-                        <button  class="h-12 rounded-lg border border-[#5271FF] px-10 text-[#5271FF] font-semibold cursor-pointer">Login</button>
+                        <button  class="h-12 rounded-lg border border-[#5271FF] px-10 text-[#5271FF] font-semibold cursor-pointer">{{ $t('login') }}</button>
                     </router-link>
                 </div>
             </div>
@@ -35,21 +36,18 @@
 
     export default {
         name:"NavBar",
-        computed:{
-            isLoginPage(){
-                return this.$route.path === '/login'
-            }
-        },
         data(){
             return{
                 languages:[
                     {
                         lang:'English',
-                        img:usa
+                        img:usa,
+                        code:'en',
                     },
                     {
                         lang:'Arabic',
-                        img:egypt
+                        img:egypt,
+                        code:'ar'
                     }
 
                 ],
@@ -60,8 +58,20 @@
         methods:{
             showLang(){
                 this.langShow = !this.langShow
+            },
+            changeLanguage(language){
+                this.$i18n.locale = language.code
+                this.langShow = false
             }
-        }
+        },
+        computed:{
+            isLoginPage(){
+                return this.$route.path === '/login'
+            },
+            currentLanguage(){
+                return this.languages.find(lang => lang.code === this.$i18n.locale) || this.languages[0]
+            }
+        },
     }
 </script>
 
