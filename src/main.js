@@ -8,11 +8,16 @@ import SignupCards from './Components/Pages/SignupCards.vue'
 import AccountCreated from './Components/Pages/AccountCreated.vue'
 import LogIn from './Components/Pages/LogIn.vue'
 import PatientSignup from './Components/Pages/PatientSignup.vue'
-import DoctorDashboard from './Components/Pages/DoctorDashboard.vue'
+import CalenDar from './Components/Pages/CalenDar.vue'
 import { auth } from '/src/firebase.js'
 import {createI18n} from 'vue-i18n'
 import en from '/locales/en.json'
 import ar from '/locales/ar.json'
+import DashboardLayout from './Components/Layouts/DashboardLayout.vue'
+import { watch } from 'vue'
+import AuthNavbar from './Components/Layouts/AuthNavbar.vue'
+import PatientsPage from './Components/Pages/PatientsPage.vue'
+import FinancialPage from './Components/Pages/FinancialPage.vue'
 
 const i18n = createI18n({
   locale: 'en', // اللغة الافتراضية
@@ -24,17 +29,54 @@ const vueApp = createApp(App)
 vueApp.config.globalProperties.$auth = auth
 
 
+// const routes = [
+//   {path:"/",component:SignupCards},
+//   {path:"/doctorSignup",component:DoctorSignup},
+//   {path:"/success",component:AccountCreated},
+//   {path:"/login",component:LogIn},
+//   {path:"/doctorDashboard",component:DoctorDashboard},
+//   {path:"/patientSignup",component:PatientSignup},
+//   {path:"/:pathMatch(.*)*",component:NotFound},
+// ]
 const routes = [
-  {path:"/",component:SignupCards},
-  {path:"/doctorSignup",component:DoctorSignup},
-  {path:"/success",component:AccountCreated},
-  {path:"/login",component:LogIn},
-  {path:"/doctorDashboard",component:DoctorDashboard},
-  {path:"/patientSignup",component:PatientSignup},
-  {path:"/:pathMatch(.*)*",component:NotFound}
+  {
+    path: '/',
+    component: AuthNavbar,
+    children: [
+      { path: '/', component: SignupCards },
+      { path: '/doctorSignup', component: DoctorSignup },
+      { path: '/patientSignup', component: PatientSignup },
+      { path: '/success', component: AccountCreated },
+      { path: '/login', component: LogIn }
+    ]
+  },
+
+  // {
+  //   path: '/doctorDashboard',
+  //   component: DoctorDashboard,
+  //   children: [
+  //     { path:"/patients", component:PatientsPage }
+  //   ]
+  // },
+   {
+    path: '/dashboard',
+    component: DashboardLayout,
+    children: [
+      { path: 'calendar', component: CalenDar },
+      { path: 'patients', component: PatientsPage },
+      {path:'financial', component: FinancialPage}
+      
+    ]
+  },
+  
+
+  {
+    path: '/:pathMatch(.*)*',
+    component: NotFound
+  }
 ]
 
-import { watch } from 'vue'
+
 
 watch(() => i18n.global.locale, (newLocale) => {
   localStorage.setItem('lang', newLocale)
