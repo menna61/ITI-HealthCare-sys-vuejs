@@ -25,6 +25,20 @@
                     <p class="text-xl text-gray-300">Financial</p>
                 </div>
             </router-link>
+
+            <router-link to="/dashboard/services" exact-active-class="bg-gradient-to-r from-slate-900 to-slate-900/0 border-l-4 border-white">
+                <div class="calendar flex gap-4 justify-start items-center w-full h-12 px-4">
+                    <svg class="w-6 h-6 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M264 112L376 112C380.4 112 384 115.6 384 120L384 160L256 160L256 120C256 115.6 259.6 112 264 112zM208 120L208 160L128 160C92.7 160 64 188.7 64 224L64 320L576 320L576 224C576 188.7 547.3 160 512 160L432 160L432 120C432 89.1 406.9 64 376 64L264 64C233.1 64 208 89.1 208 120zM576 368L384 368L384 384C384 401.7 369.7 416 352 416L288 416C270.3 416 256 401.7 256 384L256 368L64 368L64 480C64 515.3 92.7 544 128 544L512 544C547.3 544 576 515.3 576 480L576 368z"/></svg>
+                    <p class="text-xl text-gray-300">Services</p>
+                </div>
+            </router-link>
+
+            <router-link to="/dashboard/telemedicine" exact-active-class="bg-gradient-to-r from-slate-900 to-slate-900/0 border-l-4 border-white">
+                <div class="calendar flex gap-4 justify-start items-center w-full h-12 px-4">
+                    <svg class="w-6 h-6 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 128C92.7 128 64 156.7 64 192L64 448C64 483.3 92.7 512 128 512L384 512C419.3 512 448 483.3 448 448L448 192C448 156.7 419.3 128 384 128L128 128zM496 400L569.5 458.8C573.7 462.2 578.9 464 584.3 464C597.4 464 608 453.4 608 440.3L608 199.7C608 186.6 597.4 176 584.3 176C578.9 176 573.7 177.8 569.5 181.2L496 240L496 400z"/></svg>
+                    <p class="text-xl text-gray-300">Telemedicine</p>
+                </div>
+            </router-link>
                 
             
         </div>

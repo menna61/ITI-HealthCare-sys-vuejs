@@ -18,6 +18,8 @@ import { watch } from 'vue'
 import AuthNavbar from './Components/Layouts/AuthNavbar.vue'
 import PatientsPage from './Components/Pages/PatientsPage.vue'
 import FinancialPage from './Components/Pages/FinancialPage.vue'
+import DoctorServices from './Components/Pages/DoctorServices.vue'
+import DoctorVideo from './Components/Pages/DoctorVideo.vue'
 
 const i18n = createI18n({
   locale: 'en', // اللغة الافتراضية
@@ -64,7 +66,9 @@ const routes = [
     children: [
       { path: 'calendar', component: CalenDar },
       { path: 'patients', component: PatientsPage },
-      {path:'financial', component: FinancialPage}
+      {path:'financial', component: FinancialPage},
+      {path:'services',component:DoctorServices},
+      {path:'telemedicine',component:DoctorVideo}
       
     ]
   },
