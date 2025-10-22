@@ -20,6 +20,7 @@ import PatientsPage from './Components/Pages/PatientsPage.vue'
 import FinancialPage from './Components/Pages/FinancialPage.vue'
 import DoctorServices from './Components/Pages/DoctorServices.vue'
 import DoctorVideo from './Components/Pages/DoctorVideo.vue'
+import LandingPage from './Components/Pages/LandingPage/LandingPage.vue'
 
 const i18n = createI18n({
   locale: 'en', // اللغة الافتراضية
@@ -41,11 +42,12 @@ vueApp.config.globalProperties.$auth = auth
 //   {path:"/:pathMatch(.*)*",component:NotFound},
 // ]
 const routes = [
+  {path:'/', component:LandingPage},
   {
-    path: '/',
+    path: '/signupcards',
     component: AuthNavbar,
     children: [
-      { path: '/', component: SignupCards },
+      { path: '/signupcards', component: SignupCards },
       { path: '/doctorSignup', component: DoctorSignup },
       { path: '/patientSignup', component: PatientSignup },
       { path: '/success', component: AccountCreated },
