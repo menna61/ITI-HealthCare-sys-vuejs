@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="z-20">
         <div class="lang w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer" @click="showLang">
                         <img :src="currentLanguage.img" alt="">
                          <div class="degrees w-fit p-4 shadow-xl rounded-lg absolute top-14 left-0 flex flex-col gap-4 bg-white" v-show="langShow">
