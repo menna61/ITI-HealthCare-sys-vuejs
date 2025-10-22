@@ -105,7 +105,7 @@
                                             <svg class="w-6 h-6 fill-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M73 39.1C63.6 29.7 48.4 29.7 39.1 39.1C29.8 48.5 29.7 63.7 39 73.1L567 601.1C576.4 610.5 591.6 610.5 600.9 601.1C610.2 591.7 610.3 576.5 600.9 567.2L504.5 470.8C507.2 468.4 509.9 466 512.5 463.6C559.3 420.1 590.6 368.2 605.5 332.5C608.8 324.6 608.8 315.8 605.5 307.9C590.6 272.2 559.3 220.2 512.5 176.8C465.4 133.1 400.7 96.2 319.9 96.2C263.1 96.2 214.3 114.4 173.9 140.4L73 39.1zM236.5 202.7C260 185.9 288.9 176 320 176C399.5 176 464 240.5 464 320C464 351.1 454.1 379.9 437.3 403.5L402.6 368.8C415.3 347.4 419.6 321.1 412.7 295.1C399 243.9 346.3 213.5 295.1 227.2C286.5 229.5 278.4 232.9 271.1 237.2L236.4 202.5zM357.3 459.1C345.4 462.3 332.9 464 320 464C240.5 464 176 399.5 176 320C176 307.1 177.7 294.6 180.9 282.7L101.4 203.2C68.8 240 46.4 279 34.5 307.7C31.2 315.6 31.2 324.4 34.5 332.3C49.4 368 80.7 420 127.5 463.4C174.6 507.1 239.3 544 320.1 544C357.4 544 391.3 536.1 421.6 523.4L357.4 459.2z"/></svg>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                             </div>
 
@@ -174,7 +174,7 @@
                                             <p @click="selectSpec(speciality)" v-for="speciality in specialities" :key="speciality" class="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg">{{speciality}}</p>
                                         </div>
                                     </div>
-                                
+
                                 </div>
                             </div>
 
@@ -191,7 +191,7 @@
                        <div class="inputs w-full flex flex-col gap-4">
                             <label for="">Bio</label>
                             <div class="flex gap-2 h-44 border border-gray-200 rounded-lg">
-                                <textarea 
+                                <textarea
                                 placeholder="Enter your bio"
                                 class="w-full h-full p-4 resize-none outline-none"
                                 ></textarea>
@@ -201,18 +201,18 @@
                 </div>
         </div>
 
-        
+
         <div class="btn w-full flex justify-end gap-4">
             <button v-show="currentStep>1" @click="prevStep" class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] text-[#5271FF] w-fit px-10 cursor-pointer">
                 <svg class="w-6 h-6 fill-[#5271FF]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z"/></svg>
                 <p>{{ currentStep > 1 ? 'Previous' : 'Next' }}</p>
             </button>
-            
+
             <button @click="nextStep" class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer">
                 <p>{{ currentStep === 3 ? 'Finish' : 'Next' }}</p>
                 <svg class="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"/></svg>
             </button>
-           
+
         </div>
 </div>
 </template>
@@ -251,7 +251,7 @@ import GoogleCard from '../GoogleCard.vue';
             },
             selectDegree(degree) {
                 this.selectedDegree = degree;
-                this.isShow = false; 
+                this.isShow = false;
             },
             showSpeciality(){
                 this.showSpec = !this.showSpec

@@ -21,6 +21,8 @@ import FinancialPage from './Components/Pages/FinancialPage.vue'
 import DoctorServices from './Components/Pages/DoctorServices.vue'
 import DoctorVideo from './Components/Pages/DoctorVideo.vue'
 import LandingPage from './Components/Pages/LandingPage/LandingPage.vue'
+import { db, signInWithGoogle, signOutUser, onAuthChange, registerWithEmail, loginWithEmail} from "/src/authHandler.js";
+// import { h } from 'vue'
 
 const i18n = createI18n({
   locale: 'en', // اللغة الافتراضية
@@ -31,6 +33,16 @@ const i18n = createI18n({
 const vueApp = createApp(App)
 vueApp.config.globalProperties.$auth = auth
 
+
+vueApp.config.globalProperties.$auth = {
+  auth,
+  db,
+  signInWithGoogle,
+  signOutUser,
+  onAuthChange,
+  registerWithEmail,
+  loginWithEmail
+};
 
 // const routes = [
 //   {path:"/",component:SignupCards},
@@ -95,5 +107,3 @@ const router = createRouter({history:createWebHashHistory(),routes})
 vueApp.use(router)
 vueApp.use(i18n)
 vueApp.mount('#app')
-
-
