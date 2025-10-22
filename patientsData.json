@@ -1,0 +1,44 @@
+{
+    "patients":[
+{
+    "id": 1,
+    "name": "Ahmed Hassan",
+    "age": 34,
+    "gender": "Male",
+    "email": "ahmed.hassan@example.com",
+    "action":"View details"
+  },
+  {
+    "id": 2,
+    "name": "Sara Mahmoud",
+    "age": 28,
+    "gender": "Female",
+    "email": "sara.mahmoud@example.com",
+    "action":"View details"
+  },
+  {
+    "id": 3,
+    "name": "Omar Youssef",
+    "age": 42,
+    "gender": "Male",
+    "email": "omar.youssef@example.com",
+    "action":"View details"
+  },
+  {
+    "id": 4,
+    "name": "Mona Ali",
+    "age": 37,
+    "gender": "Female",
+    "email": "mona.ali@example.com",
+    "action":"View details"
+  },
+  {
+    "id": 5,
+    "name": "Karim Nader",
+    "age": 30,
+    "gender": "Male",
+    "email": "karim.nader@example.com",
+    "action":"View details"
+  }
+    ]
+}

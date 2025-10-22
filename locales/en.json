@@ -1,0 +1,22 @@
+{
+    "login":"Login",
+    "welcomemsg":"Welcome to <span>{appName}</span> system",
+    "appName":"MediLink",
+    "signup":"Sign up",
+    "chooserole":"Choose your role to get started",
+    "doctor":"I'm a doctor",
+    "patient":"I'm a user",
+    "droledesc":"Join our network to manage patients, schedule appointments, and provide quality care",
+    "proledesc":"Sign up to book appointments, view medical records, and connect with healthcare providers",
+    "manageschedule":"Manage your schedule",
+    "patientrecords":"Access patient records",
+    "prescribe":"Prescribe medications",
+    "videoconsultation":"Video consultations",
+    "book":"Book and manage appointments",
+    "medicalrecords":"Access your medical records",
+    "communicate":"Communicate with doctors",
+    "signupdrole":"Sign up as a doctor",
+    "signupprole":"Sign up as a user"
+    
+    
+}

@@ -1,31 +1,24 @@
 <template>
 
   
-  <div id="app" class="flex flex-col gap-12">
-    <!-- <div class="flex h-dvh items-center justify-center">
-      <signup-cards/>
-    </div> -->
-    
- 
+  <!-- <div id="app" class="flex flex-col gap-12">
     <nav-bar/>
     <div>
       <RouterView></RouterView>
     </div>
-
-
-  
-  </div>
+  </div> -->
+  <RouterView></RouterView>
 </template>
 
 
 <script>
 
-import NavBar from './Components/Layouts/NavBar.vue';
+// import NavBar from './Components/Layouts/NavBar.vue';
 // import SignupCards from './Components/Pages/SignupCards.vue';
 
 export default {
     components:{
-      NavBar,
+      // NavBar,
       // SignupCards
     }
 }
@@ -37,5 +30,12 @@ export default {
 #app {font-family: system-ui, -apple-system, 'Segoe UI', Roboto }
 .cont{
   margin: 0 80px;
+}
+:root{
+  --main-color-500: #5271FF;
+  --main-color-25:#EEF1FF;
+  --sec-color-500: #0CB8B6;
+  --sec-color-25: #E7F8F8;
+  
 }
 </style>
