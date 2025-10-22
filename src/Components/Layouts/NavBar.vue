@@ -2,14 +2,26 @@
     <div class="w-full">
         <nav class="bg-white w-full">
             <div :class="isAuthPages ? 'cont' : 'mr-20 ml-8'"  class="py-4 flex justify-between items-center">
-                <router-link to="/">
-                    <div class="left" v-if="isAuthPages">
-                        <img src="../../assets/Group 1.svg" alt="">
-                    </div>
-                </router-link>
-                <div v-if="!isAuthPages" class="search flex gap-2 items-center border border-gray-200 rounded-lg px-4 h-12 w-96">
-                    <svg class="w-6 h-6 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M480 272C480 317.9 465.1 360.3 440 394.7L566.6 521.4C579.1 533.9 579.1 554.2 566.6 566.7C554.1 579.2 533.8 579.2 521.3 566.7L394.7 440C360.3 465.1 317.9 480 272 480C157.1 480 64 386.9 64 272C64 157.1 157.1 64 272 64C386.9 64 480 157.1 480 272zM272 416C351.5 416 416 351.5 416 272C416 192.5 351.5 128 272 128C192.5 128 128 192.5 128 272C128 351.5 192.5 416 272 416z"/></svg>
-                    <p class="text-gray-500 text-[14px]">Search...</p>
+                <div v-if="isAuthPages">
+                    <router-link to="/">
+                        <div class="left">
+                            <img src="../../assets/Group 1.svg" alt="">
+                        </div>
+                    </router-link>
+                </div>
+                <div v-if="!isAuthPages" class="search">
+                     <form class="w-96">   
+                            <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                    </svg>
+                                </div>
+                                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search..." required />
+                                </div>
+                        </form>
+
                 </div>
                 <div class="right flex gap-4">
                     <div v-if="!isAuthPages" class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer">
@@ -68,7 +80,7 @@ import LangDrop from "../LangDrop.vue";
                 return this.languages.find(lang => lang.code === this.$i18n.locale) || this.languages[0]
             },
             isAuthPages(){
-                return this.$route.path === '/login' || this.$route.path ==='/signupcards' || this.$route.path === '/patientSignup' || this.$route.path === '/doctorSignup'
+                return this.$route.path === '/login' || this.$route.path ==='/signupcards' || this.$route.path === '/patientSignup' || this.$route.path === '/doctorSignup' || this.$route.path === '/success'
             }
         },
     }
