@@ -218,52 +218,105 @@
 </template>
 
 <script>
-import BackBtn from '../BackBtn.vue';
-import GoogleCard from '../GoogleCard.vue';
-    export default {
-        components:{GoogleCard,BackBtn},
-        name:"DoctorSignup",
-        data(){
-            return{
-                currentStep:1,
-                isShow:false,
-                degrees: ["PhD", "Bachelor's", "Master's", "Diploma"],
-                selectedDegree:"",
-                specialities: ["Cardiology", "Dermatology", "Neurology", "Pediatrics", "Orthopedics", "Dentistry", "Psychiatry", "Ophthalmology", "General Surgery"],
-                selectedSpeciality:"",
-                showSpec:false
+import BackBtn from "../BackBtn.vue";
+import GoogleCard from "../GoogleCard.vue";
+import { registerWithEmail, db } from "../../authHandler.js";
+import { doc, setDoc } from "firebase/firestore";
 
-            }
-        },
-        methods: {
-            nextStep() {
-                 if (this.currentStep < 3) {
-                    this.currentStep++;
-                } else {
-                    this.$router.push("/success");
-                }
-            },
-            prevStep() {
-                if (this.currentStep > 1) this.currentStep--;
-            },
-            showDegrees(){
-                this.isShow = !this.isShow
-            },
-            selectDegree(degree) {
-                this.selectedDegree = degree;
-                this.isShow = false;
-            },
-            showSpeciality(){
-                this.showSpec = !this.showSpec
-            },
-            selectSpec(speciality){
-                this.selectedSpeciality = speciality;
-                this.showSpec = false;
-            }
-        },
-    }
+export default {
+  components: { GoogleCard, BackBtn },
+  name: "DoctorSignup",
+  data() {
+    return {
+      currentStep: 1,
+      loading: false,
+      errorMsg: "",
+      successMsg: "",
+      // Step 1
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      phoneNumber: "",
+      selectedGender: "",
+      birthdate: "",
+      // Step 2
+      experienceYears: "",
+      licenseNumber: "",
+      clinicName: "",
+      clinicAddress: "",
+      selectedDegree: "",
+      selectedSpeciality: "",
+      degrees: ["PhD", "Bachelor's", "Master's", "Diploma"],
+      specialities: [
+        "Cardiology",
+        "Dermatology",
+        "Neurology",
+        "Pediatrics",
+        "Orthopedics",
+        "Dentistry",
+        "Psychiatry",
+        "Ophthalmology",
+        "General Surgery",
+      ],
+      // Step 3
+      bio: "",
+    };
+  },
+  methods: {
+    nextStep() {
+      if (this.currentStep < 3) this.currentStep++;
+      else this.registerDoctor();
+    },
+    prevStep() {
+      if (this.currentStep > 1) this.currentStep--;
+    },
+    async registerDoctor() {
+      if (this.loading) return;
+      this.errorMsg = "";
+      this.successMsg = "";
+      this.loading = true;
+
+      try {
+        const cred = await registerWithEmail(this.email, this.password);
+        const uid = cred.user.uid;
+
+        await setDoc(doc(db, "doctors", uid), {
+          firstName: this.firstName,
+          lastName: this.lastName,
+          email: this.email,
+          phone: this.phoneNumber,
+          gender: this.selectedGender,
+          birthdate: this.birthdate,
+          experienceYears: this.experienceYears,
+          licenseNumber: this.licenseNumber,
+          clinicName: this.clinicName,
+          clinicAddress: this.clinicAddress,
+          degree: this.selectedDegree,
+          speciality: this.selectedSpeciality,
+          bio: this.bio,
+          role: "doctor",
+        });
+
+        this.successMsg = "Account created. Redirecting to dashboard...";
+        setTimeout(() => {
+          this.$router.push("/doctorDashboard");
+        }, 1000);
+      } catch (error) {
+        console.error("Error signing up:", error);
+        this.errorMsg = error?.message || String(error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    selectDegree(degree) {
+      this.selectedDegree = degree;
+    },
+    selectSpec(speciality) {
+      this.selectedSpeciality = speciality;
+    },
+  },
+};
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
