@@ -1,0 +1,3 @@
+- [x] Add logout button to SideMenu.vue for doctors
+- [x] Add logout button to PatientDashboard.vue for patients
+- [x] Implement logout functionality to sign out and redirect to /login

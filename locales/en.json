@@ -16,7 +16,30 @@
     "medicalrecords":"Access your medical records",
     "communicate":"Communicate with doctors",
     "signupdrole":"Sign up as a doctor",
-    "signupprole":"Sign up as a user"
-    
-    
+    "signupprole":"Sign up as a user",
+    "home":"Home",
+    "about":"About us",
+    "services":"Services",
+    "contact":"Contact us",
+    "heroword":"Your complete digital <span>{healthcare}</span> experience",
+    "healthcare":"healthcare",
+    "herotext":"Your all-in-one platform for appointments and online consultations. Stay connected with your doctor and manage your health easily.",
+    "getstart":"get started",
+    "aboutword":"Committed to Excellence in Healthcare",
+    "aboutdesc1":"With over 20 years of experience, our clinic has been at the forefront of healthcare innovation. We combine traditional medical expertise with modern technology to provide the best possible care for our patients.",
+    "aboutdesc2":"Our team of dedicated healthcare professionals is committed to your wellbeing, offering personalized treatment plans and compassionate care every step of the way.",
+    "expertdoctors":"expert doctors",
+    "recoverpatients":"recover patients",
+    "satisfiedrate":"satisfied rate",
+    "servword":"modern healthcare solutions",
+    "servdesc":"We offer a comprehensive range of digital health services designed to make healthcare more accessible and convenient for you",
+    "easyapp":"easy appointment",
+    "easydesc":"Book doctor appointments quickly and manage your health schedule online.",
+    "virtualword":"virtual consultations",
+    "virtualdesc":"Meet your doctor online anytime through secure video consultations.",
+    "digitalword":"digital prescriptions",
+    "digitaldesc":"Receive your medical notes and prescriptions instantly after each session.",
+    "smartword":"smart AI assistant",
+    "smartdesc":"Get instant recommendations for the right speciality based on your symptoms.",
+    "readytext":"Ready to Transform Your Healthcare Experience ? "
 }

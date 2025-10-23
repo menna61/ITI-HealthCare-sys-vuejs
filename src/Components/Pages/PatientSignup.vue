@@ -4,15 +4,15 @@
       <back-btn />
       <div class="stepper flex flex-col gap-8">
         <div class="top flex flex-col gap-4">
-          <h1 class="text-4xl font-bold">Sign up as a user</h1>
-          <p class="text-gray-600 text-xl">Create your user account</p>
+          <h1 class="text-4xl font-bold">Sign up as a patient</h1>
+          <p class="text-gray-600 text-xl">Create your patient account</p>
         </div>
       </div>
     </div>
 
     <div class="bottom flex gap-10">
       <div class="right w-full">
-        <form class="flex flex-col gap-6" @submit.prevent="registerDoctor">
+        <form class="flex flex-col gap-6" @submit.prevent="registerPatient">
           <google-card />
 
           <!-- Feedback messages -->
@@ -168,14 +168,9 @@ import { doc, setDoc } from "firebase/firestore";
 
 export default {
   components: { GoogleCard, BackBtn },
-  name: "DoctorSignup",
+  name: "PatientSignup",
   data() {
     return {
-      currentStep: 1,
-      loading: false,
-      errorMsg: "",
-      successMsg: "",
-      // Step 1
       firstName: "",
       lastName: "",
       email: "",
@@ -183,80 +178,35 @@ export default {
       phoneNumber: "",
       selectedGender: "",
       birthdate: "",
-      // Step 2
-      experienceYears: "",
-      licenseNumber: "",
-      clinicName: "",
-      clinicAddress: "",
-      selectedDegree: "",
-      selectedSpeciality: "",
-      degrees: ["PhD", "Bachelor's", "Master's", "Diploma"],
-      specialities: [
-        "Cardiology",
-        "Dermatology",
-        "Neurology",
-        "Pediatrics",
-        "Orthopedics",
-        "Dentistry",
-        "Psychiatry",
-        "Ophthalmology",
-        "General Surgery",
-      ],
-      // Step 3
-      bio: "",
+      loading: false,
+      errorMsg: "",
+      successMsg: "",
     };
   },
-  methods: {
-    nextStep() {
-      if (this.currentStep < 3) this.currentStep++;
-      else this.registerDoctor();
-    },
-    prevStep() {
-      if (this.currentStep > 1) this.currentStep--;
-    },
-    async registerDoctor() {
-      if (this.loading) return;
-      this.errorMsg = "";
-      this.successMsg = "";
-      this.loading = true;
 
+  methods: {
+    async registerPatient() {
       try {
         const cred = await registerWithEmail(this.email, this.password);
         const uid = cred.user.uid;
 
-        await setDoc(doc(db, "doctors", uid), {
+        await setDoc(doc(db, "patients", uid), {
           firstName: this.firstName,
           lastName: this.lastName,
           email: this.email,
           phone: this.phoneNumber,
           gender: this.selectedGender,
           birthdate: this.birthdate,
-          experienceYears: this.experienceYears,
-          licenseNumber: this.licenseNumber,
-          clinicName: this.clinicName,
-          clinicAddress: this.clinicAddress,
-          degree: this.selectedDegree,
-          speciality: this.selectedSpeciality,
-          bio: this.bio,
-          role: "doctor",
+          role: "patient",
         });
-
-        this.successMsg = "Account created. Redirecting to dashboard...";
+        this.successMsg = "Account created successfully. Redirecting...";
         setTimeout(() => {
-          this.$router.push("/doctorDashboard");
+          this.$router.push("/login");
         }, 1000);
       } catch (error) {
         console.error("Error signing up:", error);
-        this.errorMsg = error?.message || String(error);
-      } finally {
-        this.loading = false;
+        this.errorMsg = error?.message || "Something went wrong. Please try again.";
       }
-    },
-    selectDegree(degree) {
-      this.selectedDegree = degree;
-    },
-    selectSpec(speciality) {
-      this.selectedSpeciality = speciality;
     },
   },
 };

@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
         <div class="mb-14">
             <home-nav/>
             
