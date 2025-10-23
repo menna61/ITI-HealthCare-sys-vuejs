@@ -12,27 +12,27 @@
         <!--Right section-->
         <div class="right flex flex-col w-1/2">
             <div class="w-fit px-4 h-8 rounded-2xl flex items-center justify-center tag bg-[#CEF1F0] mb-4">
-                <p>About us</p>
+                <p>{{ $t('about') }}</p>
             </div>
-            <p class="text-[56px] mb-4 font-bold w-[400px] leading-16">Committed to Excellence in Healthcare</p>
-            <p class="text-gray-500 mb-4">With over 20 years of experience, our clinic has been at the forefront of healthcare innovation. We combine traditional medical expertise with modern technology to provide the best possible care for our patients.</p>
-            <p class="text-gray-500 mb-8">Our team of dedicated healthcare professionals is committed to your wellbeing, offering personalized treatment plans and compassionate care every step of the way.</p>
+            <p class="text-[56px] mb-4 font-bold w-[400px] leading-16">{{$t('aboutword')}}</p>
+            <p class="text-gray-500 mb-4">{{$t('aboutdesc1')}}</p>
+            <p class="text-gray-500 mb-8">{{$t('aboutdesc2')}}</p>
 
             <!--Numbers will come from database-->
             <div class="numbers flex gap-10">
                 <div class="flex flex-col gap-2">
                     <p class="text-2xl text-[var(--main-color-500)] font-bold">+400</p>
-                    <p>Experts doctors</p>
+                    <p>{{ $t('expertdoctors') }}</p>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <p class="text-2xl text-[var(--sec-color-500)] font-bold">+500</p>
-                    <p>Recover patients</p>
+                    <p>{{ $t('recoverpatients') }}</p>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <p class="text-2xl text-[var(--main-color-500)] font-bold">98%</p>
-                    <p>Satisfied rate</p>
+                    <p>{{ $t('satisfiedrate') }}</p>
                 </div>
                 
             </div>

@@ -179,8 +179,8 @@ export default {
       selectedGender: "",
       birthdate: "",
       loading: false,
-    errorMsg: "",
-    successMsg: ""
+      errorMsg: "",
+      successMsg: "",
     };
   },
 

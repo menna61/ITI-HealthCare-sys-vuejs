@@ -18,7 +18,7 @@ function redirectByRole(role, next) {
     case "patient":
       return next({ path: "/patientDashboard" });
     case "doctor":
-      return next({ path: "/doctorDashboard" });
+      return next({ path: "/dashboard/calendar" });
     default:
       return next({ path: "/login" });
   }

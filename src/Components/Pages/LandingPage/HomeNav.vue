@@ -9,10 +9,10 @@
 
             <div class="middle">
                 <nav class="flex gap-10 font-medium">
-                    <a  @click="scrollToSection('hero')">Home</a>
-                    <a  @click="scrollToSection('about')">About us</a>
-                    <a  @click="scrollToSection('services')">Services</a>
-                    <a  @click="scrollToSection('contact')">Contact us</a>
+                    <a  @click="scrollToSection('hero')">{{$t('home')}}</a>
+                    <a  @click="scrollToSection('about')">{{ $t('about') }}</a>
+                    <a  @click="scrollToSection('services')">{{ $t('services') }}</a>
+                    <a  @click="scrollToSection('contact')">{{ $t('contact') }}</a>
                 </nav>
             </div>
 
@@ -20,9 +20,9 @@
                
                 <lang-drop/>
                 <router-link to="/login">
-                    <button  class="h-12 rounded-lg border border-[var(--main-color-500)] px-10 text-[#5271FF] font-semibold cursor-pointer hover:bg-[var(--main-color-500)] hover:text-white transition-all ease-in-out">Login</button>
+                    <button  class="h-12 rounded-lg border border-[var(--main-color-500)] px-10 text-[#5271FF] font-semibold cursor-pointer hover:bg-[var(--main-color-500)] hover:text-white transition-all ease-in-out">{{$t('login')}}</button>
                 </router-link>
-                <router-link to="/signupcards"><button  class="h-12 rounded-lg text-white px-10 bg-[var(--main-color-500)] font-semibold cursor-pointer hover:bg-white hover:border hover:border-[var(--main-color-500)] hover:text-[var(--main-color-500)] transition-all ease-in-out">Sign up</button></router-link>
+                <router-link to="/signupcards"><button  class="h-12 rounded-lg text-white px-10 bg-[var(--main-color-500)] font-semibold cursor-pointer hover:bg-white hover:border hover:border-[var(--main-color-500)] hover:text-[var(--main-color-500)] transition-all ease-in-out">{{ $t('signup') }}</button></router-link>
             </div>
         </div>
     </div>
