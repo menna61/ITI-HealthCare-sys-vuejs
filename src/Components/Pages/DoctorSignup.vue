@@ -84,8 +84,30 @@
     >
       <!--Upload image-->
       <div class="left w-fit">
-        <div class="cam w-36 h-36 rounded-full bg-gray-50 flex items-center justify-center">
-          <img src="../../assets/camera.svg" alt="" />
+        <div
+          class="cam w-36 h-36 rounded-full bg-gray-50 flex items-center justify-center relative"
+        >
+          <img
+            v-if="!profileImage"
+            src="../../assets/camera.svg"
+            alt=""
+            class="cursor-pointer"
+            @click="triggerFileInput"
+          />
+          <img
+            v-else
+            :src="profileImage"
+            alt="Profile"
+            class="w-full h-full rounded-full object-cover cursor-pointer"
+            @click="triggerFileInput"
+          />
+          <input
+            ref="fileInput"
+            type="file"
+            accept="image/*"
+            @change="handleFileUpload"
+            class="hidden"
+          />
         </div>
       </div>
 
@@ -304,7 +326,7 @@
                   </div>
                 </div>
               </div>
-              <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
+              <div class="pass flex xl:flex-row gap-4 items-center w-full">
                 <div class="pass flex flex-col gap-2 w-full relative">
                   <label for="">Degree</label>
                   <div
@@ -322,7 +344,7 @@
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 640 640"
                     >
-                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                       <path
                         d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"
                       />
@@ -342,51 +364,54 @@
                     </p>
                   </div>
                 </div>
-                <div class="pass flex flex-col gap-2 w-full relative">
-                  <label for="">Speciality</label>
-                  <div
-                    class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
-                    @click="showSpeciality"
-                  >
-                    <svg
-                      class="w-6 h-6 fill-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
+
+                <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
+                  <div class="pass flex flex-col gap-2 w-full relative">
+                    <label for="">Speciality</label>
+                    <div
+                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      @click="showSpeciality"
                     >
-                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M64 112C64 85.5 85.5 64 112 64L160 64C177.7 64 192 78.3 192 96C192 113.7 177.7 128 160 128L128 128L128 256C128 309 171 352 224 352C277 352 320 309 320 256L320 128L288 128C270.3 128 256 113.7 256 96C256 78.3 270.3 64 288 64L336 64C362.5 64 384 85.5 384 112L384 256C384 333.4 329 398 256 412.8L256 432C256 493.9 306.1 544 368 544C429.9 544 480 493.9 480 432L480 346.5C442.7 333.3 416 297.8 416 256C416 203 459 160 512 160C565 160 608 203 608 256C608 297.8 581.3 333.4 544 346.5L544 432C544 529.2 465.2 608 368 608C270.8 608 192 529.2 192 432L192 412.8C119 398 64 333.4 64 256L64 112zM512 288C529.7 288 544 273.7 544 256C544 238.3 529.7 224 512 224C494.3 224 480 238.3 480 256C480 273.7 494.3 288 512 288z"
+                      <svg
+                        class="w-6 h-6 fill-gray-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                        <path
+                          d="M64 112C64 85.5 85.5 64 112 64L160 64C177.7 64 192 78.3 192 96C192 113.7 177.7 128 160 128L128 128L128 256C128 309 171 352 224 352C277 352 320 309 320 256L320 128L288 128C270.3 128 256 113.7 256 96C256 78.3 270.3 64 288 64L336 64C362.5 64 384 85.5 384 112L384 256C384 333.4 329 398 256 412.8L256 432C256 493.9 306.1 544 368 544C429.9 544 480 493.9 480 432L480 346.5C442.7 333.3 416 297.8 416 256C416 203 459 160 512 160C565 160 608 203 608 256C608 297.8 581.3 333.4 544 346.5L544 432C544 529.2 465.2 608 368 608C270.8 608 192 529.2 192 432L192 412.8C119 398 64 333.4 64 256L64 112zM512 288C529.7 288 544 273.7 544 256C544 238.3 529.7 224 512 224C494.3 224 480 238.3 480 256C480 273.7 494.3 288 512 288z"
+                        />
+                      </svg>
+                      <input
+                        v-model="selectedSpeciality"
+                        type="text"
+                        placeholder="Select your speciality"
+                        class="w-full h-12"
                       />
-                    </svg>
-                    <input
-                      v-model="selectedSpeciality"
-                      type="text"
-                      placeholder="Select your speciality"
-                      class="w-full h-12"
-                    />
-                    <svg
-                      class="w-6 h-6 fill-gray-400"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
+                      <svg
+                        class="w-6 h-6 fill-gray-400"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                        <path
+                          d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"
+                        />
+                      </svg>
+                    </div>
+                    <div
+                      class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white"
+                      v-show="showSpec === true"
                     >
-                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"
-                      />
-                    </svg>
-                  </div>
-                  <div
-                    class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white"
-                    v-show="showSpec === true"
-                  >
-                    <p
-                      @click="selectSpec(speciality)"
-                      v-for="speciality in specialities"
-                      :key="speciality"
-                      class="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg"
-                    >
-                      {{ speciality }}
-                    </p>
+                      <p
+                        @click="selectSpec(speciality)"
+                        v-for="speciality in specialities"
+                        :key="speciality"
+                        class="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg"
+                      >
+                        {{ speciality }}
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -434,11 +459,11 @@
 
       <button
         @click="nextStep"
-        :disabled="loading"
+        :disabled="loading || uploading"
         class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
       >
         <svg
-          v-if="loading"
+          v-if="loading || uploading"
           class="animate-spin h-5 w-5 text-white mr-2"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -454,8 +479,23 @@
           />
           <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
         </svg>
-        <p>{{ loading ? "Creating account..." : currentStep === 3 ? "Finish" : "Next" }}</p>
-        <svg class="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
+        <p>
+          {{
+            loading
+              ? "Creating account..."
+              : uploading
+              ? "Uploading image..."
+              : currentStep === 3
+              ? "Finish"
+              : "Next"
+          }}
+        </p>
+        <svg
+          v-if="!loading && !uploading"
+          class="w-6 h-6 fill-white"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 640 640"
+        >
           <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
           <path
             d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"
@@ -502,7 +542,11 @@ export default {
       medicalLicenseNumber: "",
       clinicName: "",
       clinicAddress: "",
+
       bio: "",
+      profileImage: null,
+      profileImageUrl: "",
+      uploading: false,
       loading: false,
       errorMsg: "",
       successMsg: "",
@@ -513,6 +557,44 @@ export default {
       if (this.currentStep < 3) {
         this.currentStep++;
       } else {
+        // Validate all fields before registering
+        console.log("Validating fields...");
+        console.log("firstName:", this.firstName);
+        console.log("lastName:", this.lastName);
+        console.log("email:", this.email);
+        console.log("phoneNumber:", this.phoneNumber);
+        console.log("password:", this.password);
+        console.log("yearsOfExperience:", this.yearsOfExperience);
+        console.log("medicalLicenseNumber:", this.medicalLicenseNumber);
+        console.log("clinicName:", this.clinicName);
+        console.log("clinicAddress:", this.clinicAddress);
+        console.log("selectedDegree:", this.selectedDegree);
+        console.log("selectedSpeciality:", this.selectedSpeciality);
+        console.log("bio:", this.bio);
+        console.log("profileImageUrl:", this.profileImageUrl);
+
+        if (
+          !this.firstName ||
+          !this.lastName ||
+          !this.email ||
+          !this.phoneNumber ||
+          !this.password ||
+          !this.yearsOfExperience ||
+          !this.medicalLicenseNumber ||
+          !this.clinicName ||
+          !this.clinicAddress ||
+          !this.selectedDegree ||
+          !this.selectedSpeciality ||
+          !this.bio
+        ) {
+          this.errorMsg = "Please fill all fields in all steps.";
+          return;
+        }
+
+        if (!this.profileImageUrl) {
+          this.errorMsg = "Please upload a profile image before finishing.";
+          return;
+        }
         await this.registerDoctor();
       }
     },
@@ -533,6 +615,50 @@ export default {
       this.selectedSpeciality = speciality;
       this.showSpec = false;
     },
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    async handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.profileImage = URL.createObjectURL(file);
+        this.uploading = true;
+        // Upload to Cloudinary
+        await this.uploadToCloudinary(file);
+        this.uploading = false;
+      }
+    },
+    async uploadToCloudinary(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default"); // Replace with your Cloudinary upload preset
+      formData.append("cloud_name", "dtaqbcmmg"); // Replace with your Cloudinary cloud name
+
+      try {
+        console.log("Starting upload to Cloudinary...");
+        const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        console.log("Cloudinary response:", data);
+        console.log("Response status:", response.status);
+        if (response.ok && data.secure_url) {
+          this.profileImageUrl = data.secure_url;
+          console.log("Image uploaded successfully:", this.profileImageUrl);
+          this.successMsg = "Image uploaded successfully!";
+          this.errorMsg = ""; // Clear any previous error
+        } else {
+          console.error("Upload failed:", data.error?.message || data);
+          this.errorMsg = `Failed to upload image: ${data.error?.message || "Unknown error"}`;
+          this.profileImageUrl = ""; // Reset on failure
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        this.errorMsg = `Failed to upload image: ${error.message}`;
+        this.profileImageUrl = ""; // Reset on failure
+      }
+    },
     async registerDoctor() {
       try {
         this.errorMsg = "";
@@ -547,7 +673,6 @@ export default {
           lastName: this.lastName,
           email: this.email,
           phone: this.phoneNumber,
-          password: this.password, // Note: Storing password in Firestore is not recommended for security
           yearsOfExperience: this.yearsOfExperience,
           medicalLicenseNumber: this.medicalLicenseNumber,
           clinicName: this.clinicName,
@@ -555,16 +680,22 @@ export default {
           degree: this.selectedDegree,
           speciality: this.selectedSpeciality,
           bio: this.bio,
+          profileImageUrl: this.profileImageUrl,
           role: "doctor",
         });
 
-        this.successMsg = "Account created successfully. Redirecting...";
+        this.successMsg = "Account created successfully.";
+        this.loading = false;
         setTimeout(() => {
-          this.$router.push("/login");
-        }, 1000);
+          this.$router.push("/success");
+        }, 2000);
       } catch (error) {
         console.error("Error signing up:", error);
-        this.errorMsg = error?.message || "Something went wrong. Please try again.";
+        if (error.code === "auth/email-already-in-use") {
+          this.errorMsg = "Email already registered. Please login.";
+        } else {
+          this.errorMsg = error?.message || "Something went wrong. Please try again.";
+        }
       } finally {
         this.loading = false;
       }

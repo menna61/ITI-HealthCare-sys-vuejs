@@ -7,7 +7,9 @@
       <RouterView></RouterView>
     </div>
   </div> -->
-  <RouterView></RouterView>
+  <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
+    <router-view></router-view>
+  </div>
 </template>
 
 

@@ -30,7 +30,12 @@ import {
   loginWithEmail,
 } from "/src/authHandler.js";
 import DoctorAvail from "./Components/Pages/DoctorAvail.vue";
-import PatientDashboard from "./Components/Pages/PatientDashboard.vue";
+import { getAuth } from "firebase/auth";
+import DoctorsPage from "./Components/Pages/PatientFlow/DoctorsPage.vue";
+import PatientLayout from "./Components/Layouts/PatientLayout.vue";
+import PaymentsPage from "./Components/Pages/PatientFlow/PaymentsPage.vue";
+import PatientAppointments from "./Components/Pages/PatientFlow/PatientAppointments.vue";
+import PatientHome from "./Components/Pages/PatientFlow/PatientHome.vue";
 // import { h } from 'vue'
 
 const i18n = createI18n({
@@ -94,10 +99,15 @@ const routes = [
       { path: "availability", component: DoctorAvail },
     ],
   },
-
   {
-    path: "/patientDashboard",
-    component: PatientDashboard,
+    path: "/patient",
+    component: PatientLayout,
+    children: [
+      { path: "", component: PatientHome },
+      { path: "doctors", component: DoctorsPage },
+      { path: "payments", component: PaymentsPage },
+      { path: "appointments", component: PatientAppointments },
+    ],
   },
 
   {
@@ -117,6 +127,39 @@ const savedLang = localStorage.getItem("lang") || "en";
 i18n.global.locale = savedLang;
 
 const router = createRouter({ history: createWebHashHistory(), routes });
+
+// Navigation guard
+router.beforeEach(async (to, from, next) => {
+  const auth = getAuth();
+
+  // Define protected routes
+  const protectedRoutes = ["/dashboard", "/patient"];
+
+  // Check if the route is protected
+  const isProtected = protectedRoutes.some((route) => to.path.startsWith(route));
+
+  if (isProtected) {
+    // Wait for auth state to be determined
+    const user = await new Promise((resolve) => {
+      const unsubscribe = auth.onAuthStateChanged((user) => {
+        unsubscribe();
+        resolve(user);
+      });
+    });
+
+    if (!user) {
+      // Redirect to login if not authenticated
+      next("/login");
+    } else {
+      // Allow navigation
+      next();
+    }
+  } else {
+    // Allow navigation for non-protected routes
+    next();
+  }
+});
+
 vueApp.use(router);
 vueApp.use(i18n);
 vueApp.mount("#app");

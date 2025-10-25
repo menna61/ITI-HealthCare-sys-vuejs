@@ -16,7 +16,7 @@ function getCurrentUser() {
 function redirectByRole(role, next) {
   switch (role) {
     case "patient":
-      return next({ path: "/patientDashboard" });
+      return next({ path: "/patient" });
     case "doctor":
       return next({ path: "/dashboard/calendar" });
     default:

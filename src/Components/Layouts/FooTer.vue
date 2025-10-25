@@ -9,22 +9,22 @@
             <img src="../../assets/logo-white.svg" class="w-[151px] mb-2" alt="">
             <h2 class="text-xl font-semibold">Healthcare Plus</h2>
             <p class="text-gray-300 text-sm leading-relaxed">
-              Providing trusted medical care and innovative health solutions to improve your well-being.
+              {{ $t('healthtxt') }}
             </p>
           </div>
           <!-- Column 2: Quick Links -->
           <div class="flex flex-col gap-2">
-            <h3 class="font-semibold text-lg mb-3">Quick Links</h3>
+            <h3 class="font-semibold text-lg mb-3">{{ $t('quicklinks') }}</h3>
             <ul class="space-y-2 text-gray-300 text-sm">
-              <li><a  @click="scrollToSection('hero')" class="hover:text-white transition cursor-pointer">Home</a></li>
-              <li><a  @click="scrollToSection('about')" class="hover:text-white transition cursor-pointer">About Us</a></li>
-              <li><a  @click="scrollToSection('services')" class="hover:text-white transition cursor-pointer">Services</a></li>
-              <li><a  @click="scrollToSection('contact')" class="hover:text-white transition cursor-pointer">Contact</a></li>
+              <li><a  @click="scrollToSection('hero')" class="hover:text-white transition cursor-pointer">{{ $t('home') }}</a></li>
+              <li><a  @click="scrollToSection('about')" class="hover:text-white transition cursor-pointer">{{ $t('about') }}</a></li>
+              <li><a  @click="scrollToSection('services')" class="hover:text-white transition cursor-pointer">{{ $t('services') }}</a></li>
+              <li><a  @click="scrollToSection('contact')" class="hover:text-white transition cursor-pointer">{{ $t('contact') }}</a></li>
             </ul>
           </div>
           <!-- Column 3: Contact -->
           <div class="flex flex-col gap-2">
-            <h3 class="font-semibold text-lg mb-3">Contact Info</h3>
+            <h3 class="font-semibold text-lg mb-3">{{ $t('contactinfo') }}</h3>
             <ul class="space-y-2 text-gray-300 text-sm flex flex-col gap-2">
               <li class="flex items-center gap-2">
                 <svg class="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 252.6C128 148.4 214 64 320 64C426 64 512 148.4 512 252.6C512 371.9 391.8 514.9 341.6 569.4C329.8 582.2 310.1 582.2 298.3 569.4C248.1 514.9 127.9 371.9 127.9 252.6zM320 320C355.3 320 384 291.3 384 256C384 220.7 355.3 192 320 192C284.7 192 256 220.7 256 256C256 291.3 284.7 320 320 320z"/></svg>
