@@ -3,8 +3,8 @@
         <!--Left section - img-->
         <div class="left relative">
             <div class="relative w-fit z-10">
-                <img src="../../../assets/doctor1.png" alt="">
-                <img class="absolute bottom-0 right-[-14px]" src="../../../assets/doctor2.png" alt="">
+                <img src="../../../assets/doctor1.png" alt="" :class="{'rotate-y-180':$i18n.locale === 'ar'}">
+                <img class="absolute bottom-0 right-[-14px]" src="../../../assets/doctor2.png" alt="" :class="{'rotate-y-180 right-[378px]':$i18n.locale === 'ar'}">
             </div>
             <div class="w-[180px] h-[180px] rounded-full bg-[var(--sec-color-500)] blur-[100px] absolute top-[600px] left-[48px]"></div>
         </div>

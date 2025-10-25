@@ -41,5 +41,19 @@
     "digitaldesc":"Receive your medical notes and prescriptions instantly after each session.",
     "smartword":"smart AI assistant",
     "smartdesc":"Get instant recommendations for the right speciality based on your symptoms.",
-    "readytext":"Ready to Transform Your Healthcare Experience ? "
+    "readytext":"Ready to Transform Your Healthcare Experience ? ",
+    "getintouch":"get in touch",
+    "haveques":"Have questions? We're here to help. Reach out to us and we'll get back to you as soon as possible.",
+    "fullname":"Full name",
+    "entername":"Enter name",
+    "email":"Email",
+    "enteremail":"Enter email",
+    "phone":"phone number",
+    "msgdesc":"description",
+    "msg":"Enter your message",
+    "sendmsg":"send message",
+    "healthtxt":"Providing trusted medical care and innovative health solutions to improve your well-being.",
+    "quicklinks":"quick links",
+    "contactinfo":"contact info"
+    
 }

@@ -74,7 +74,7 @@ export default {
 
           if (patientSnap.exists()) {
             // Redirect to patient dashboard
-            this.$router.push("/patientDashboard");
+            this.$router.push("/patient/doctors");
           } else if (doctorSnap.exists()) {
             // Redirect to doctor dashboard
             this.$router.push("/dashboard/calendar");

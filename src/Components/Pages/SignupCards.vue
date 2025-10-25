@@ -16,20 +16,20 @@
                     </div>
                 </div>
                 <div class="bottom flex flex-col gap-6">
-                    <div class="services flex flex-col gap-2" :class="$i18n.locale === 'ar' ? 'items-end' : 'items-start'">
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                    <div class="services flex flex-col gap-2" >
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{ $t('book') }}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{ $t('medicalrecords') }}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{ $t('communicate') }}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{$t('videoconsultation')}}</p>
                         </div>
@@ -49,20 +49,20 @@
                     </div>
                 </div>
                 <div class="bottom flex flex-col gap-6">
-                    <div class="services flex flex-col gap-2" :class="$i18n.locale === 'ar' ? 'items-end' : 'items-start'">
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                    <div class="services flex flex-col gap-2" >
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{$t('manageschedule')}}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{$t('patientrecords')}}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{$t('prescribe')}}</p>
                         </div>
-                        <div class="flex items-center gap-2" :class="{'flex-row-reverse': $i18n.locale === 'ar'}">
+                        <div class="flex items-center gap-2" >
                             <svg  class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M530.8 134.1C545.1 144.5 548.3 164.5 537.9 178.8L281.9 530.8C276.4 538.4 267.9 543.1 258.5 543.9C249.1 544.7 240 541.2 233.4 534.6L105.4 406.6C92.9 394.1 92.9 373.8 105.4 361.3C117.9 348.8 138.2 348.8 150.7 361.3L252.2 462.8L486.2 141.1C496.6 126.8 516.6 123.6 530.9 134z"/></svg>
                             <p class="text-gray-500">{{$t('videoconsultation')}}</p>
                         </div>
