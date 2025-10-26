@@ -71,7 +71,7 @@
             v-if="!isAuthPages || this.$route.path === '/dashboard'"
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
           >
-            <img
+            <img  @click="goToDocProfile"
               v-if="currentUser && currentUser.profileImageUrl"
               :src="currentUser.profileImageUrl"
               alt="Profile"
@@ -145,6 +145,9 @@ export default {
     changeLanguage(language) {
       this.$i18n.locale = language.code;
       this.langShow = false;
+    },
+    goToDocProfile(){
+        this.$router.push("/dashboard/profile");
     },
     async fetchDoctors() {
       try {
