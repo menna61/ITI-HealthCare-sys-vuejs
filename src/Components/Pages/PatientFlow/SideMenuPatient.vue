@@ -81,7 +81,7 @@
       </router-link>
 
       <div
-        @click="logout"
+        @click="showLogoutModal = true"
         class="logout flex gap-4 justify-start items-center w-full h-12 px-4 cursor-pointer hover:bg-gradient-to-r hover:from-slate-900 hover:to-slate-900/0 hover:border-l-4 hover:border-white"
       >
         <svg class="w-6 h-6 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -92,6 +92,22 @@
         </svg>
         <p class="text-xl text-gray-300">Logout</p>
       </div>
+
+      <!-- Logout Confirmation Modal -->
+      <div
+        v-if="showLogoutModal"
+        class="fixed inset-0 bg-black/50 flex items-center justify-center z-50"
+      >
+        <div class="bg-white p-6 rounded-lg shadow-lg text-center">
+          <p class="text-lg mb-4">Are you sure you want to log out?</p>
+          <div class="flex gap-4 justify-center">
+            <button @click="logout" class="bg-red-500 text-white px-4 py-2 rounded">Logout</button>
+            <button @click="showLogoutModal = false" class="bg-gray-300 px-4 py-2 rounded">
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -101,6 +117,11 @@ import { signOutUser } from "/src/authHandler.js";
 
 export default {
   name: "SideMenu",
+  data() {
+    return {
+      showLogoutModal: false,
+    };
+  },
   methods: {
     async logout() {
       try {

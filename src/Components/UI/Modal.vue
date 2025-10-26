@@ -1,25 +1,27 @@
 <template>
-  <transition name="modal-fade">
-    <div v-if="modelValue" class="fixed inset-0 z-50 flex items-center justify-center">
-      <div class="fixed inset-0 bg-black/50" @click="close"></div>
-      <div class="relative bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 p-4 z-10">
-        <header class="mb-2">
-          <h3 class="text-lg font-semibold text-gray-900">{{ title }}</h3>
-        </header>
-        <section class="mb-4">
-          <slot />
-        </section>
-        <footer class="flex justify-end gap-2">
-          <slot name="footer"></slot>
-        </footer>
+  <teleport to="body">
+    <transition name="modal-fade">
+      <div v-if="modelValue" class="fixed inset-0 z-[99999] flex items-center justify-center">
+        <div class="fixed inset-0 bg-black/50 z-[99998]" @click="close"></div>
+        <div class="relative bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 p-4 z-[99999]">
+          <header class="mb-2">
+            <h3 class="text-lg font-semibold text-gray-900">{{ title }}</h3>
+          </header>
+          <section class="mb-4">
+            <slot />
+          </section>
+          <footer class="flex justify-end gap-2">
+            <slot name="footer"></slot>
+          </footer>
+        </div>
       </div>
-    </div>
-  </transition>
+    </transition>
+  </teleport>
 </template>
 
 <script>
 export default {
-  name: 'UiModal',
+  name: "UiModal",
   props: {
     modelValue: {
       type: Boolean,
@@ -27,14 +29,14 @@ export default {
     },
     title: {
       type: String,
-      default: '',
+      default: "",
     },
   },
-  emits: ['update:modelValue', 'close'],
+  emits: ["update:modelValue", "close"],
   methods: {
     close() {
-      this.$emit('update:modelValue', false);
-      this.$emit('close');
+      this.$emit("update:modelValue", false);
+      this.$emit("close");
     },
   },
 };

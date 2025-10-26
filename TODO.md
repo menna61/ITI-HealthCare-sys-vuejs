@@ -1,0 +1,3 @@
+- [x] Update SideMenu.vue to add logout confirmation modal
+- [x] Update SideMenuPatient.vue to add logout confirmation modal
+- [x] Test the logout functionality with modal (dev server running at http://localhost:5173/, modal now working properly)

@@ -8,37 +8,17 @@
                         <p class="text-gray-500">Track your telemedicine sessions</p>
                     </div>
 
-                <!--Page content-->
-                <!-- <div class="content">
-
-       <div class="bg-white h-[150px]">
-        <h1>
-          Waiting Room for Telemedicine Sessions
-        </h1>
-        <div class="w-[90%] h-[80px] bg-black ">
-          <div class="w-[32px] h-[32px] bg-amber-700 raduis-[50%]"><img src="../../assets/avatar-waiting.png" alt="Video Call Placeholder" class=""></div>
-          <div>
-            <img src="../../assets/waiting-time.png" alt="Video Call Placeholder" class="">
-          <p>waiting</p>
-          </div>
-
-        </div>
-
-       </div>
-
-
-                </div> -->
 
 
 <div class="content flex flex-col items-center w-full gap-6">
 
   <!-- 🟡 Waiting Room Section -->
-  <div class="w-full rounded-lg shadow-md p-4 flex flex-col">
+  <div class="w-full rounded-xl bg-white p-4 flex flex-col">
     <h1 class="text-lg font-semibold text-gray-900 mb-2">
       Waiting Room for Telemedicine Sessions
     </h1>
 
-    <div class="flex items-center justify-between bg-yellow-500/25 rounded h-[80px] w-full px-3">
+    <div class="flex items-center justify-between bg-amber-100/75 rounded h-[80px] w-full px-3">
       <!-- Left: User Info -->
       <div class="flex items-center gap-3">
         <div class="w-[32px] h-[32px] bg-amber-50 rounded-full flex items-center justify-center overflow-hidden">
@@ -48,7 +28,7 @@
         <div class="flex flex-col">
           <span class="text-gray-900 font-medium text-base">John Doe</span>
           <div class="flex items-center gap-2 mt-1 text-gray-600">
-            <img src="../../assets/waiting-time.png" alt="Time Icon" class="">
+            <svg class="w-4 h-4 fill-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"/></svg>
             <span class="text-sm">10:25 AM</span>
           </div>
         </div>
@@ -56,17 +36,17 @@
 
       <!-- Right: Start Session Button -->
       <button
-        class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4
+        class="flex items-center gap-2 text-white bg-[var(--main-color-500)] hover:bg-blue-800 focus:ring-4
         focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2
         transition duration-200 hover:scale-105 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-        <img src="../../assets/icon-video.png" alt="Video Icon" class="">
+        <svg class="w-6 h-6 fill-white" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M128 128C92.7 128 64 156.7 64 192L64 448C64 483.3 92.7 512 128 512L384 512C419.3 512 448 483.3 448 448L448 192C448 156.7 419.3 128 384 128L128 128zM496 400L569.5 458.8C573.7 462.2 578.9 464 584.3 464C597.4 464 608 453.4 608 440.3L608 199.7C608 186.6 597.4 176 584.3 176C578.9 176 573.7 177.8 569.5 181.2L496 240L496 400z"/></svg>
         Start Session
       </button>
     </div>
   </div>
 
   <!-- 🟢 Upcoming Sessions Section -->
-  <div class="w-full rounded-lg shadow-md p-4 flex flex-col">
+  <div class="w-full rounded-xl bg-white p-4 flex flex-col">
     <h1 class="text-lg font-semibold text-gray-900 mb-3">
       Upcoming Telemedicine Sessions
     </h1>
@@ -78,13 +58,13 @@
       <!-- Session 1 -->
       <div class="flex items-center justify-between rounded h-[80px] w-full px-3 border border-gray-200">
         <div class="flex items-center gap-3">
-          <div class="w-[32px] h-[32px] bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-            <img src="../../assets/avatar-upcoming.png" alt="User Avatar" class="object-cover">
+          <div class="w-[32px] h-[32px] bg-[var(--main-color-25)] rounded-full flex items-center justify-center overflow-hidden">
+            <svg class="w-6 h-6 fill-[var(--main-color-500)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
           </div>
           <div class="flex flex-col">
             <span class="text-gray-900 font-medium text-base">Michael Brown</span>
             <div class="flex items-center gap-2 mt-1 text-gray-600">
-              <img src="../../assets/icon-gray.png" alt="Time Icon" class="">
+            <svg class="w-4 h-4 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"/></svg>
               <span class="text-sm">11:15 AM</span>
             </div>
           </div>
@@ -118,13 +98,13 @@
       <!-- Session 2 -->
       <div class="flex items-center justify-between rounded h-[80px] w-full px-3 border border-gray-200/50">
         <div class="flex items-center gap-3">
-          <div class="w-[32px] h-[32px] bg-gray-100 rounded-full flex items-center justify-center overflow-hidden">
-            <img src="../../assets/avatar-upcoming.png" alt="User Avatar" class="object-cover">
+          <div class="w-[32px] h-[32px] bg-[var(--main-color-25)] rounded-full flex items-center justify-center overflow-hidden">
+            <svg class="w-6 h-6 fill-[var(--main-color-500)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
           </div>
           <div class="flex flex-col">
             <span class="text-gray-900 font-medium text-base">Lisa Turner</span>
             <div class="flex items-center gap-2 mt-1 text-gray-600">
-              <img src="../../assets/icon-gray.png" alt="Time Icon" class="">
+              <svg class="w-4 h-4 fill-gray-300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"/></svg>
               <span class="text-sm">12:00 PM</span>
             </div>
           </div>
@@ -158,22 +138,22 @@
   </div>
 
   <!-- 🔵 Recent Sessions Section -->
-  <div class="w-full rounded-lg shadow-md p-4 flex flex-col">
+  <div class="w-full rounded-xl bg-white p-4 flex flex-col">
     <h1 class="text-lg font-semibold text-gray-900 mb-3">
       Recent Telemedicine Sessions
     </h1>
 
     <div class="flex flex-col gap-3">
       <!-- Recent Session Card 1 -->
-      <div class="flex items-center justify-between bg-gray-200/50 rounded h-[80px] w-full px-3">
+      <div class="flex items-center justify-between border border-gray-200/50 rounded h-[80px] w-full px-3">
         <div class="flex items-center gap-3">
-          <div class="w-[32px] h-[32px] bg-gray-400/25 rounded-full flex items-center justify-center overflow-hidden">
-            <img src="../../assets/avatar-upcoming.png" alt="User Avatar" class="object-cover">
+          <div class="w-[32px] h-[32px] bg-[var(--main-color-25)] rounded-full flex items-center justify-center overflow-hidden">
+            <svg class="w-6 h-6 fill-[var(--main-color-500)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
           </div>
           <div class="flex flex-col">
             <span class="text-gray-900 font-medium text-base">Emily Davis</span>
             <div class="flex items-center gap-2 mt-1 text-gray-600">
-              <img src="../../assets/icon-gray.png" alt="Time Icon" class="">
+              <svg class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"/></svg>
               <span class="text-sm">Yesterday, 4:00 PM</span>
             </div>
           </div>
@@ -181,7 +161,7 @@
 
         <!-- View Details Button -->
         <button
-          class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4
+          class="flex items-center gap-2 text-white bg-[var(--main-color-500)] hover:bg-blue-800 focus:ring-4
           focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2
           transition duration-200 hover:scale-105">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
@@ -194,22 +174,22 @@
       </div>
 
       <!-- Recent Session Card 2 -->
-      <div class="flex items-center justify-between bg-gray-200/50 rounded h-[80px] w-full px-3">
+      <div class="flex items-center justify-between border border-gray-200/50 rounded h-[80px] w-full px-3">
         <div class="flex items-center gap-3">
-          <div class="w-[32px] h-[32px] bg-gray-400/25 rounded-full flex items-center justify-center overflow-hidden">
-            <img src="../../assets/avatar-upcoming.png" alt="User Avatar" class="object-cover">
+          <div class="w-[32px] h-[32px] bg-[var(--main-color-25)] rounded-full flex items-center justify-center overflow-hidden">
+            <svg class="w-6 h-6 fill-[var(--main-color-500)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 312C386.3 312 440 258.3 440 192C440 125.7 386.3 72 320 72C253.7 72 200 125.7 200 192C200 258.3 253.7 312 320 312zM290.3 368C191.8 368 112 447.8 112 546.3C112 562.7 125.3 576 141.7 576L498.3 576C514.7 576 528 562.7 528 546.3C528 447.8 448.2 368 349.7 368L290.3 368z"/></svg>
           </div>
           <div class="flex flex-col">
             <span class="text-gray-900 font-medium text-base">Mark Wilson</span>
             <div class="flex items-center gap-2 mt-1 text-gray-600">
-              <img src="../../assets/icon-gray.png" alt="Time Icon" class="">
+              <svg class="w-4 h-4 fill-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"/></svg>
               <span class="text-sm">Yesterday, 2:30 PM</span>
             </div>
           </div>
         </div>
 
         <button
-          class="flex items-center gap-2 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4
+          class="flex items-center gap-2 text-white bg-[var(--main-color-500)] hover:bg-blue-800 focus:ring-4
           focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2
           transition duration-200 hover:scale-105">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"

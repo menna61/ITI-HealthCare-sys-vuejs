@@ -36,6 +36,7 @@ import PatientLayout from "./Components/Layouts/PatientLayout.vue";
 import PaymentsPage from "./Components/Pages/PatientFlow/PaymentsPage.vue";
 import PatientAppointments from "./Components/Pages/PatientFlow/PatientAppointments.vue";
 import PatientHome from "./Components/Pages/PatientFlow/PatientHome.vue";
+import DoctorProfile from "./Components/Pages/DoctorProfile.vue";
 // import { h } from 'vue'
 
 const i18n = createI18n({
@@ -97,6 +98,7 @@ const routes = [
       { path: "services", component: DoctorServices },
       { path: "telemedicine", component: DoctorVideo },
       { path: "availability", component: DoctorAvail },
+      { path: "profile", component:DoctorProfile}
     ],
   },
   {
