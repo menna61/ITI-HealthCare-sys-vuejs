@@ -159,7 +159,7 @@ export default {
           }
         }
 
-        if (role === 'patient') return this.$router.push('/patientDashboard')
+        if (role === 'patient') return this.$router.push('/patient/doctors')
         if (role === 'doctor') return this.$router.push('/dashboard/calendar')
 
         return this.$router.push('/')

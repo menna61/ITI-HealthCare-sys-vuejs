@@ -119,6 +119,8 @@
         </div>
       </router-link>
 
+      
+
       <div
         @click="logout"
         class="logout flex gap-4 justify-start items-center w-full h-12 px-4 cursor-pointer hover:bg-gradient-to-r hover:from-slate-900 hover:to-slate-900/0 hover:border-l-4 hover:border-white"

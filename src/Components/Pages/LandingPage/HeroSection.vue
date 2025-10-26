@@ -7,7 +7,7 @@
         </div>
         <div class="right w-full flex justify-end relative" :class="{'justify-end':$i18n.locale === 'ar'}">
             <img src="../../../assets/landingimg.png" alt="" class="z-10">
-            <div :class="{'left-[50px]': $i18n.locale === 'ar'}" class="w-[180px] h-[180px] rounded-full bg-[var(--sec-color-500)] blur-[100px] absolute top-[500px] right-[48px]" ></div>
+            <div  class="w-[180px] h-[180px] rounded-full bg-[var(--sec-color-500)] blur-[100px] absolute top-[500px] right-[48px]" :class="{'right-0 left-0' : $i18n.locale === 'ar'}" ></div>
         </div>
     </div>
 </template>
