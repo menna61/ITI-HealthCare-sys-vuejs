@@ -9,11 +9,15 @@
   </div> -->
   <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
     <router-view></router-view>
+    <a-i-button/>
+
   </div>
 </template>
 
 
 <script>
+import AIButton from './Components/AIButton.vue';
+
 
 // import NavBar from './Components/Layouts/NavBar.vue';
 // import SignupCards from './Components/Pages/SignupCards.vue';
@@ -21,7 +25,9 @@
 export default {
     components:{
       // NavBar,
-      // SignupCards
+      // SignupCards,
+      AIButton
+
     }
 }
 </script>

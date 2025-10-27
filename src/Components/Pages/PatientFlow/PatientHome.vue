@@ -1,27 +1,37 @@
 <template>
-    <div class="w-dwh ml-[302px]">
+  <div class="w-dwh ml-[302px]">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
-      <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Dashboard</h1>
-        <p class="text-gray-500">Manage your appointments and schedule</p>
-      </div>
 
       <!--Page content-->
       <div v-if="currentPatient" class="welcome-message bg-blue-100 p-6 rounded-lg mb-6">
-      <h2 class="text-2xl font-semibold text-blue-800">
-        Welcome, {{ currentPatient.firstName }} {{ currentPatient.lastName }}!
-      </h2>
-      <p class="text-blue-600 mt-2">
-        We're glad to have you back. Here's an overview of your health dashboard.
+        <h2 class="text-2xl font-semibold text-blue-800">
+          Welcome, {{ currentPatient.firstName }} {{ currentPatient.lastName }}!
+        </h2>
+        <p class="text-blue-600 mt-2">
+          We're glad to have you back. Here's an overview of your health dashboard.
+        </p>
+      </div>
+      <p v-else>
+        Welcome to your patient dashboard. This is a placeholder for patient-specific content.
       </p>
+
+      <!-- Payments and Appointments Sections -->
+      <div class="flex gap-6 mt-6">
+        <div class="flex-1 bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Payments</h3>
+          <p class="text-gray-600">Manage your payment history and outstanding balances.</p>
+          <!-- Add payment-related content here -->
+        </div>
+        <div class="flex-1 bg-white p-6 rounded-lg shadow-md">
+          <h3 class="text-xl font-semibold text-gray-800 mb-4">Appointments</h3>
+          <p class="text-gray-600">View and schedule your upcoming appointments.</p>
+          <!-- Add appointment-related content here -->
+        </div>
+      </div>
     </div>
-    <p v-else>
-      Welcome to your patient dashboard. This is a placeholder for patient-specific content.
-    </p>
-      </div>
-      </div>
+  </div>
 </template>
 
 <script>
@@ -31,7 +41,7 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default {
   name: "PatientHome",
-  components:{MainNav},
+  components: { MainNav },
   data() {
     return {
       doctors: [],
@@ -96,6 +106,4 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

@@ -37,6 +37,8 @@ import PaymentsPage from "./Components/Pages/PatientFlow/PaymentsPage.vue";
 import PatientAppointments from "./Components/Pages/PatientFlow/PatientAppointments.vue";
 import PatientHome from "./Components/Pages/PatientFlow/PatientHome.vue";
 import DoctorProfile from "./Components/Pages/DoctorProfile.vue";
+import StripeCheckout from "./Components/Pages/PatientFlow/StripeCheckout.vue";
+import PaymentPopup from "./Components/Pages/PatientFlow/PaymentPopup.vue";
 // import { h } from 'vue'
 
 const i18n = createI18n({
@@ -91,6 +93,7 @@ const routes = [
   {
     path: "/dashboard",
     component: DashboardLayout,
+    meta: { requiresAuth: true },
     children: [
       { path: "calendar", component: CalenDar },
       { path: "patients", component: PatientsPage },
@@ -98,17 +101,20 @@ const routes = [
       { path: "services", component: DoctorServices },
       { path: "telemedicine", component: DoctorVideo },
       { path: "availability", component: DoctorAvail },
-      { path: "profile", component:DoctorProfile}
+      { path: "profile", component: DoctorProfile },
     ],
   },
   {
     path: "/patient",
     component: PatientLayout,
+    meta: { requiresAuth: true },
     children: [
-      { path: "", component: PatientHome },
+      { path: "home", component: PatientHome },
       { path: "doctors", component: DoctorsPage },
       { path: "payments", component: PaymentsPage },
       { path: "appointments", component: PatientAppointments },
+      { path: "payment", component: StripeCheckout },
+      {path:'paymentpopup', component: PaymentPopup}
     ],
   },
 
@@ -131,6 +137,62 @@ i18n.global.locale = savedLang;
 const router = createRouter({ history: createWebHashHistory(), routes });
 
 // Navigation guard
+// router.beforeEach(async (to, from, next) => {
+//   const authInstance = getAuth();
+
+//   // Check if the route requires authentication
+//   const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
+
+//   if (requiresAuth) {
+//     // Wait for auth state to be determined
+//     const user = await new Promise((resolve) => {
+//       const unsubscribe = authInstance.onAuthStateChanged((user) => {
+//         unsubscribe();
+//         resolve(user);
+//       });
+//     });
+
+//     if (!user) {
+//       // Redirect to login if not authenticated
+//       next("/login");
+//     } else {
+//       // Check user role and redirect accordingly
+//       try {
+//         const uid = user.uid;
+//         let role = null;
+
+//         if (db) {
+//           const patientSnap = await getDoc(doc(db, "patients", uid));
+//           if (patientSnap.exists()) {
+//             role = patientSnap.data()?.role || "patient";
+//           } else {
+//             const doctorSnap = await getDoc(doc(db, "doctors", uid));
+//             if (doctorSnap.exists()) {
+//               role = doctorSnap.data()?.role || "doctor";
+//             }
+//           }
+//         }
+
+//         // Redirect based on role
+//         if (role === "patient" && !to.path.startsWith("/patient")) {
+//           next("/patient/home");
+//         } else if (role === "doctor" && !to.path.startsWith("/dashboard")) {
+//           next("/dashboard/calendar");
+//         } else {
+//           next();
+//         }
+//       } catch (error) {
+//         console.error("Error determining user role:", error);
+//         next("/login");
+//       }
+//     }
+//   } else {
+//     // Allow navigation for non-protected routes
+//     next();
+//   }
+// });
+
+
 router.beforeEach(async (to, from, next) => {
   const auth = getAuth();
 
@@ -161,7 +223,6 @@ router.beforeEach(async (to, from, next) => {
     next();
   }
 });
-
 vueApp.use(router);
 vueApp.use(i18n);
 vueApp.mount("#app");
