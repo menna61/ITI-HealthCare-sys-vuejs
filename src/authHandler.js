@@ -7,11 +7,15 @@ import {
   onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  sendPasswordResetEmail,
+  setPersistence,
+  browserSessionPersistence,
 } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Initialize products
 const authApi = getAuth(firebaseApp);
+setPersistence(authApi, browserSessionPersistence);
 const db = (function () {
   try {
     return getFirestore(firebaseApp);
@@ -30,6 +34,14 @@ const onAuthChange = (callback) => onAuthStateChanged(authApi, callback);
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(authApi, email, password);
 const loginWithEmail = (email, password) => signInWithEmailAndPassword(authApi, email, password);
+const resetPassword = (email) => sendPasswordResetEmail(authApi, email);
 
-export { signInWithGoogle, signOutUser, onAuthChange, registerWithEmail, loginWithEmail };
-export { authApi as auth, db};
+export {
+  signInWithGoogle,
+  signOutUser,
+  onAuthChange,
+  registerWithEmail,
+  loginWithEmail,
+  resetPassword,
+};
+export { authApi as auth, db };

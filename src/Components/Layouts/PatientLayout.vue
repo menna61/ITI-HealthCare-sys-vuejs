@@ -1,18 +1,17 @@
 <template>
-  <div class="flex w-full">
-    <side-menu-patient/>
+  <div class="flex w-full min-h-screen">
+    <side-menu-patient />
     <div class="w-full">
-        <RouterView></RouterView>
+      <RouterView></RouterView>
     </div>
   </div>
 </template>
 
 <script>
-import SideMenuPatient from '../Pages/PatientFlow/SideMenuPatient.vue';
-
+import SideMenuPatient from "../Pages/PatientFlow/SideMenuPatient.vue";
 
 export default {
-  name: 'DashboardLayout',
-  components: { SideMenuPatient}
-}
+  name: "DashboardLayout",
+  components: { SideMenuPatient },
+};
 </script>

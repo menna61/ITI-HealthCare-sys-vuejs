@@ -1,6 +1,6 @@
 <template>
-  <div id="app" class="flex flex-col gap-12">
-    <nav-bar/>
+  <div id="app" class="flex flex-col gap-12 min-h-screen">
+    <nav-bar />
     <div>
       <RouterView></RouterView>
     </div>
@@ -8,14 +8,12 @@
 </template>
 
 <script>
-import NavBar from './NavBar.vue';
+import NavBar from "./NavBar.vue";
 
-    export default {
-        name:"AuthNavbar",
-        components:{NavBar}
-    }
+export default {
+  name: "AuthNavbar",
+  components: { NavBar },
+};
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

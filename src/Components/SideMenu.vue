@@ -133,37 +133,59 @@
       </div>
 
       <!-- Logout Confirmation Modal -->
-     
-     <UiModal v-model="showLogoutModal" title="">
-  <div class="sm:flex sm:items-start z-50">
-    <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
-      <svg class="w-6 h-6 fill-red-500 rotate-y-180" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640"><!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path d="M569 337C578.4 327.6 578.4 312.4 569 303.1L425 159C418.1 152.1 407.8 150.1 398.8 153.8C389.8 157.5 384 166.3 384 176L384 256L272 256C245.5 256 224 277.5 224 304L224 336C224 362.5 245.5 384 272 384L384 384L384 464C384 473.7 389.8 482.5 398.8 486.2C407.8 489.9 418.1 487.9 425 481L569 337zM224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160z"/></svg>
-    </div>
-    <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-      <h3 id="dialog-title" class="text-base font-semibold text-gray-900">Logout</h3>
-      <div class="mt-2">
-        <p class="text-sm text-gray-500">Are you sure you want to logout ?</p>
-      </div>
-    </div>
-  </div>
-  <template #footer>
-    <button type="button" @click="showLogoutModal = false" class="inline-flex justify-center rounded-md bg-[var(--main-color-500)] px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-3">Stay here</button>
 
-    <button type="button" @click="logout" class="ml-2 inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs">Logout</button>
+      <UiModal v-model="showLogoutModal" title="">
+        <div class="sm:flex sm:items-start z-50">
+          <div
+            class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10"
+          >
+            <svg
+              class="w-6 h-6 fill-red-500 rotate-y-180"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 640 640"
+            >
+              <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+              <path
+                d="M569 337C578.4 327.6 578.4 312.4 569 303.1L425 159C418.1 152.1 407.8 150.1 398.8 153.8C389.8 157.5 384 166.3 384 176L384 256L272 256C245.5 256 224 277.5 224 304L224 336C224 362.5 245.5 384 272 384L384 384L384 464C384 473.7 389.8 482.5 398.8 486.2C407.8 489.9 418.1 487.9 425 481L569 337zM224 160C241.7 160 256 145.7 256 128C256 110.3 241.7 96 224 96L160 96C107 96 64 139 64 192L64 448C64 501 107 544 160 544L224 544C241.7 544 256 529.7 256 512C256 494.3 241.7 480 224 480L160 480C142.3 480 128 465.7 128 448L128 192C128 174.3 142.3 160 160 160L224 160z"
+              />
+            </svg>
+          </div>
+          <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+            <h3 id="dialog-title" class="text-base font-semibold text-gray-900">Logout</h3>
+            <div class="mt-2">
+              <p class="text-sm text-gray-500">Are you sure you want to logout ?</p>
+            </div>
+          </div>
+        </div>
+        <template #footer>
+          <button
+            type="button"
+            @click="showLogoutModal = false"
+            class="inline-flex justify-center rounded-md bg-[var(--main-color-500)] px-3 py-2 text-sm font-semibold text-white shadow-xs sm:ml-3"
+          >
+            Stay here
+          </button>
 
-  </template>
-</UiModal>
+          <button
+            type="button"
+            @click="logout"
+            class="ml-2 inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs"
+          >
+            Logout
+          </button>
+        </template>
+      </UiModal>
     </div>
   </div>
 </template>
 
 <script>
 import { signOutUser } from "/src/authHandler.js";
-import UiModal from './UI/Modal.vue';
+import UiModal from "./UI/Modal.vue";
 
 export default {
   name: "SideMenu",
-  components:{UiModal},
+  components: { UiModal },
 
   data() {
     return {

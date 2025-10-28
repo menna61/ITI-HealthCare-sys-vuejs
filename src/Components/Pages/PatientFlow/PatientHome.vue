@@ -1,37 +1,44 @@
 <template>
-    <div class="w-dwh ml-[302px]">
+  <div class="w-dwh ml-[302px]">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
-      <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Dashboard</h1>
-        <p class="text-gray-500">Manage your appointments and schedule</p>
-      </div>
 
       <!--Page content-->
-      <div v-if="currentPatient" class="welcome-message bg-blue-100 p-6 rounded-lg mb-6">
-      <h2 class="text-2xl font-semibold text-blue-800">
-        Welcome, {{ currentPatient.firstName }} {{ currentPatient.lastName }}!
-      </h2>
-      <p class="text-blue-600 mt-2">
-        We're glad to have you back. Here's an overview of your health dashboard.
-      </p>
+      <div
+          class="relative  flex items-center justify-start rounded-4xl h-80 bg-cover bg-center"
+          style="background-image: url('/images/bgHome.png')"
+        >
+          <div class="absolute right-4 md:right-20">
+            <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
+          </div>
+          <div class="flex flex-col justify-around items-start pl-6 py-4">
+            <p class="text-gray-50 text-xl">Hi. </p>
+            <h1 class="h1 text-white md:w-3/4 text-3xl">Have You Had a Routine Health Check This Month?</h1>
+            <button class="btnBooking my-2 rounded-xl mt-4">Booking Now</button>
+          </div>
+        </div>
+
+      <!-- Payments and Appointments Sections -->
+      <div class="flex gap-6 w-full">
+        <payments-component/>
+        <appointments-component/>
+
+      </div>
     </div>
-    <p v-else>
-      Welcome to your patient dashboard. This is a placeholder for patient-specific content.
-    </p>
-      </div>
-      </div>
+  </div>
 </template>
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import { signOutUser, db, auth } from "/src/authHandler.js";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import PaymentsComponent from "./PaymentsComponent.vue";
+import AppointmentsComponent from "./AppointmentsComponent.vue";
 
 export default {
   name: "PatientHome",
-  components:{MainNav},
+  components: { MainNav, PaymentsComponent, AppointmentsComponent },
   data() {
     return {
       doctors: [],
@@ -96,6 +103,20 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style scoped>
+  .btnBooking {
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 500;
+  border: 1px solid #fff;
+  color: #fff;
+  transition: all 0.3s;
+}
+.btnBooking:hover {
+  background: #fff;
+  border-color: #101733;
+  color: #101733;
+}
 
 </style>
