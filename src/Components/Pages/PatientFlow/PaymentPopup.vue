@@ -3,11 +3,11 @@
     class="fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm backdrop-grayscale-50"
   >
     <div
-      class="bgPay bg-white rounded-2xl shadow-xl w-1/2 p-6 transform transition-all duration-300"
+      class="bgPay bg-white dark:bg-gray-800 rounded-2xl shadow-xl w-1/2 p-6 transform transition-all duration-300"
     >
-      <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Payment</h2>
+      <h2 class="text-2xl font-bold mb-4 text-center text-gray-800 dark:text-white">Payment</h2>
 
-      <p class="text-center text-gray-600 mb-6">
+      <p class="text-center text-gray-600 dark:text-gray-300 mb-6">
         Please confirm your payment of
         <span class="font-semibold text-blue-600">{{ paymentAmount }}$</span>
       </p>
@@ -15,7 +15,7 @@
         <div class="w-1/2 h-auto object-fill">
           <!-- <img src="/images/bgVisa.png" alt="" class="w-full mx-auto h-auto" /> -->
         </div>
-        <div class="space-y-3 mb-6 w-full bg-white shadow-2xl p-4 rounded-lg">
+        <div class="space-y-3 mb-6 w-full bg-white dark:bg-gray-700 shadow-2xl p-4 rounded-lg">
           <input
             type="text"
             placeholder="Cardholder Name"

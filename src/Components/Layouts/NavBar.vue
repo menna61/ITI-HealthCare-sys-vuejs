@@ -1,6 +1,6 @@
 <template>
-  <div class="w-full">
-    <nav class="bg-white w-full">
+  <div class="w-full bg-white dark:bg-gray-800">
+    <nav class="w-full">
       <div
         :class="isAuthPages ? 'cont' : 'mr-20 ml-8'"
         class="py-4 flex justify-between items-center"
@@ -50,10 +50,10 @@
         <div class="right flex gap-4">
           <div
             v-if="!isAuthPages"
-            class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
+            class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-600 relative cursor-pointer"
           >
             <svg
-              class="w-6 h-6 fill-gray-500"
+              class="w-6 h-6 fill-gray-500 dark:fill-gray-400"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 640 640"
             >
@@ -65,13 +65,16 @@
             <!--  -->
           </div>
 
+          <dark-mode-toggle />
+
           <lang-drop />
 
           <div
             v-if="!isAuthPages || this.$route.path === '/dashboard'"
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
           >
-            <img  @click="goToDocProfile"
+            <img
+              @click="goToDocProfile"
               v-if="currentUser && currentUser.profileImageUrl"
               :src="currentUser.profileImageUrl"
               alt="Profile"
@@ -86,7 +89,7 @@
             </svg>
           </div>
           <div
-            v-if="this.$route.path==='patient'"
+            v-if="this.$route.path === 'patient'"
             class="w-12 h-12 rounded-full bg-gray-300 mr-4 flex items-center justify-center"
           >
             <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
@@ -122,12 +125,13 @@
 
 <script>
 import LangDrop from "../LangDrop.vue";
+import DarkModeToggle from "../DarkModeToggle.vue";
 import { db, auth } from "/src/authHandler.js";
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default {
   name: "NavBar",
-  components: { LangDrop },
+  components: { LangDrop, DarkModeToggle },
   data() {
     return {
       doctors: [],
@@ -146,8 +150,8 @@ export default {
       this.$i18n.locale = language.code;
       this.langShow = false;
     },
-    goToDocProfile(){
-        this.$router.push("/dashboard/profile");
+    goToDocProfile() {
+      this.$router.push("/dashboard/profile");
     },
     async fetchDoctors() {
       try {
@@ -210,7 +214,8 @@ export default {
         this.$route.path === "/signupcards" ||
         this.$route.path === "/patientSignup" ||
         this.$route.path === "/doctorSignup" ||
-        this.$route.path === "/success"
+        this.$route.path === "/success" ||
+        this.$route.path === "/forgot-password"
       );
     },
   },

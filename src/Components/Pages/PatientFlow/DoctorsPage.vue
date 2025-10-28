@@ -311,15 +311,13 @@
             </div>
 
             <!-- Confirm Booking Button -->
-            <router-link to="/patient/paymentpopup">
-              <button
-                v-if="selectedDay && selectedTime && selectedService"
-                @click="confirmBooking"
-                class="w-full rounded-lg py-2 text-white px-10 bg-[var(--main-color-500)] font-semibold cursor-pointer hover:bg-white hover:border hover:border-[var(--main-color-500)] hover:text-[var(--main-color-500)] transition-all ease-in-out"
-              >
-                Confirm Booking
-              </button>
-            </router-link>
+            <button
+              @click="checkout"
+              v-if="selectedDay && selectedTime && selectedService"
+              class="w-full rounded-lg py-2 text-white px-10 bg-[var(--main-color-500)] font-semibold cursor-pointer hover:bg-white hover:border hover:border-[var(--main-color-500)] hover:text-[var(--main-color-500)] transition-all ease-in-out"
+            >
+              Confirm Booking
+            </button>
           </div>
         </div>
       </div>
@@ -367,6 +365,7 @@ export default {
         "Ophthalmology",
         "General Surgery",
       ],
+      price: 10,
     };
   },
   mounted() {
@@ -389,6 +388,18 @@ export default {
         console.error("Logout error:", error);
       }
     },
+
+    async checkout() {
+      const amount = parseInt(this.selectedService.price) * 100; // convert USD to cents
+      const res = await fetch("http://localhost:4242/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ amount }),
+      });
+      const data = await res.json();
+      window.location.href = data.url;
+    },
+
     getFirstAvailableDay(availability) {
       if (!availability || !Array.isArray(availability)) return null;
 
@@ -520,28 +531,34 @@ export default {
       try {
         const user = auth.currentUser;
         if (!user) {
-          alert("You must be logged in to book an appointment.");
+          alert("Please log in to book an appointment.");
           return;
         }
 
         const bookingData = {
-          patientId: user.uid,
           doctorId: this.selectedDoctor.id,
+          patientId: user.uid,
+          patientName: user.displayName || "Patient",
+          doctorName: `${this.selectedDoctor.firstName} ${this.selectedDoctor.lastName}`,
+          speciality: this.selectedDoctor.speciality,
           service: this.selectedService.name,
+          price: this.selectedService.price,
           date: this.selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD
           time: this.selectedTime,
-          status: "Confirmed",
+          dayName: this.selectedDay.dayName,
+          status: "pending", // or "confirmed" based on your flow
           createdAt: new Date(),
         };
 
-        const bookingsRef = collection(db, "bookings");
-        await addDoc(bookingsRef, bookingData);
+        await addDoc(collection(db, "bookings"), bookingData);
 
-        alert("Booking confirmed successfully!");
+        alert("Appointment booked successfully!");
         this.closeModal();
+        // Optionally, redirect to payment or another page
+        // this.$router.push('/payment');
       } catch (error) {
-        console.error("Error confirming booking:", error);
-        alert("Failed to confirm booking. Please try again.");
+        console.error("Error booking appointment:", error);
+        alert("Failed to book appointment. Please try again.");
       }
     },
   },

@@ -1,11 +1,11 @@
 <template>
-  <div class="cont h-full p-8 bg-white rounded-2xl flex flex-col gap-10">
+  <div class="cont h-full p-8 bg-white dark:bg-gray-800 rounded-2xl flex flex-col gap-10">
     <div class="top flex flex-col gap-10">
       <back-btn />
       <div class="stepper flex flex-col gap-8">
         <div class="top flex flex-col gap-4">
-          <h1 class="text-4xl font-bold">Sign up as a patient</h1>
-          <p class="text-gray-600 text-xl">Create your patient account</p>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Sign up as a patient</h1>
+          <p class="text-gray-600 dark:text-gray-300 text-xl">Create your patient account</p>
         </div>
       </div>
     </div>
@@ -16,21 +16,24 @@
           <google-card />
 
           <!-- Feedback messages -->
-          <div v-if="errorMsg" class="text-red-700 bg-red-50 border border-red-100 p-3 rounded">
+          <div
+            v-if="errorMsg"
+            class="text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-100 dark:border-red-800 p-3 rounded"
+          >
             {{ errorMsg }}
           </div>
           <div
             v-if="successMsg"
-            class="text-green-700 bg-green-50 border border-green-100 p-3 rounded"
+            class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900 border border-green-100 dark:border-green-800 p-3 rounded"
           >
             {{ successMsg }}
           </div>
 
           <fieldset :disabled="loading" class="flex flex-col gap-6 border-0 p-0">
             <div class="or flex gap-2 items-center justify-center">
-              <div class="w-full h-0.5 bg-gray-100"></div>
-              <p>or</p>
-              <div class="w-full h-0.5 bg-gray-100"></div>
+              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
+              <p class="text-gray-600 dark:text-gray-300">or</p>
+              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
             </div>
 
             <div class="flex flex-col gap-8 items-end">
@@ -90,7 +93,7 @@
                     <select
                       v-model="selectedGender"
                       required
-                      class="w-full h-12 px-4 border rounded-lg bg-white"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700"
                     >
                       <option disabled value="">Select gender</option>
                       <option value="male">Male</option>

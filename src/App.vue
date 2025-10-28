@@ -1,6 +1,4 @@
 <template>
-
-  
   <!-- <div id="app" class="flex flex-col gap-12">
     <nav-bar/>
     <div>
@@ -9,41 +7,42 @@
   </div> -->
   <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
     <router-view></router-view>
-    <a-i-button/>
-
+    <a-i-button />
   </div>
 </template>
 
-
 <script>
-import AIButton from './Components/AIButton.vue';
-
+import AIButton from "./Components/AIButton.vue";
 
 // import NavBar from './Components/Layouts/NavBar.vue';
 // import SignupCards from './Components/Pages/SignupCards.vue';
 
 export default {
-    components:{
-      // NavBar,
-      // SignupCards,
-      AIButton
-
-    }
-}
+  components: {
+    // NavBar,
+    // SignupCards,
+    AIButton,
+  },
+};
 </script>
 
-
-
 <style>
-#app {font-family: system-ui, -apple-system, 'Segoe UI', Roboto }
-.cont{
+#app {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto;
+}
+.cont {
   margin: 0 80px;
 }
-:root{
-  --main-color-500: #5271FF;
-  --main-color-25:#EEF1FF;
-  --sec-color-500: #0CB8B6;
-  --sec-color-25: #E7F8F8;
-  
+:root {
+  --main-color-500: #5271ff;
+  --main-color-25: #eef1ff;
+  --sec-color-500: #0cb8b6;
+  --sec-color-25: #e7f8f8;
+}
+.dark {
+  --main-color-500: #6b73ff;
+  --main-color-25: #374151;
+  --sec-color-500: #0cb8b6;
+  --sec-color-25: #374151;
 }
 </style>
