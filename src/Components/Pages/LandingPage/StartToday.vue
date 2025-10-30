@@ -16,7 +16,8 @@
         </h1>
         <button
           class="h-12 rounded-lg border border-[var(--sec-color-500)] px-6 md:px-10 text-[var(--sec-color-500)] bg-white font-semibold cursor-pointer hover:bg-[var(--sec-color-500)] hover:text-white transition-all ease-in-out"
-        >
+        @click="$router.push('/login')"
+          >
           {{ $t("getstart") }}
         </button>
       </div>

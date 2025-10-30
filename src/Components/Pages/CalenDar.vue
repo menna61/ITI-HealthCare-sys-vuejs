@@ -88,6 +88,105 @@
 
         <!-- Card for new doctors -->
         <div v-else class="services-card">
+          <!-- Union Membership Card Reminder -->
+          <div class="mb-4" v-if="!isApproved">
+            <div
+              class="p-4 rounded-xl w-[378px] flex flex-col gap-4"
+              :class="
+                hasUnionCard
+                  ? 'bg-yellow-50 border border-yellow-300'
+                  : 'bg-red-50 border border-red-200'
+              "
+            >
+              <div class="flex items-center gap-3" v-if="hasUnionCard">
+                <svg
+                  class="w-8 h-8 text-yellow-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  />
+                </svg>
+                <div>
+                  <h4 class="text-yellow-900 font-semibold">Documents Uploaded</h4>
+                  <p class="text-yellow-700 text-sm">
+                    You have uploaded the document and we will notify you once it is reviewed.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3" v-else>
+                <svg
+                  class="w-8 h-8 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                  ></path>
+                </svg>
+                <div>
+                  <h4 class="text-red-800 font-semibold">Upload Union Membership Card</h4>
+                  <p class="text-red-600 text-sm">Required to access services and appointments</p>
+                </div>
+              </div>
+              <div v-if="!hasUnionCard" class="flex flex-col gap-2">
+                <input
+                  ref="unionCardInput"
+                  type="file"
+                  accept="image/*"
+                  @change="handleUnionCardUpload"
+                  class="hidden"
+                />
+                <button
+                  @click="triggerUnionCardInput"
+                  :disabled="uploading"
+                  class="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                >
+                  <svg v-if="uploading" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                      fill="none"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                    ></path>
+                  </svg>
+                  <svg v-else class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                    ></path>
+                  </svg>
+                  {{ uploading ? "Uploading..." : "Upload Card" }}
+                </button>
+              </div>
+              <div v-if="uploadError" class="text-red-600 text-sm">{{ uploadError }}</div>
+              <div v-if="uploadSuccess && !hasUnionCard" class="text-green-600 text-sm">
+                {{ uploadSuccess }}
+              </div>
+            </div>
+          </div>
+          <!-- Approval notification message moved to notification popup. (Was: Your union membership card has been approved! You can now create services and start accepting appointments.) Removed from inline display. -->
+
+          <!-- Services Card -->
           <div
             class="p-6 rounded-xl bg-white w-[378px] flex flex-col gap-4 items-center text-center"
           >
@@ -108,7 +207,13 @@
             <p class="text-gray-500">Create your services to start taking appointments</p>
             <button
               @click="goToServices"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2"
+              :disabled="!isApproved"
+              :class="[
+                'font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2',
+                isApproved
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                  : 'bg-gray-400 text-white cursor-not-allowed',
+              ]"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -132,7 +237,7 @@ import FullCalendar from "@fullcalendar/vue3";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import MainNav from "../Layouts/MainNav.vue";
 import { db, auth } from "../../authHandler.js";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default {
   name: "CalenDar",
@@ -141,6 +246,11 @@ export default {
     return {
       selectedDateText: this.formatDate(new Date()),
       hasServices: false,
+      hasUnionCard: false,
+      isApproved: false,
+      uploading: false,
+      uploadError: "",
+      uploadSuccess: "",
       calendarOptions: {
         plugins: [dayGridPlugin],
         initialView: "dayGridMonth",
@@ -170,6 +280,8 @@ export default {
   },
   async mounted() {
     await this.checkServices();
+    await this.checkUnionCard();
+    await this.checkApprovalStatus();
   },
   methods: {
     async checkServices() {
@@ -184,6 +296,44 @@ export default {
       } catch (error) {
         console.error("Error checking services:", error);
         this.hasServices = false;
+      }
+    },
+    async checkUnionCard() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "doctors", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          this.hasUnionCard = !!data.unionMembershipCardUrl;
+        } else {
+          this.hasUnionCard = false;
+        }
+      } catch (error) {
+        console.error("Error checking union card:", error);
+        this.hasUnionCard = false;
+      }
+    },
+    async checkApprovalStatus() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "doctors", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          this.isApproved = data.approved === true;
+        } else {
+          this.isApproved = false;
+        }
+      } catch (error) {
+        console.error("Error checking approval status:", error);
+        this.isApproved = false;
       }
     },
     handleDateClick(info) {
@@ -211,6 +361,63 @@ export default {
     },
     goToServices() {
       this.$router.push("/dashboard/services");
+    },
+    triggerUnionCardInput() {
+      this.$refs.unionCardInput.click();
+    },
+    async handleUnionCardUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.uploading = true;
+        this.uploadError = "";
+        this.uploadSuccess = "";
+        await this.uploadUnionCardToCloudinary(file);
+        this.uploading = false;
+      }
+    },
+    async uploadUnionCardToCloudinary(file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "ml_default"); // Replace with your Cloudinary upload preset
+      formData.append("cloud_name", "dtaqbcmmg"); // Replace with your Cloudinary cloud name
+
+      try {
+        console.log("Starting union card upload to Cloudinary...");
+        const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const data = await response.json();
+        console.log("Union card Cloudinary response:", data);
+        console.log("Response status:", response.status);
+        if (response.ok && data.secure_url) {
+          await this.saveUnionCardUrl(data.secure_url);
+          this.uploadSuccess = "Union membership card uploaded successfully!";
+          this.uploadError = "";
+          this.hasUnionCard = true;
+        } else {
+          console.error("Union card upload failed:", data.error?.message || data);
+          this.uploadError = `Failed to upload union card: ${
+            data.error?.message || "Unknown error"
+          }`;
+        }
+      } catch (error) {
+        console.error("Error uploading union card:", error);
+        this.uploadError = `Failed to upload union card: ${error.message}`;
+      }
+    },
+    async saveUnionCardUrl(url) {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "doctors", user.uid);
+        await updateDoc(docRef, {
+          unionMembershipCardUrl: url,
+        });
+      } catch (error) {
+        console.error("Error saving union card URL:", error);
+      }
     },
   },
 };

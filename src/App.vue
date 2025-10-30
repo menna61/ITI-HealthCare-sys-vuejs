@@ -7,7 +7,7 @@
   </div> -->
   <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'">
     <router-view></router-view>
-    <a-i-button />
+    <a-i-button v-if="!isGeminiChatPage" />
   </div>
 </template>
 
@@ -22,6 +22,11 @@ export default {
     // NavBar,
     // SignupCards,
     AIButton,
+  },
+  computed: {
+    isGeminiChatPage() {
+      return this.$route.path === "/gemini-chat";
+    },
   },
 };
 </script>

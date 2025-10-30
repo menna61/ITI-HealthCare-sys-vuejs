@@ -14,7 +14,13 @@
         <button
           type="button"
           @click="openServiceModal"
-          class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+          :disabled="!isApproved"
+          :class="[
+            'focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2',
+            isApproved
+              ? 'text-white bg-blue-600 hover:bg-blue-700 cursor-pointer'
+              : 'text-white bg-gray-400 cursor-not-allowed',
+          ]"
         >
           <!-- Plus Icon -->
           <svg
@@ -59,7 +65,13 @@
             </p>
             <button
               @click="openServiceModal"
-              class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2"
+              :disabled="!isApproved"
+              :class="[
+                'font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2',
+                isApproved
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
+                  : 'bg-gray-400 text-white cursor-not-allowed',
+              ]"
             >
               <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -246,7 +258,7 @@
 <script>
 import MainNav from "../Layouts/MainNav.vue";
 import { db, auth } from "../../authHandler.js";
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, getDoc } from "firebase/firestore";
 
 export default {
   name: "DoctorServices",
@@ -258,6 +270,8 @@ export default {
       isEditing: false,
       loading: false,
       currentServiceId: null,
+      hasUnionCard: false,
+      isApproved: false,
       serviceForm: {
         name: "",
         description: "",
@@ -268,6 +282,8 @@ export default {
   },
   async mounted() {
     await this.loadServices();
+    await this.checkUnionCard();
+    await this.checkApprovalStatus();
   },
   methods: {
     async loadServices() {
@@ -284,6 +300,44 @@ export default {
         }));
       } catch (error) {
         console.error("Error loading services:", error);
+      }
+    },
+    async checkUnionCard() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "doctors", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          this.hasUnionCard = !!data.unionMembershipCardUrl;
+        } else {
+          this.hasUnionCard = false;
+        }
+      } catch (error) {
+        console.error("Error checking union card:", error);
+        this.hasUnionCard = false;
+      }
+    },
+    async checkApprovalStatus() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const docRef = doc(db, "doctors", user.uid);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          this.isApproved = data.approved === true;
+        } else {
+          this.isApproved = false;
+        }
+      } catch (error) {
+        console.error("Error checking approval status:", error);
+        this.isApproved = false;
       }
     },
     openServiceModal() {

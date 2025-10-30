@@ -141,23 +141,32 @@ export default {
             const doctorSnap = await getDoc(doc(db, "doctors", uid));
             if (doctorSnap.exists()) {
               role = doctorSnap.data()?.role || "doctor";
+            } else {
+              const adminSnap = await getDoc(doc(db, "admin", uid));
+              if (adminSnap.exists()) {
+                role = adminSnap.data()?.role || "admin";
+              }
             }
           }
         }
 
+        // console.log("User role:", role);
+
         if (role === "patient") return this.$router.push("/patient/home");
         if (role === "doctor") return this.$router.push("/dashboard/calendar");
+        if (role === "admin") return this.$router.push("/admin/dashboard");
 
-        return this.$router.push("/");
+        // return this.$router.push("/");
       } catch (err) {
         console.error("Login error", err);
         this.error = err?.message || String(err);
       } finally {
         this.loading = false;
       }
-    },
-  },
-};
+      }
+    }
+  }
+
 </script>
 
 <style scoped>

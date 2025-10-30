@@ -8,6 +8,7 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  fetchSignInMethodsForEmail,
   setPersistence,
   browserSessionPersistence,
 } from "firebase/auth";
@@ -34,7 +35,15 @@ const onAuthChange = (callback) => onAuthStateChanged(authApi, callback);
 const registerWithEmail = (email, password) =>
   createUserWithEmailAndPassword(authApi, email, password);
 const loginWithEmail = (email, password) => signInWithEmailAndPassword(authApi, email, password);
-const resetPassword = (email) => sendPasswordResetEmail(authApi, email);
+const resetPassword = async (email) => {
+  // Check if the email exists by fetching sign-in methods
+  const signInMethods = await fetchSignInMethodsForEmail(authApi, email);
+  if (signInMethods.length === 0) {
+    throw new Error("No account found with this email address.");
+  }
+  // If email exists, send the reset email
+  await sendPasswordResetEmail(authApi, email);
+};
 
 export {
   signInWithGoogle,

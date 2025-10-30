@@ -41,6 +41,13 @@ import PaymentsPage from "./Components/Pages/PatientFlow/PaymentsPage.vue";
 import PatientAppointments from "./Components/Pages/PatientFlow/PatientAppointments.vue";
 import PatientHome from "./Components/Pages/PatientFlow/PatientHome.vue";
 import DoctorProfile from "./Components/Pages/DoctorProfile.vue";
+import GeminiChat from "./Components/Pages/GeminiChat.vue";
+import CancelPage from "./Components/Pages/CancelPage.vue";
+import SuccessPage from "./Components/Pages/SuccessPage.vue";
+import AdminLayout from "./Components/Layouts/AdminLayout.vue";
+import AdminHome from "./Components/Pages/AdminFlow/AdminHome.vue";
+import UsersPage from "./Components/Pages/AdminFlow/UsersPage.vue";
+import DocumentApproval from "./Components/Pages/AdminFlow/DocumentApproval.vue";
 
 // import { h } from 'vue'
 
@@ -122,6 +129,29 @@ const routes = [
   },
 
   {
+    path: "/admin",
+    component: AdminLayout,
+    meta: { requiresAuth: true },
+    children: [
+      { path: "dashboard", component: AdminHome },
+      { path: "users" , component: UsersPage},
+      { path: "documents", component: DocumentApproval}
+    ],
+  },
+
+  {
+    path: "/gemini-chat",
+    component: GeminiChat,
+  },
+  {
+    path: "/cancel",
+    component: CancelPage,
+  },
+  {
+    path: "/success",
+    component: SuccessPage,
+  },
+  {
     path: "/:pathMatch(.*)*",
     component: NotFound,
   },
@@ -167,12 +197,17 @@ router.beforeEach(async (to, from, next) => {
 
     const patientSnap = await getDoc(doc(db, "patients", uid));
     const doctorSnap = await getDoc(doc(db, "doctors", uid));
+    const adminSnap = await getDoc(doc(db, "admin", uid));
 
     if (patientSnap.exists()) {
       role = "patient";
     } else if (doctorSnap.exists()) {
       role = "doctor";
+    } else if (adminSnap.exists()) {
+      role = "admin";
     }
+
+    console.log("Main.js beforeEach - User role:", role, "To path:", to.path);
 
     // لو مفيش رول، نعتبره غير مصرح → login
     if (!role) {
@@ -184,6 +219,8 @@ router.beforeEach(async (to, from, next) => {
       return next("/patient/home");
     } else if (role === "doctor" && !to.path.startsWith("/dashboard")) {
       return next("/dashboard/calendar");
+    } else if (role === "admin" && !to.path.startsWith("/admin")) {
+      return next("/admin/dashboard");
     }
 
     next();

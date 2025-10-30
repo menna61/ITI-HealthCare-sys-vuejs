@@ -16,9 +16,12 @@ function getCurrentUser() {
 function redirectByRole(role, next) {
   switch (role) {
     case "patient":
-      return next({ path: "/patient" });
+      // return next({ path: "/profile/home" });
+      return next({ path: "/patient/home" });
     case "doctor":
       return next({ path: "/dashboard/calendar" });
+    case "admin":
+      return next({ path: "/admin/dashboard" });
     default:
       return next({ path: "/login" });
   }
@@ -50,6 +53,11 @@ router.beforeEach(async (to, from, next) => {
           const doctorSnap = await getDoc(doc(db, "doctors", uid));
           if (doctorSnap.exists()) {
             role = doctorSnap.data()?.role || "doctor";
+          } else {
+            const adminSnap = await getDoc(doc(db, "admin", uid));
+            if (adminSnap.exists()) {
+              role = adminSnap.data()?.role || "admin";
+            }
           }
         }
       }

@@ -312,7 +312,7 @@
 
             <!-- Confirm Booking Button -->
             <button
-              @click="checkout"
+              @click="confirmBooking"
               v-if="selectedDay && selectedTime && selectedService"
               class="w-full rounded-lg py-2 text-white px-10 bg-[var(--main-color-500)] font-semibold cursor-pointer hover:bg-white hover:border hover:border-[var(--main-color-500)] hover:text-[var(--main-color-500)] transition-all ease-in-out"
             >
@@ -337,7 +337,7 @@
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import Modal from "@/Components/UI/Modal.vue";
 import { signOutUser, db, auth } from "/src/authHandler.js";
-import { collection, getDocs, doc, getDoc, addDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, addDoc, query, where } from "firebase/firestore";
 
 export default {
   name: "DoctorsPage",
@@ -390,6 +390,32 @@ export default {
     },
 
     async checkout() {
+      // Prepare booking data but don't save yet
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Please log in to book an appointment.");
+        return;
+      }
+
+      const bookingData = {
+        doctorId: this.selectedDoctor.id,
+        patientId: user.uid,
+        patientName: user.displayName || "Patient",
+        doctorName: `${this.selectedDoctor.firstName} ${this.selectedDoctor.lastName}`,
+        speciality: this.selectedDoctor.speciality,
+        service: this.selectedService.name,
+        price: this.selectedService.price,
+        date: this.selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD
+        time: this.selectedTime,
+        dayName: this.selectedDay.dayName,
+        status: "confirmed", // Set to confirmed after payment
+        createdAt: new Date(),
+      };
+
+      // Store booking data in localStorage to save after payment
+      localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+
+      // Proceed to payment
       const amount = parseInt(this.selectedService.price) * 100; // convert USD to cents
       const res = await fetch("http://localhost:4242/create-checkout-session", {
         method: "POST",
@@ -429,6 +455,10 @@ export default {
         const doctorsData = await Promise.all(
           doctorsSnapshot.docs.map(async (doctorDoc) => {
             const doctorData = { id: doctorDoc.id, ...doctorDoc.data() };
+            // Only include approved doctors
+            if (doctorData.approved !== true) {
+              return null;
+            }
             // Fetch availability from doctorAvailability collection
             try {
               const availRef = doc(db, "doctorAvailability", doctorData.id);
@@ -453,7 +483,8 @@ export default {
             return doctorData;
           })
         );
-        this.doctors = doctorsData;
+        // Filter out null values (unapproved doctors)
+        this.doctors = doctorsData.filter((doctor) => doctor !== null);
       } catch (error) {
         console.error("Error fetching doctors:", error);
       } finally {
@@ -500,17 +531,19 @@ export default {
       }
       return days;
     },
-    selectDay(day) {
+    async selectDay(day) {
       this.selectedDay = day;
       this.selectedTime = null;
-      this.availableSlots = this.getAvailableSlotsForDay(day.dayName);
+      this.availableSlots = await this.getAvailableSlotsForDay(day.dayName);
     },
-    getAvailableSlotsForDay(dayName) {
+    async getAvailableSlotsForDay(dayName) {
       if (!this.selectedDoctor.availability) return [];
       const dayAvail = this.selectedDoctor.availability.find(
         (day) => day.name === dayName && day.available
       );
       if (!dayAvail) return [];
+
+      // Generate all possible slots based on availability
       const slots = [];
       const start = new Date(`1970-01-01T${dayAvail.start}:00`);
       const end = new Date(`1970-01-01T${dayAvail.end}:00`);
@@ -519,7 +552,25 @@ export default {
         const slotTime = new Date(time);
         slots.push(slotTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
       }
-      return slots;
+
+      // Fetch existing bookings for this doctor and selected date
+      try {
+        const bookingsRef = collection(db, "bookings");
+        const q = query(
+          bookingsRef,
+          where("doctorId", "==", this.selectedDoctor.id),
+          where("date", "==", this.selectedDay.date.toISOString().split("T")[0]),
+          where("status", "in", ["confirmed", "pending"]) // Exclude cancelled bookings
+        );
+        const querySnapshot = await getDocs(q);
+        const bookedTimes = querySnapshot.docs.map((doc) => doc.data().time);
+
+        // Filter out booked slots
+        return slots.filter((slot) => !bookedTimes.includes(slot));
+      } catch (error) {
+        console.error("Error fetching bookings:", error);
+        return slots; // Return all slots if error occurs
+      }
     },
     selectTime(time) {
       this.selectedTime = time;
@@ -532,6 +583,21 @@ export default {
         const user = auth.currentUser;
         if (!user) {
           alert("Please log in to book an appointment.");
+          return;
+        }
+
+        // Check if the slot is already booked
+        const bookingsRef = collection(db, "bookings");
+        const q = query(
+          bookingsRef,
+          where("doctorId", "==", this.selectedDoctor.id),
+          where("date", "==", this.selectedDay.date.toISOString().split("T")[0]),
+          where("time", "==", this.selectedTime),
+          where("status", "in", ["confirmed", "pending"])
+        );
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+          alert("This time slot is already booked. Please select another time.");
           return;
         }
 
@@ -552,13 +618,14 @@ export default {
 
         await addDoc(collection(db, "bookings"), bookingData);
 
-        alert("Appointment booked successfully!");
-        this.closeModal();
-        // Optionally, redirect to payment or another page
-        // this.$router.push('/payment');
+        // Save booking data to localStorage for later saving after payment
+        localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
+        // Redirect to payment
+        this.checkout();
       } catch (error) {
         console.error("Error booking appointment:", error);
         alert("Failed to book appointment. Please try again.");
+        throw error; // Re-throw to prevent payment if booking fails
       }
     },
   },
