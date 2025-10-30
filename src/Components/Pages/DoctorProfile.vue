@@ -1,6 +1,7 @@
 <template>
   <div class="w-dwh ml-[302px]">
     <main-nav />
+
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Titles-->
       <div class="title flex flex-col gap-4">
@@ -247,6 +248,7 @@ export default {
       speciality: "",
       bio: "",
       profileImageUrl: "",
+
       loading: false,
       errorMsg: "",
       successMsg: "",
@@ -331,6 +333,7 @@ export default {
         this.errorMsg = `Failed to upload image: ${error.message}`;
       }
     },
+
     async saveProfile() {
       this.loading = true;
       this.errorMsg = "";

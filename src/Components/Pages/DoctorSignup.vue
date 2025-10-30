@@ -438,70 +438,84 @@
       </div>
     </div>
 
-    <div class="btn w-full flex justify-end gap-4">
-      <button
-        v-show="currentStep > 1"
-        @click="prevStep"
-        class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] text-[#5271FF] w-fit px-10 cursor-pointer"
+    <div class="btn w-full flex flex-col gap-4">
+      <div
+        v-if="errorMsg && currentStep === 3"
+        class="text-red-700 bg-red-50 border border-red-100 p-3 rounded w-full"
       >
-        <svg
-          class="w-6 h-6 fill-[#5271FF]"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 640 640"
+        {{ errorMsg }}
+      </div>
+      <div
+        v-if="successMsg && currentStep === 3"
+        class="text-green-700 bg-green-50 border border-green-100 p-3 rounded w-full"
+      >
+        {{ successMsg }}
+      </div>
+      <div class="flex justify-end gap-4">
+        <button
+          v-show="currentStep > 1"
+          @click="prevStep"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] text-[#5271FF] w-fit px-10 cursor-pointer"
         >
-          <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-          <path
-            d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z"
-          />
-        </svg>
-        <p>{{ currentStep > 1 ? "Previous" : "Next" }}</p>
-      </button>
+          <svg
+            class="w-6 h-6 fill-[#5271FF]"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 640 640"
+          >
+            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+            <path
+              d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z"
+            />
+          </svg>
+          <p>{{ currentStep > 1 ? "Previous" : "Next" }}</p>
+        </button>
 
-      <button
-        @click="nextStep"
-        :disabled="loading || uploading"
-        class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
-      >
-        <svg
-          v-if="loading || uploading"
-          class="animate-spin h-5 w-5 text-white mr-2"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
+        <button
+          @click="nextStep"
+          :disabled="loading || uploading"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
         >
-          <circle
-            class="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            stroke-width="4"
-          />
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
-        </svg>
-        <p>
-          {{
-            loading
-              ? "Creating account..."
-              : uploading
-              ? "Uploading image..."
-              : currentStep === 3
-              ? "Finish"
-              : "Next"
-          }}
-        </p>
-        <svg
-          v-if="!loading && !uploading"
-          class="w-6 h-6 fill-white"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 640 640"
-        >
-          <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-          <path
-            d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"
-          />
-        </svg>
-      </button>
+          <svg
+            v-if="loading || uploading"
+            class="animate-spin h-5 w-5 text-white mr-2"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          <p>
+            {{
+              loading
+                ? "Creating account..."
+                : uploading
+                ? "Uploading image..."
+                : currentStep === 3
+                ? "Finish"
+                : "Next"
+            }}
+          </p>
+          <svg
+            v-if="!loading && !uploading"
+            class="w-6 h-6 fill-white"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 640 640"
+          >
+            <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+            <path
+              d="M471.1 297.4C483.6 309.9 483.6 330.2 471.1 342.7L279.1 534.7C266.6 547.2 246.3 547.2 233.8 534.7C221.3 522.2 221.3 501.9 233.8 489.4L403.2 320L233.9 150.6C221.4 138.1 221.4 117.8 233.9 105.3C246.4 92.8 266.7 92.8 279.2 105.3L471.2 297.3z"
+            />
+          </svg>
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -681,6 +695,7 @@ export default {
           speciality: this.selectedSpeciality,
           bio: this.bio,
           profileImageUrl: this.profileImageUrl,
+          unionMembershipCardUrl: "",
           role: "doctor",
         });
 

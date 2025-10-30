@@ -136,7 +136,7 @@
             </div>
             <div class="text">
               <p class="w-full md:w-[300px] text-sm md:text-base">
-                123 Medical Plaza, Suite 400, Healthcare District, CA 94102
+                {{ landingData.contact.address }}
               </p>
             </div>
           </div>
@@ -157,7 +157,7 @@
               </svg>
             </div>
             <div class="text">
-              <p class="w-full md:w-[300px] text-sm md:text-base">MediLink@gmail.com</p>
+              <p class="w-full md:w-[300px] text-sm md:text-base">{{ landingData.contact.email }}</p>
             </div>
           </div>
 
@@ -177,7 +177,7 @@
               </svg>
             </div>
             <div class="text">
-              <p class="w-full md:w-[300px] text-sm md:text-base">+20 394 48343, +20 384 2333</p>
+              <p class="w-full md:w-[300px] text-sm md:text-base">{{ landingData.contact.phone }}</p>
             </div>
           </div>
         </div>
@@ -193,9 +193,19 @@
 </template>
 
 <script>
-export default {
-  name: "ContactusPage",
-};
+
+import landingData from '@/assets/landingData.json';
+
+    export default {
+        name:"ContactusPage",
+        data() {
+            return {
+                landingData
+            };
+            
+        }
+    }
+
 </script>
 
 <style scoped></style>

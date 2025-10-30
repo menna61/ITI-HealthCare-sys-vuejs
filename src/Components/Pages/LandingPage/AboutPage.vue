@@ -1,3 +1,6 @@
+
+
+
 <template>
   <div class="cont flex flex-col md:flex-row justify-between items-center" id="about">
     <!--Left section - img-->
@@ -43,34 +46,60 @@
       <!--Numbers will come from database-->
       <div class="numbers flex flex-wrap gap-6 md:gap-10">
         <div class="flex flex-col gap-2">
-          <p class="text-2xl text-[var(--main-color-500)] font-bold">+400</p>
+          <p class="text-2xl text-[var(--main-color-500)] font-bold">+ {{ doctorCount }}</p>
           <p class="text-gray-700 dark:text-gray-300 text-sm md:text-base">
-            {{ $t("expertdoctors") }}
+            {{ $t(landingData.about.expertdoctorsKey) }}
           </p>
         </div>
 
         <div class="flex flex-col gap-2">
-          <p class="text-2xl text-[var(--sec-color-500)] font-bold">+500</p>
+          <p class="text-2xl text-[var(--sec-color-500)] font-bold">+ {{ patientCount }}</p>
           <p class="text-gray-700 dark:text-gray-300 text-sm md:text-base">
-            {{ $t("recoverpatients") }}
+            {{ $t(landingData.about.recoverpatientsKey) }}
           </p>
         </div>
 
-        <div class="flex flex-col gap-2">
-          <p class="text-2xl text-[var(--main-color-500)] font-bold">98%</p>
-          <p class="text-gray-700 dark:text-gray-300 text-sm md:text-base">
-            {{ $t("satisfiedrate") }}
-          </p>
-        </div>
+       
       </div>
     </div>
   </div>
 </template>
 
 <script>
-export default {
-  name: "AboutPage",
-};
+
+import landingData from '@/assets/landingData.json';
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "@/firebase";
+
+    export default {
+        name:"AboutPage",
+        data() {
+            return {
+                landingData,
+                doctorCount: 0,
+                patientCount: 0
+            };
+        },
+        async mounted() {
+            await this.fetchCounts();
+        },
+        methods: {
+            async fetchCounts() {
+                try {
+                    // Fetch doctors count
+                    const doctorsSnapshot = await getDocs(collection(db, "doctors"));
+                    this.doctorCount = doctorsSnapshot.size;
+
+                    // Fetch patients count
+                    const patientsSnapshot = await getDocs(collection(db, "patients"));
+                    this.patientCount = patientsSnapshot.size;
+                } catch (error) {
+                    console.error("Error fetching counts:", error);
+                }
+            }
+        }
+    }
+
 </script>
 
 <style scoped></style>
