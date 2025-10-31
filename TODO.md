@@ -1,27 +1,23 @@
-# Notification System Implementation
+# TODO: Fix Appointment Issues
 
-## Tasks
+## Issues to Fix:
 
-- [x] Update NavBar.vue to use real-time Firestore listener (onSnapshot) for notifications
-- [x] Implement logic to mark notifications as read when popup opens
-- [x] Ensure red badge updates dynamically based on unread count
-- [x] Test the notification flow: Admin approves doctor -> Notification added -> Doctor sees badge -> Opens popup -> Badge disappears
-- [x] Add console logs for debugging notification issues
-- [x] Fix auth timing issue by using onAuthStateChanged listener
+1. Appointment card repeated in calendar - Ensure unique appointments in CalenDar.vue
+2. Cancel button fails but wallet increases - Add refund to patient cancel in PatientAppointments.vue, standardize status to "cancelled"
+3. Calendar booking card shows "Patient" instead of actual name - Fetch proper patient names in CalenDar.vue, DoctorsPage.vue
 
-## Notes
+## Steps:
 
-- Admin approval logic already exists in AdminHome.vue (approveItem method adds notification)
-- Focus on doctor notifications for now
-- Use Options API in Vue.js
-- Added testNotification method for manual testing by clicking the bell icon
-- Notifications should now appear for doctors after admin approval
+- [x] Update PatientAppointments.vue: Change status to "cancelled", add refund logic
+- [x] Update CalenDar.vue: Fetch patient names from patients collection, ensure unique appointments, change status to "cancelled"
+- [x] Update DoctorsPage.vue: Fetch patient name from patients collection in confirmBooking
+- [x] Update DoctorAppointments.vue: Add refund logic to cancelAppointment
+- [x] Test cancellations, wallet updates, and patient names in calendar
 
-# Booking System Fix
+# TODO: Add Red Dots on Calendar Days with Appointments
 
-## Tasks
+## Steps:
 
-- [ ] Modify getAvailableSlotsForDay in DoctorsPage.vue to fetch existing bookings and filter out booked slots
-- [ ] Add validation in confirmBooking to prevent double booking
-- [ ] Test booking flow: Book a slot, verify it disappears for other users, prevent double booking
-- [ ] Ensure bookings are checked for the specific doctor, date, and time
+- [x] Modify updateCalendarEvents() in CalenDar.vue to collect unique appointment dates excluding today and create background events with className 'red-dot-event'
+- [x] Add CSS in <style scoped> for .red-dot-event to display a small red dot on the calendar day
+- [x] Test the calendar to ensure red dots appear on days with appointments (excluding today)

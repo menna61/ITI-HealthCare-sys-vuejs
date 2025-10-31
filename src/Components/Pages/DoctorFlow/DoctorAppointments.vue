@@ -1,0 +1,217 @@
+<template>
+  <div class="w-dwh ml-[302px]">
+    <main-nav />
+    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+      <!--Page titles-->
+      <div class="title flex flex-col gap-4">
+        <h1 class="text-2xl font-bold dark:text-white">My Appointments</h1>
+        <p class="text-gray-500">Manage your scheduled appointments</p>
+      </div>
+
+      <div class="appointments">
+        <div class="bg-white rounded-lg shadow-md overflow-hidden animate-fade-in">
+          <table class="min-w-full">
+            <thead class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+              <tr>
+                <th class="py-4 px-6 text-left font-semibold">Patient Name</th>
+                <th class="py-4 px-6 text-left font-semibold">Service</th>
+                <th class="py-4 px-6 text-left font-semibold">Date</th>
+                <th class="py-4 px-6 text-left font-semibold">Time</th>
+                <th class="py-4 px-6 text-left font-semibold">Status</th>
+                <th class="py-4 px-6 text-left font-semibold">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr
+                v-for="(appointment, index) in appointments"
+                :key="appointment.id"
+                class="hover:bg-blue-50 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-sm"
+                :style="{ animationDelay: `${index * 0.1}s` }"
+              >
+                <td class="py-4 px-6 text-gray-900 font-medium animate-slide-in-left">
+                  {{ appointment.patientName }}
+                </td>
+                <td
+                  class="py-4 px-6 text-gray-700 animate-slide-in-left"
+                  :style="{ animationDelay: `${index * 0.1 + 0.1}s` }"
+                >
+                  {{ appointment.service }}
+                </td>
+                <td
+                  class="py-4 px-6 animate-slide-in-left"
+                  :style="{ animationDelay: `${index * 0.1 + 0.2}s` }"
+                >
+                  {{ appointment.date }}
+                </td>
+                <td
+                  class="py-4 px-6 animate-slide-in-left"
+                  :style="{ animationDelay: `${index * 0.1 + 0.3}s` }"
+                >
+                  {{ appointment.time }}
+                </td>
+                <td
+                  class="py-4 px-6 animate-slide-in-left"
+                  :style="{ animationDelay: `${index * 0.1 + 0.4}s` }"
+                >
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 transition-all duration-300 hover:bg-green-200 hover:scale-105"
+                  >
+                    {{ appointment.status }}
+                  </span>
+                </td>
+                <td
+                  class="py-4 px-6 animate-slide-in-left"
+                  :style="{ animationDelay: `${index * 0.1 + 0.5}s` }"
+                >
+                  <button
+                    @click="cancelAppointment(appointment.id)"
+                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div v-if="appointments.length === 0" class="text-center py-12 animate-fade-in">
+            <div class="text-gray-500 text-lg">No appointments found</div>
+            <div class="text-gray-400 text-sm mt-2">
+              Your scheduled appointments will appear here
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+import MainNav from "@/Components/Layouts/MainNav.vue";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  getDoc,
+  addDoc,
+  setDoc,
+} from "firebase/firestore";
+import { db, auth } from "@/firebase";
+
+export default {
+  name: "DoctorAppointments",
+  components: {
+    MainNav,
+  },
+  data() {
+    return {
+      appointments: [],
+    };
+  },
+  async mounted() {
+    await this.fetchAppointments();
+  },
+  methods: {
+    async fetchAppointments() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        const bookingsCollection = collection(db, "bookings");
+        const q = query(bookingsCollection, where("doctorId", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+
+        this.appointments = querySnapshot.docs
+          .map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }))
+          .filter((app) => (app.status || "").toLowerCase() !== "cancelled");
+      } catch (error) {
+        console.error("Error fetching appointments:", error);
+      }
+    },
+    async cancelAppointment(appointmentId) {
+      try {
+        // Get appointment details
+        const appointmentRef = doc(db, "bookings", appointmentId);
+        const appointmentSnap = await getDoc(appointmentRef);
+        if (!appointmentSnap.exists()) {
+          alert("Appointment not found.");
+          return;
+        }
+        const appointment = appointmentSnap.data();
+
+        // Update the status to 'cancelled' in Firebase
+        await updateDoc(appointmentRef, { status: "cancelled" });
+
+        // Refund money to patient wallet
+        const patientRef = doc(db, "patients", appointment.patientId);
+        const patientSnap = await getDoc(patientRef);
+        const refundAmount = parseFloat(appointment.price) || 0;
+        if (patientSnap.exists()) {
+          const patientData = patientSnap.data();
+          const currentWallet = parseFloat(patientData.wallet) || 0;
+          await updateDoc(patientRef, {
+            wallet: currentWallet + refundAmount,
+          });
+        } else {
+          await setDoc(patientRef, { wallet: refundAmount }, { merge: true });
+        }
+
+        // Add transaction record
+        const transactionRef = collection(db, "patients", appointment.patientId, "transactions");
+        await addDoc(transactionRef, {
+          description: `Refund for cancelled appointment with ${appointment.doctorName}`,
+          amount: refundAmount,
+          date: new Date(),
+          type: "refund",
+        });
+
+        // Update local state
+        this.appointments = this.appointments.filter((app) => app.id !== appointmentId);
+
+        alert("Appointment cancelled successfully and refund processed.");
+      } catch (error) {
+        console.error("Error cancelling appointment:", error);
+        alert("Failed to cancel appointment");
+      }
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-out;
+}
+
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s ease-out forwards;
+  opacity: 0;
+}
+</style>

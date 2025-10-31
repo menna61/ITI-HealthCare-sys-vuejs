@@ -3,6 +3,8 @@ import App from "./App.vue";
 import "flowbite";
 import "../style.css";
 import { createRouter, createWebHashHistory } from "vue-router";
+// import VueToast from "vue-toast-notification";
+// import "vue-toast-notification/dist/theme-sugar.css";
 import NotFound from "./Components/Pages/NotFound.vue";
 import DoctorSignup from "./Components/Pages/DoctorSignup.vue";
 import SignupCards from "./Components/Pages/SignupCards.vue";
@@ -34,20 +36,25 @@ import {
   resetPassword,
 } from "/src/authHandler.js";
 import DoctorAvail from "./Components/Pages/DoctorAvail.vue";
-
 import DoctorsPage from "./Components/Pages/PatientFlow/DoctorsPage.vue";
 import PatientLayout from "./Components/Layouts/PatientLayout.vue";
 import PaymentsPage from "./Components/Pages/PatientFlow/PaymentsPage.vue";
 import PatientAppointments from "./Components/Pages/PatientFlow/PatientAppointments.vue";
 import PatientHome from "./Components/Pages/PatientFlow/PatientHome.vue";
 import DoctorProfile from "./Components/Pages/DoctorProfile.vue";
+import DoctorAppointments from "./Components/Pages/DoctorFlow/DoctorAppointments.vue";
 import GeminiChat from "./Components/Pages/GeminiChat.vue";
 import CancelPage from "./Components/Pages/CancelPage.vue";
 import SuccessPage from "./Components/Pages/SuccessPage.vue";
 import AdminLayout from "./Components/Layouts/AdminLayout.vue";
 import AdminHome from "./Components/Pages/AdminFlow/AdminHome.vue";
 import UsersPage from "./Components/Pages/AdminFlow/UsersPage.vue";
+import AllDoctorsPage from "./Components/Pages/AdminFlow/AllDoctorsPage.vue";
+import DoctorAvailability from "./Components/Pages/AdminFlow/DoctorAvailability.vue";
+import TotalAppointments from "./Components/Pages/AdminFlow/TotalAppointments.vue";
 import DocumentApproval from "./Components/Pages/AdminFlow/DocumentApproval.vue";
+import PatientWallet from "./Components/Pages/PatientFlow/PatientWallet.vue";
+import PatientProfile from "./Components/Pages/PatientFlow/PatientProfile.vue";
 
 // import { h } from 'vue'
 
@@ -114,8 +121,65 @@ const routes = [
       { path: "telemedicine", component: DoctorVideo },
       { path: "availability", component: DoctorAvail },
       { path: "profile", component: DoctorProfile },
+      { path: "appointments", component: DoctorAppointments },
     ],
   },
+
+  //  {
+  //     name: "Profile",
+  //     path: "/profile",
+  //     component: ProfileComponent,
+  //     meta: {
+  //       title: "Profile",
+  //     },
+  //     redirect: "/profile/home",
+  //     children: [
+  //       {
+  //         name: "Home",
+  //         path: "home",
+  //         component: Home,
+  //         meta: {
+  //           title: "Home",
+  //         },
+  //       },
+  //       {
+  //         name: "Doctors",
+  //         path: "Doctors",
+  //         component: DoctorsComponent,
+  //         meta: {
+  //           title: "Doctors",
+  //         },
+  //       },
+  //       {
+  //         name: "infoDoctor",
+  //         path: "infoDoctor/:id",
+  //         component: InfoDoctor,
+  //         meta: { title: "infoDoctor" },
+  //       },
+  //       {
+  //         name: "Appointments",
+  //         path: "Appointments",
+  //         component: AppointmentsComponent,
+  //         meta: {
+  //           title: "Appointments",
+  //         },
+  //       },
+  //       {
+  //         name: "Payments",
+  //         path: "Payments",
+  //         component: PaymentsComponent,
+  //         meta: {
+  //           title: "Payments",
+  //         },
+  //       },
+  //       {
+  //         name: "Setting",
+  //         path: "Setting",
+  //         component: SettingComponent,
+  //         meta: {
+  //           title: "Setting",
+  //         },
+  //       },
   {
     path: "/patient",
     component: PatientLayout,
@@ -125,6 +189,8 @@ const routes = [
       { path: "doctors", component: DoctorsPage },
       { path: "payments", component: PaymentsPage },
       { path: "appointments", component: PatientAppointments },
+      { path: "wallet", component: PatientWallet },
+      { path: "profile", component: PatientProfile },
     ],
   },
 
@@ -134,8 +200,11 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: "dashboard", component: AdminHome },
-      { path: "users" , component: UsersPage},
-      { path: "documents", component: DocumentApproval}
+      { path: "users", component: UsersPage },
+      { path: "doctors", component: AllDoctorsPage },
+      { path: "documents", component: DocumentApproval },
+      { path: "totalAppointments", component: TotalAppointments },
+      { path: "doctorAvailability", component: DoctorAvailability },
     ],
   },
 
@@ -287,4 +356,16 @@ router.beforeEach(async (to, from, next) => {
 
 vueApp.use(router);
 vueApp.use(i18n);
+// vueApp.use(VueToast, {
+//   position: "top-right",
+//   duration: 3000,
+//   dismissible: true,
+//   pauseOnHover: true,
+//   closeOnClick: true,
+//   maxToasts: 3,
+//   newestOnTop: true,
+//   type: "default",
+//   className: "custom-toast",
+//   containerClass: "custom-toast-container",
+// });
 vueApp.mount("#app");

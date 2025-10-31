@@ -1,7 +1,5 @@
 <template>
   <div class="flex h-auto overflow-hidden w-full">
-   
-
     <!-- main-->
     <div
       class="flex-1 flex flex-col transition-all duration-300"
@@ -13,9 +11,8 @@
       <!-- Navbar -->
       <div
         v-if="$route.name === 'Appointments'"
-        class="w-full sticky top-0 z-40 flex items-center justify-between "
+        class="w-full sticky top-0 z-40 flex items-center justify-between"
       >
-
         <!-- btn => Sidebar on sm screen-->
         <button
           v-if="!largeScreen"
@@ -40,14 +37,10 @@
       </div>
 
       <!-- Main -->
-      <main
-        class="flex-1 overflow-y-auto"
-      >
+      <main class="flex-1 overflow-y-auto">
         <!-- Appointments Section -->
 
-        <div
-          class=" transition-all duration-300"
-        >
+        <div class="transition-all duration-300">
           <div class="">
             <div class="grid grid-cols-1 gap-6 mb-4">
               <div class="flex flex-col gap-6">
@@ -59,27 +52,34 @@
                   </div>
                 </div>
 
-                <div v-for="i in 2" :key="i" class="cardPayment cardPayment1 bg-blue-50 flex flex-col gap-4 rounded-xl h-[121px]">
+                <div v-if="loading" class="text-sm text-gray-500">Loading appointment...</div>
+                <div v-else-if="nextAppointment == null" class="text-sm text-gray-500">
+                  No appointments
+                </div>
+                <div
+                  v-else
+                  class="cardPayment cardPayment1 bg-blue-50 flex flex-col gap-4 rounded-xl h-[121px]"
+                >
                   <div class="flex justify-between">
-                    <h2 class="Internal">Internal Medicine</h2>
+                    <h2 class="Internal">{{ nextAppointment.speciality || "Appointment" }}</h2>
                     <div class="flex w-fit justify-end gap-2">
-                      <button class="Pending hover:cursor-pointer">Pending</button>
-                      <button class="Canceled hover:cursor-pointer">Canceled</button>
                       <button class="Confirmed hover:cursor-pointer">Confirmed</button>
                     </div>
                   </div>
                   <div class="flex justify-start items-center w-full">
                     <div class="imgDoc mx-2">
-                      <img src="/images/imgProfile.jpg" alt="" />
+                      <img :src="nextAppointment.doctorImage || '/images/imgProfile.jpg'" alt="" />
                     </div>
                     <div class="w-full">
                       <div class="flex justify-between w-full">
-                        <h2 class="nameDoc">Dr.Mohammed ahmed</h2>
-                        <span class="cancelword">cancel</span>
+                        <h2 class="nameDoc">{{ nextAppointment.doctorName }}</h2>
+                        <span class="linkVido">{{ nextAppointment.service }}</span>
                       </div>
                       <div class="flex flex-row justify-between">
-                        <span class="time">08:00PM , Wednesday 15 Oct,2025</span>
-                        <span class="linkVido">www.link.com</span>
+                        <span class="time"
+                          >{{ nextAppointment.time }} , {{ nextAppointment.date }}</span
+                        >
+                        <span class="linkVido"></span>
                       </div>
                     </div>
                   </div>
@@ -89,20 +89,22 @@
           </div>
         </div>
       </main>
-
     </div>
   </div>
 </template>
 
 <script>
-
+import { db, auth } from "/src/authHandler.js";
+import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
 
 export default {
-
   data() {
     return {
       isSidebarOpen: false,
       largeScreen: window.innerWidth >= 1024,
+      loading: true,
+      nextAppointment: null,
+      unsubscribe: null,
     };
   },
   methods: {
@@ -118,12 +120,63 @@ export default {
         this.isSidebarOpen = false;
       }
     },
+    listenToNextAppointment() {
+      const user = auth.currentUser;
+      if (!user) {
+        this.loading = false;
+        return;
+      }
+      const bookingsRef = collection(db, "bookings");
+      const q = query(bookingsRef, where("patientId", "==", user.uid));
+      this.unsubscribe = onSnapshot(q, async (querySnapshot) => {
+        // Map bookings, filter to confirmed only and future or latest
+        const items = await Promise.all(
+          querySnapshot.docs.map(async (snap) => {
+            const b = { id: snap.id, ...snap.data() };
+            let doctorName = b.doctorName || "Unknown Doctor";
+            let doctorImage = b.doctorImage || "/images/imgProfile.jpg";
+            try {
+              if (b.doctorId) {
+                const dref = doc(db, "doctors", b.doctorId);
+                const ds = await getDoc(dref);
+                if (ds.exists()) {
+                  const d = ds.data();
+                  doctorName = `${d.firstName || ""} ${d.lastName || ""}`.trim() || doctorName;
+                  if (d.profileImageUrl) doctorImage = d.profileImageUrl;
+                }
+              }
+            } catch {}
+            return {
+              id: b.id,
+              doctorName,
+              doctorImage,
+              service: b.service,
+              speciality: b.speciality,
+              date: b.date,
+              time: b.time,
+              status: (b.status || "").toLowerCase(),
+            };
+          })
+        );
+        const confirmed = items.filter((x) => x.status === "confirmed");
+        // Sort by date then time ascending
+        confirmed.sort((a, b) => {
+          const ad = new Date(`${a.date} ${a.time}`);
+          const bd = new Date(`${b.date} ${b.time}`);
+          return ad - bd;
+        });
+        this.nextAppointment = confirmed[0] || null;
+        this.loading = false;
+      });
+    },
   },
   mounted() {
     window.addEventListener("resize", this.handleResize);
+    this.listenToNextAppointment();
   },
   beforeUnmount() {
     window.removeEventListener("resize", this.handleResize);
+    if (this.unsubscribe) this.unsubscribe();
   },
 };
 </script>

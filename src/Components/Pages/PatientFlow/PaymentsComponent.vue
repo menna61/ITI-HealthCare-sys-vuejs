@@ -1,87 +1,119 @@
 <template>
   <div class="flex h-auto overflow-hidden w-full">
-   
-     
+    <div class="w-full px-0 col-span-1 flex flex-col items-start justify-start rounded-sm gap-6">
+      <div class="flex flex-col gap-2 w-full">
+        <h1 class="h1 dark:text-white">Payment</h1>
+        <div class="w-full flex justify-between items-center">
+          <h3 class="lastPaymentWord dark:text-white text-lg">Last Payment</h3>
+          <span class="view dark:text-blue-500">View all</span>
+        </div>
+      </div>
 
-        <div
-  
-          class="w-full px-0 col-span-1 flex flex-col items-start justify-start rounded-sm  gap-6" 
-        >
-          <div class="flex flex-col gap-2 w-full">
-            <h1 class="h1 dark:text-white">Payment</h1>
-            <div class="w-full flex justify-between items-center">
-              <h3 class="lastPaymentWord dark:text-white text-lg">Last Payment</h3>
-              <span class="view dark:text-blue-500">View all</span>
-            </div>
+      <div v-if="loading" class="text-sm text-gray-500">Loading payment...</div>
+      <div v-else-if="!lastPayment" class="text-sm text-gray-500">No payments</div>
+      <div v-else class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl">
+        <div class="flex justify-between w-full">
+          <h2 class="Internal">{{ lastPayment.speciality || "Payment" }}</h2>
+          <button class="done hover:cursor-pointer">Done</button>
+        </div>
+        <div class="flex justify-start items-center w-full">
+          <div class="imgDoc mx-2">
+            <img :src="lastPayment.doctorImage || '/images/imgProfile.jpg'" alt="" />
           </div>
-
-          <div class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl">
+          <div class="w-full">
             <div class="flex justify-between w-full">
-              <h2 class="Internal">Internal Medicine</h2>
-              <button class="done hover:cursor-pointer">Done</button>
-            </div>
-            <div class="flex justify-start items-center w-full">
-              <div class="imgDoc mx-2">
-                <img src="/images/imgProfile.jpg" alt="" />
-              </div>
-              <div class="w-full">
-                <div class="flex justify-between w-full">
-                  <h2 class="nameDoc">Dr.Mohammed ahmed</h2>
-                  <div>
-                    <i class="fa-brands fa-cc-visa">visa</i>
-                    <span class="price">500$</span>
-                  </div>
-                </div>
-                <span class="time">08:00PM , Wednesday 15 Oct,2025</span>
+              <h2 class="nameDoc">{{ lastPayment.doctorName }}</h2>
+              <div>
+                <i class="fa-brands fa-cc-visa">visa</i>
+                <span class="price">${{ lastPayment.price }}</span>
               </div>
             </div>
-          </div>
-
-          <div class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl">
-            <div class="flex justify-between">
-              <h2 class="Internal">Internal Medicine</h2>
-              <button class="done hover:cursor-pointer">Done</button>
-            </div>
-            <div class="flex justify-start items-center w-full">
-              <div class="imgDoc mx-2">
-                <img src="/images/imgProfile.jpg" alt="" />
-              </div>
-              <div class="w-full">
-                <div class="flex justify-between w-full">
-                  <h2 class="nameDoc">Dr.Mohammed ahmed</h2>
-                  <div>
-                    <i class="fa-brands fa-cc-visa">visa</i>
-                    <span class="price">500$</span>
-                  </div>
-                </div>
-                <span class="time">08:00PM , Wednesday 15 Oct,2025</span>
-              </div>
-            </div>
+            <span class="time">{{ lastPayment.time }} , {{ lastPayment.date }}</span>
           </div>
         </div>
-
+      </div>
     </div>
+  </div>
 </template>
 
 <script>
-
+import { db, auth } from "/src/authHandler.js";
+import { collection, query, where, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default {
-
   data() {
     return {
       isSidebarOpen: false,
       largeScreen: window.innerWidth >= 1024,
+      loading: true,
+      lastPayment: null,
     };
   },
   methods: {
-    
+    async fetchLastPayment() {
+      try {
+        const user = auth.currentUser;
+        if (!user) {
+          this.loading = false;
+          return;
+        }
+        // Fetch bookings for the user, then filter/sort on client to avoid index requirements
+        const bookingsRef = collection(db, "bookings");
+        const q = query(bookingsRef, where("patientId", "==", user.uid));
+        const snap = await getDocs(q);
+        if (snap.empty) {
+          this.lastPayment = null;
+          this.loading = false;
+          return;
+        }
+        const all = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const confirmed = all.filter((b) => (b.status || "").toLowerCase() === "confirmed");
+        if (confirmed.length === 0) {
+          this.lastPayment = null;
+          this.loading = false;
+          return;
+        }
+        // Sort by createdAt desc if available; fallback to date/time desc
+        confirmed.sort((a, b) => {
+          const aTs =
+            a.createdAt instanceof Date ? a.createdAt.getTime() : Date.parse(`${a.date} ${a.time}`);
+          const bTs =
+            b.createdAt instanceof Date ? b.createdAt.getTime() : Date.parse(`${b.date} ${b.time}`);
+          return bTs - aTs;
+        });
+        const b = confirmed[0];
+        let doctorName = b.doctorName || "Unknown Doctor";
+        let doctorImage = b.doctorImage || "/images/imgProfile.jpg";
+        try {
+          if (b.doctorId) {
+            const dref = doc(db, "doctors", b.doctorId);
+            const ds = await getDoc(dref);
+            if (ds.exists()) {
+              const d = ds.data();
+              doctorName = `${d.firstName || ""} ${d.lastName || ""}`.trim() || doctorName;
+              if (d.profileImageUrl) doctorImage = d.profileImageUrl;
+            }
+          }
+        } catch {}
+        this.lastPayment = {
+          id: b.id,
+          doctorName,
+          doctorImage,
+          price: b.price,
+          date: b.date,
+          time: b.time,
+          speciality: b.speciality,
+        };
+      } catch (e) {
+        console.error("Error fetching last payment:", e);
+        this.lastPayment = null;
+      } finally {
+        this.loading = false;
+      }
+    },
   },
-  mounted() {
-    window.addEventListener("resize", this.handleResize);
-  },
-  beforeUnmount() {
-    window.removeEventListener("resize", this.handleResize);
+  async mounted() {
+    await this.fetchLastPayment();
   },
 };
 </script>

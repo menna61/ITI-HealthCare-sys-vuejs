@@ -3,7 +3,7 @@
     <transition name="modal-fade">
       <div v-if="modelValue" class="fixed inset-0 z-[99999] flex items-center justify-center">
         <div class="fixed inset-0 bg-black/50 z-[99998]" @click="close"></div>
-        <div class="relative bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 p-4 z-[99999]">
+        <div class="relative bg-white rounded-lg shadow-lg max-w-xl w-full mx-4 p-6 z-[99999]" :class="$attrs.class">
           <header class="mb-2">
             <h3 class="text-lg font-semibold text-gray-900">{{ title }}</h3>
           </header>
