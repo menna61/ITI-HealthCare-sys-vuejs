@@ -33,24 +33,17 @@
                   :class="{ 'translate-x-full': day.available }"
                 ></div>
               </div>
-              <span
-                class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300"
-              >
+              <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
                 {{ day.available ? "Available" : "Not Available" }}
               </span>
             </label>
           </div>
 
-          <div
-            v-if="day.available"
-            class="bottom p-4 rounded-lg bg-gray-100 flex flex-col gap-2"
-          >
+          <div v-if="day.available" class="bottom p-4 rounded-lg bg-gray-100 flex flex-col gap-2">
             <p class="text-lg font-medium">Time slots</p>
             <form class="mx-auto grid grid-cols-2 gap-4 w-full">
               <div class="w-full">
-                <label
-                  for="start-time"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                <label for="start-time" class="block mb-2 text-sm font-medium text-gray-900"
                   >Start time:</label
                 >
                 <input
@@ -63,9 +56,7 @@
                 />
               </div>
               <div class="w-full">
-                <label
-                  for="end-time"
-                  class="block mb-2 text-sm font-medium text-gray-900"
+                <label for="end-time" class="block mb-2 text-sm font-medium text-gray-900"
                   >End time:</label
                 >
                 <input
@@ -107,7 +98,7 @@ export default {
   data() {
     return {
       days: [
-        { name: "Saturday", available: true, start: "09:00", end: "17:00" },
+        { name: "Saturday", available: false, start: "", end: "" },
         { name: "Sunday", available: false, start: "", end: "" },
         { name: "Monday", available: false, start: "", end: "" },
         { name: "Tuesday", available: false, start: "", end: "" },

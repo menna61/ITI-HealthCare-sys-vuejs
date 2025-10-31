@@ -1,0 +1,82 @@
+/* Custom toast styling */
+.custom-toast-container {
+  z-index: 9999;
+}
+
+.custom-toast {
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  padding: 16px 20px;
+  min-width: 300px;
+  backdrop-filter: blur(10px);
+}
+
+.custom-toast.success {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: white;
+  border-left: 4px solid #047857;
+}
+
+.custom-toast.error {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: white;
+  border-left: 4px solid #b91c1c;
+}
+
+.custom-toast.info {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border-left: 4px solid #1d4ed8;
+}
+
+.custom-toast.warning {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: white;
+  border-left: 4px solid #b45309;
+}
+
+/* Toast close button */
+.custom-toast .vue-toastification__close {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  margin-left: auto;
+  transition: color 0.2s ease;
+}
+
+.custom-toast .vue-toastification__close:hover {
+  color: white;
+}
+
+/* Toast icon */
+.custom-toast .vue-toastification__icon {
+  margin-right: 12px;
+  font-size: 18px;
+}
+
+/* Toast progress bar */
+.custom-toast .vue-toastification__progress-bar {
+  background: rgba(255, 255, 255, 0.3);
+  height: 3px;
+  border-radius: 0 0 12px 12px;
+}
+
+/* Animation improvements */
+.vue-toastification__toast--enter,
+.vue-toastification__toast--leave-to {
+  opacity: 0;
+  transform: translateX(100%);
+}
+
+.vue-toastification__toast--enter-to,
+.vue-toastification__toast--leave {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.vue-toastification__toast--enter-active,
+.vue-toastification__toast--leave-active {
+  transition: all 0.3s ease;
+}

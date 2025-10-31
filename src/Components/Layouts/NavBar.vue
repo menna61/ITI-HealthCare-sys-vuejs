@@ -117,7 +117,7 @@
           <lang-drop />
 
           <div
-            v-if="!isAuthPages || this.$route.path === '/dashboard'"
+            v-if="!isAuthPages && this.$route.path.startsWith ('/dashboard') "
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
           >
             <img
@@ -135,11 +135,13 @@
               ></path>
             </svg>
           </div>
+
           <div
-            v-if="this.$route.path === 'patient'"
-            class="w-12 h-12 rounded-full bg-gray-300 mr-4 flex items-center justify-center"
+            v-if="this.$route.path.startsWith('/patient')"
+            class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
+            @click="goToPatientProfile"
           >
-            <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
+            <svg class="w-6 h-6 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
               <path
                 fill-rule="evenodd"
                 d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
@@ -205,11 +207,11 @@ export default {
     });
   },
   methods: {
-    toggleNotifications() {
+    async toggleNotifications() {
       this.showNotifications = !this.showNotifications;
       // When opening the popup, mark all unread notifications as read
       if (this.showNotifications) {
-        this.markNotificationsRead();
+        await this.markNotificationsRead();
         this.fetchNotifications();
       }
     },
@@ -222,6 +224,9 @@ export default {
     },
     goToDocProfile() {
       this.$router.push("/dashboard/profile");
+    },
+    goToPatientProfile() {
+      this.$router.push("/patient/profile");
     },
     async fetchDoctors() {
       try {
@@ -315,8 +320,12 @@ export default {
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((n) => n.userId === user.uid)
         .sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
-      this.notifications = notifs;
-      this.unreadCount = notifs.filter((n) => !n.read).length;
+      // Remove duplicates based on message content
+      const uniqueNotifs = notifs.filter(
+        (notif, index, self) => index === self.findIndex((n) => n.message === notif.message)
+      );
+      this.notifications = uniqueNotifs;
+      this.unreadCount = uniqueNotifs.filter((n) => !n.read).length;
     },
 
     async markNotificationsRead() {

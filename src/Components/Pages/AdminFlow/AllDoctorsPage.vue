@@ -1,0 +1,958 @@
+<template>
+  <div class="w-dwh ml-[302px]">
+    <main-nav />
+    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+      <!--Page titles-->
+      <div class="title flex flex-col gap-4">
+        <h1 class="text-2xl font-bold dark:text-white">All Doctors</h1>
+        <p class="text-gray-500">Manage and oversee all registered doctors</p>
+      </div>
+
+      <!-- Search and Filter Section -->
+      <div class="search-filter-section mb-6">
+        <div class="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between">
+          <div class="flex flex-col md:flex-row gap-4 flex-1">
+            <div class="search-box relative">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="Search doctors by name or speciality..."
+                class="w-full md:w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
+            <div class="filter-box">
+              <select
+                v-model="statusFilter"
+                class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Status</option>
+                <option value="approved">Approved</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
+          </div>
+          <div class="export-buttons flex gap-2">
+            <button
+              @click="exportToCSV"
+              class="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200 flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export CSV
+            </button>
+            <button
+              @click="exportToPDF"
+              class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors duration-200 flex items-center gap-2"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              Export PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctors Grid -->
+      <div class="doctors-grid">
+        <div v-if="loading" class="text-center w-full flex items-center justify-center py-12">
+          <div class="flex flex-col items-center justify-center">
+            <svg
+              aria-hidden="true"
+              class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600"
+              viewBox="0 0 100 101"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                fill="currentColor"
+              />
+              <path
+                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                fill="currentFill"
+              />
+            </svg>
+            <p class="mt-4 text-gray-600">Loading doctors...</p>
+          </div>
+        </div>
+        <div v-else-if="filteredDoctors.length === 0" class="text-center py-12">
+          <p class="text-gray-500 text-lg">No doctors found matching your criteria.</p>
+        </div>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="(doctor, index) in filteredDoctors"
+            :key="doctor.id"
+            class="doctor-card bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 animate-fadeInUp cursor-pointer"
+            :style="{ animationDelay: `${index * 0.1}s` }"
+          >
+            <div class="relative bgDoc">
+              <img
+                :src="doctor.profileImageUrl"
+                alt=""
+                v-if="doctor.profileImageUrl"
+                class="w-full h-48 object-contain m-auto"
+              />
+              <div
+                v-else
+                class="w-full h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center"
+              >
+                <svg class="w-16 h-16 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </div>
+              <div class="absolute top-4 right-4  backdrop-blur-sm rounded-full px-3 py-1 bg-blue-100">
+                <p class="text-sm font-semibold text-gray-700 ">
+                  {{ doctor.yearsOfExperience }} yrs exp
+                </p>
+              </div>
+              <!-- <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3">
+                <h3 class="text-lg font-bold text-gray-800">
+                  {{ doctor.firstName }} {{ doctor.lastName }}
+                </h3>
+                <p class="text-sm text-blue-600 font-medium">{{ doctor.speciality }}</p>
+              </div> -->
+            </div>
+            <div class="p-6">
+              <div class="flex justify-between mb-2">
+                <h1 class="text-lg font-bold text-gray-800">{{ doctor.firstName }} {{ doctor.lastName }}</h1>
+                <p class="text-sm text-blue-600 font-medium">{{ doctor.speciality }}</p>
+              </div>
+              <div class="flex items-center gap-2 mb-2 justify-between">
+                <div class="flex">
+ <svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <p class="text-sm text-gray-600 truncate">{{ doctor.clinicAddress }}</p>
+
+                </div>
+               
+                  <p class="text-sm text-blue-600 font-medium px-1">{{ doctor.degree }}</p>
+              </div>
+              <div class="flex items-center gap-2 mb-4 justify-between">
+                <div class="flex">
+<svg class="w-5 h-5 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M16 7a1 1 0 10-2 0v1H5V7a1 1 0 00-2 0v1H2a2 2 0 00-2 2v7a2 2 0 002 2h16a2 2 0 002-2V10a2 2 0 00-2-2h-1V7zM4 5a1 1 0 011-1h10a1 1 0 011 1v1H4V5z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <p class="text-sm text-gray-600 cursor-pointer px-1 hover:text-blue-600" @click.stop="openBookingsModal(doctor)">{{ doctor.patientCount || 0 }} patients</p>
+              
+                </div>
+                 <p v-for="ser in doctor.services" :key="ser" class="text-sm text-blue-600 font-medium">services :{{ ser }}</p>
+              </div>
+              <div class="flex gap-2">
+                <button
+                  @click.stop="openDetailsModal(doctor)"
+                  class="flex-1 bg-[#212D66] text-white py-2 px-4 rounded-lg font-medium hover:from-blue-600 hover:to-blue-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                >
+                  View Details
+                </button>
+                <button
+                  @click.stop="openDeleteModal(doctor)"
+                  class="bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg font-medium hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
+                >
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Doctor Details Modal -->
+      <UiModal v-model="showDetailsModal" :title="'👨‍⚕️ Doctor Details'" @close="closeDetailsModal" class="doctor-details-modal">
+        <div v-if="selectedDoctor" class="doctor-details-content">
+          <div class="doctor-avatar">
+            <img
+              :src="selectedDoctor.profileImageUrl"
+              alt=""
+              v-if="selectedDoctor.profileImageUrl"
+              class="w-24 h-24 rounded-full object-cover border-4 border-blue-200"
+            />
+            <div v-else class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center border-4 border-blue-200">
+              <svg class="w-12 h-12 text-white" fill="currentColor" viewBox="0 0 20 20">
+                <path
+                  fill-rule="evenodd"
+                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                  clip-rule="evenodd"
+                ></path>
+              </svg>
+            </div>
+          </div>
+          <div class="doctor-info">
+            <div class="info-item">
+              <span class="info-label">👤 Name:</span>
+              <span class="info-value">{{ selectedDoctor.firstName }} {{ selectedDoctor.lastName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">📧 Email:</span>
+              <span class="info-value">{{ selectedDoctor.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">📱 Phone:</span>
+              <span class="info-value">{{ selectedDoctor.phone }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">🏥 Speciality:</span>
+              <span class="info-value">{{ selectedDoctor.speciality }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">📍 Clinic Address:</span>
+              <span class="info-value">{{ selectedDoctor.clinicAddress }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">⭐ Experience:</span>
+              <span class="info-value">{{ selectedDoctor.yearsOfExperience }} years</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">📊 Patient Count:</span>
+              <span class="info-value">{{ selectedDoctor.patientCount || 0 }}</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button @click="deleteFromDetails" class="modal-delete-btn">🗑️ Delete Doctor</button>
+          </div>
+        </div>
+      </UiModal>
+
+      <!-- Delete Confirmation Modal -->
+      <UiModal v-model="showDeleteModal" :title="'⚠️ Confirm Delete'" @close="cancelDelete" class="delete-modal">
+        <div v-if="doctorToDelete" class="delete-modal-content">
+          <div class="delete-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
+            </svg>
+          </div>
+          <h3 class="delete-title">Are you sure you want to delete this doctor?</h3>
+          <div class="delete-doctor-info">
+            <p><strong>Name:</strong> {{ doctorToDelete.firstName }} {{ doctorToDelete.lastName }}</p>
+            <p><strong>Email:</strong> {{ doctorToDelete.email }}</p>
+            <p><strong>Speciality:</strong> {{ doctorToDelete.speciality }}</p>
+          </div>
+          <p class="delete-warning">This action cannot be undone. The doctor will be permanently removed from the system.</p>
+        </div>
+        <template #footer>
+          <div class="delete-modal-footer">
+            <button @click="cancelDelete" class="cancel-btn">Cancel</button>
+            <button @click="confirmDelete" class="delete-btn">Yes, Delete</button>
+          </div>
+        </template>
+      </UiModal>
+
+      <!-- Bookings Modal -->
+      <UiModal v-model="showBookingsModal" :title="'📅 Doctor Bookings'" @close="closeBookingsModal" class="bookings-modal">
+        <div v-if="selectedDoctorForBookings" class="bookings-content">
+          <div class="doctor-info-section">
+            <h3 class="doctor-name">{{ selectedDoctorForBookings.firstName }} {{ selectedDoctorForBookings.lastName }}</h3>
+            <p class="doctor-speciality">{{ selectedDoctorForBookings.speciality }}</p>
+          </div>
+          <div v-if="bookings.length === 0" class="no-bookings">
+            <p>No bookings found for this doctor.</p>
+          </div>
+          <div v-else class="bookings-list">
+            <div v-for="booking in bookings" :key="booking.id" class="booking-item">
+              <div class="booking-header">
+                <span class="booking-date">{{ formatDate(booking.date) }}</span>
+                <span class="booking-time">{{ booking.time }}</span>
+              </div>
+              <div class="booking-details">
+                <p><strong>Patient:</strong> {{ booking.patientName }}</p>
+                <p><strong>Status:</strong> <span :class="getStatusClass(booking.status)">{{ booking.status }}</span></p>
+                <p><strong>Notes:</strong> {{ booking.notes || 'N/A' }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </UiModal>
+    </div>
+  </div>
+</template>
+
+<script>
+import { collection, getDocs, doc, deleteDoc, getDoc, query, where } from 'firebase/firestore';
+import { db } from '@/firebase';
+import UiModal from '@/Components/UI/Modal.vue';
+import MainNav from "@/Components/Layouts/MainNav.vue";
+
+export default {
+  name: "AllDoctorsPage",
+  components: {
+    UiModal,
+    MainNav,
+  },
+  data() {
+    return {
+      doctors: [],
+      loading: true,
+      showDetailsModal: false,
+      selectedDoctor: null,
+      showDeleteModal: false,
+      doctorToDelete: null,
+      showBookingsModal: false,
+      bookings: [],
+      selectedDoctorForBookings: null,
+      searchQuery: '',
+      statusFilter: '',
+    };
+  },
+  async mounted() {
+    await this.fetchDoctors();
+  },
+  computed: {
+    filteredDoctors() {
+      let filtered = this.doctors;
+
+      // Filter by search query
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        filtered = filtered.filter(doctor =>
+          `${doctor.firstName} ${doctor.lastName}`.toLowerCase().includes(query) ||
+          doctor.speciality.toLowerCase().includes(query)
+        );
+      }
+
+      // Filter by status
+      if (this.statusFilter) {
+        filtered = filtered.filter(doctor => doctor.status === this.statusFilter);
+      }
+
+      return filtered;
+    },
+  },
+  methods: {
+    async fetchDoctors() {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'doctors'));
+        const doctorsData = await Promise.all(querySnapshot.docs.map(async (docSnap) => {
+          const doctorData = { id: docSnap.id, ...docSnap.data() };
+
+          // Fetch services
+          try {
+            const servicesRef = collection(db, 'doctors', docSnap.id, 'services');
+            const servicesSnapshot = await getDocs(servicesRef);
+            doctorData.services = servicesSnapshot.docs.map(serviceDoc => serviceDoc.data().name);
+          } catch (error) {
+            console.error('Error fetching services:', error);
+            doctorData.services = [];
+          }
+
+          // Fetch availability
+          try {
+            const availabilityRef = doc(db, 'doctorAvailability', docSnap.id);
+            const availabilitySnap = await getDoc(availabilityRef);
+            if (availabilitySnap.exists()) {
+              const availabilityData = availabilitySnap.data().availability || [];
+              doctorData.availableDays = availabilityData.filter(day => day.available).map(day => day.name);
+              console.log(doctorData);
+              
+            } else {
+              doctorData.availableDays = [];
+            }
+          } catch (error) {
+            console.error('Error fetching availability:', error);
+            doctorData.availableDays = [];
+          }
+
+          // Calculate patient count from bookings
+          try {
+            const bookingsRef = collection(db, 'bookings');
+            const q = query(bookingsRef, where('doctorId', '==', docSnap.id));
+            const bookingsSnapshot = await getDocs(q);
+            doctorData.patientCount = bookingsSnapshot.size;
+          } catch (error) {
+            console.error('Error fetching patient count:', error);
+            doctorData.patientCount = 0;
+          }
+
+          return doctorData;
+        }));
+
+        this.doctors = doctorsData;
+      } catch (error) {
+        console.error('Error fetching doctors:', error);
+      } finally {
+        this.loading = false;
+      }
+    },
+    openDetailsModal(doctor) {
+      this.selectedDoctor = doctor;
+      this.showDetailsModal = true;
+    },
+    closeDetailsModal() {
+      this.showDetailsModal = false;
+      this.selectedDoctor = null;
+    },
+    openDeleteModal(doctor) {
+      this.doctorToDelete = doctor;
+      this.showDeleteModal = true;
+    },
+    cancelDelete() {
+      this.showDeleteModal = false;
+      this.doctorToDelete = null;
+    },
+    async confirmDelete() {
+      if (!this.doctorToDelete) return;
+      try {
+        await deleteDoc(doc(db, 'doctors', this.doctorToDelete.id));
+        this.doctors = this.doctors.filter(doctor => doctor.id !== this.doctorToDelete.id);
+        this.showDeleteModal = false;
+        this.doctorToDelete = null;
+        this.$toast.success('Doctor deleted successfully');
+      } catch (error) {
+        console.error('Error deleting doctor:', error);
+        this.$toast.error('Failed to delete doctor');
+      }
+    },
+    deleteFromDetails() {
+      this.doctorToDelete = this.selectedDoctor;
+      this.showDetailsModal = false;
+      this.showDeleteModal = true;
+    },
+    exportToCSV() {
+      const headers = ['Name', 'Email', 'Phone', 'Speciality', 'Clinic Address', 'Experience', 'Status', 'Services', 'Available Days', 'Patient Count'];
+      const csvContent = [
+        headers.join(','),
+        ...this.filteredDoctors.map(doctor => [
+          `"${doctor.firstName} ${doctor.lastName}"`,
+          `"${doctor.email}"`,
+          `"${doctor.phone}"`,
+          `"${doctor.speciality}"`,
+          `"${doctor.clinicAddress}"`,
+          doctor.yearsOfExperience,
+          doctor.status || 'pending',
+          doctor.services ? `"${doctor.services.join(', ')}"` : 'N/A',
+          doctor.availableDays ? `"${doctor.availableDays.join(', ')}"` : 'N/A',
+          doctor.patientCount || '0'
+        ].join(','))
+      ].join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'doctors.csv');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    exportToPDF() {
+      import('jspdf').then(({ jsPDF }) => {
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const pageHeight = doc.internal.pageSize.getHeight();
+        const margin = 20;
+        let yPosition = margin;
+
+        // Title
+        doc.setFontSize(20);
+        doc.text('Doctors List', pageWidth / 2, yPosition, { align: 'center' });
+        yPosition += 20;
+
+        // Table headers
+        const headers = ['Name', 'Email', 'Phone', 'Speciality', 'Clinic Address', 'Experience', 'Status', 'Services', 'Available Days', 'Patient Count'];
+        const columnWidths = [30, 40, 30, 30, 40, 25, 20, 40, 40, 25];
+        let xPosition = margin;
+
+        doc.setFontSize(12);
+        headers.forEach((header, index) => {
+          doc.text(header, xPosition, yPosition);
+          xPosition += columnWidths[index];
+        });
+
+        yPosition += 10;
+
+        // Table rows
+        this.filteredDoctors.forEach(doctor => {
+          if (yPosition > pageHeight - margin) {
+            doc.addPage();
+            yPosition = margin;
+          }
+
+          xPosition = margin;
+          const rowData = [
+            `${doctor.firstName} ${doctor.lastName}`,
+            doctor.email,
+            doctor.phone,
+            doctor.speciality,
+            doctor.clinicAddress,
+            `${doctor.yearsOfExperience} yrs`,
+            doctor.status || 'pending',
+            doctor.services ? doctor.services.join(', ') : 'N/A',
+            doctor.availableDays ? doctor.availableDays.join(', ') : 'N/A',
+            doctor.patientCount || '0'
+          ];
+
+          rowData.forEach((data, index) => {
+            const maxWidth = columnWidths[index] - 2;
+            const lines = doc.splitTextToSize(data, maxWidth);
+            lines.forEach(line => {
+              doc.text(line, xPosition, yPosition);
+              yPosition += 5;
+            });
+            xPosition += columnWidths[index];
+          });
+
+          yPosition += 5; // Space between rows
+        });
+
+        // Save the PDF
+        doc.save('doctors-list.pdf');
+      });
+    },
+    openBookingsModal(doctor) {
+      this.selectedDoctorForBookings = doctor;
+      this.showBookingsModal = true;
+      this.fetchBookingsForDoctor(doctor.id);
+    },
+    closeBookingsModal() {
+      this.showBookingsModal = false;
+      this.selectedDoctorForBookings = null;
+      this.bookings = [];
+    },
+    async fetchBookingsForDoctor(doctorId) {
+      try {
+        const bookingsRef = collection(db, 'bookings');
+        const q = query(bookingsRef, where('doctorId', '==', doctorId));
+        const querySnapshot = await getDocs(q);
+        this.bookings = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      } catch (error) {
+        console.error('Error fetching bookings:', error);
+      }
+    },
+    formatDate(date) {
+      return new Date(date).toLocaleDateString();
+    },
+    getStatusClass(status) {
+      switch (status) {
+        case 'confirmed':
+          return 'status-confirmed';
+        case 'pending':
+          return 'status-pending';
+        case 'cancelled':
+          return 'status-cancelled';
+        default:
+          return '';
+      }
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+
+.bgDoc{
+       background: linear-gradient(135deg, #212D66 0%, #c4ceda 100%);
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeInUp {
+  animation: fadeInUp 0.8s ease-out forwards;
+}
+
+.doctor-card {
+  transition: all 0.3s ease;
+  border: 1px solid #e5e7eb;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  }
+
+  img {
+    transition: transform 0.3s ease;
+  }
+
+  &:hover img {
+    transform: scale(1.05);
+  }
+}
+
+.doctor-details-modal {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.4s ease-out;
+
+  .doctor-details-content {
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  .doctor-avatar {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+
+    img, div {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
+  }
+
+  .doctor-info {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-width: 500px;
+    margin: 0 auto;
+
+    .info-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+      border-radius: 12px;
+      padding: 16px 20px;
+      border: 2px solid #e2e8f0;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      transition: all 0.3s ease;
+      animation: infoItemFadeIn 0.5s ease-out both;
+      animation-delay: calc(var(--item-index, 0) * 0.1s + 0.4s);
+
+      &:hover {
+        transform: translateY(-2px) scale(1.02);
+        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        border-color: #0ea5e9;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      }
+
+      .info-label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .info-value {
+        font-weight: 500;
+        color: #1f2937;
+        font-size: 14px;
+        text-align: right;
+        max-width: 250px;
+        word-break: break-word;
+      }
+    }
+
+    .info-item:nth-child(1) { --item-index: 1; }
+    .info-item:nth-child(2) { --item-index: 2; }
+    .info-item:nth-child(3) { --item-index: 3; }
+    .info-item:nth-child(4) { --item-index: 4; }
+    .info-item:nth-child(5) { --item-index: 5; }
+    .info-item:nth-child(6) { --item-index: 6; }
+  }
+
+  .modal-actions {
+    margin-top: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  .modal-delete-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(239, 68, 68, 0.4);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+
+@keyframes modalSlideIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes infoItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.delete-modal {
+  background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
+  border: 2px solid #fecaca;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  .delete-modal-content {
+    text-align: center;
+    padding: 30px 0 20px;
+  }
+
+  .delete-icon {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+
+    svg {
+      filter: drop-shadow(0 4px 6px rgba(239, 68, 68, 0.3));
+    }
+  }
+
+  .delete-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+
+  .delete-doctor-info {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 2px solid #e5e7eb;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    p {
+      margin: 6px 0;
+      color: #374151;
+      font-size: 15px;
+      font-weight: 500;
+
+      strong {
+        color: #1f2937;
+        font-weight: 700;
+      }
+    }
+  }
+
+  .delete-warning {
+    color: #dc2626;
+    font-size: 14px;
+    font-weight: 600;
+    font-style: italic;
+    margin-bottom: 0;
+    background: rgba(252, 165, 165, 0.2);
+    padding: 12px;
+    border-radius: 8px;
+    border-left: 4px solid #dc2626;
+  }
+
+  .delete-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    padding-top: 24px;
+    border-top: 2px solid #fecaca;
+    background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
+    margin: 0 -24px -24px;
+    padding: 24px;
+    border-radius: 0 0 12px 12px;
+  }
+
+  .cancel-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+    color: #374151;
+    border: 2px solid #d1d5db;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    &:hover {
+      background: linear-gradient(135deg, #e5e7eb 0%, #d1d5db 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+      border-color: #9ca3af;
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .delete-btn {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    &:hover {
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 12px rgba(239, 68, 68, 0.4);
+
+      &::before {
+        left: 100%;
+      }
+    }
+
+    &:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
+    }
+  }
+}
+
+.bookings-modal {
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 2px solid #0ea5e9;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  animation: modalSlideIn 0.4s ease-out;
+
+  .bookings-content {
+    text-align: center;
+    padding: 30px 0;
+  }
+
+  .doctor-info-section {
+    margin-bottom: 20px;
+  }
+
+  .doctor-name {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1f2937;
+  }
+
+  .doctor-speciality {
+    color: #6b7280;
+  }
+
+  .no-bookings {
+    padding: 20px;
+    color: #6b7280;
+  }
+
+  .bookings-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .booking-item {
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+  }
+
+  .booking-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+
+  .booking-date,
+  .booking-time {
+    font-weight: 500;
+  }
+
+  .booking-details p {
+    margin: 4px 0;
+  }
+}
+
+.status-confirmed {
+  color: green;
+}
+
+.status-pending {
+  color: orange;
+}
+
+.status-cancelled {
+  color: red;
+}
+</style>

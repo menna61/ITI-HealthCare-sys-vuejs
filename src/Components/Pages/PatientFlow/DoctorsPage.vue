@@ -337,7 +337,7 @@
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import Modal from "@/Components/UI/Modal.vue";
 import { signOutUser, db, auth } from "/src/authHandler.js";
-import { collection, getDocs, doc, getDoc, addDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, query, where } from "firebase/firestore";
 
 export default {
   name: "DoctorsPage",
@@ -560,7 +560,7 @@ export default {
           bookingsRef,
           where("doctorId", "==", this.selectedDoctor.id),
           where("date", "==", this.selectedDay.date.toISOString().split("T")[0]),
-          where("status", "in", ["confirmed", "pending"]) // Exclude cancelled bookings
+          where("status", "==", "confirmed") // Exclude cancelled bookings
         );
         const querySnapshot = await getDocs(q);
         const bookedTimes = querySnapshot.docs.map((doc) => doc.data().time);
@@ -593,7 +593,7 @@ export default {
           where("doctorId", "==", this.selectedDoctor.id),
           where("date", "==", this.selectedDay.date.toISOString().split("T")[0]),
           where("time", "==", this.selectedTime),
-          where("status", "in", ["confirmed", "pending"])
+          where("status", "==", "confirmed")
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
@@ -601,26 +601,7 @@ export default {
           return;
         }
 
-        const bookingData = {
-          doctorId: this.selectedDoctor.id,
-          patientId: user.uid,
-          patientName: user.displayName || "Patient",
-          doctorName: `${this.selectedDoctor.firstName} ${this.selectedDoctor.lastName}`,
-          speciality: this.selectedDoctor.speciality,
-          service: this.selectedService.name,
-          price: this.selectedService.price,
-          date: this.selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD
-          time: this.selectedTime,
-          dayName: this.selectedDay.dayName,
-          status: "pending", // or "confirmed" based on your flow
-          createdAt: new Date(),
-        };
-
-        await addDoc(collection(db, "bookings"), bookingData);
-
-        // Save booking data to localStorage for later saving after payment
-        localStorage.setItem("pendingBooking", JSON.stringify(bookingData));
-        // Redirect to payment
+        // Proceed to payment; checkout will prepare and save pending booking data in localStorage
         this.checkout();
       } catch (error) {
         console.error("Error booking appointment:", error);
