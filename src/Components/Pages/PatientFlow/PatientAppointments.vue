@@ -8,6 +8,32 @@
         <p class="text-gray-500">Manage your appointments and schedule</p>
       </div>
 
+      <!-- Tabs -->
+      <div class="flex gap-4 mb-6">
+        <button
+          @click="activeTab = 'upcoming'"
+          :class="[
+            'px-4 py-2 rounded-lg font-medium',
+            activeTab === 'upcoming'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+          ]"
+        >
+          Upcoming
+        </button>
+        <button
+          @click="activeTab = 'history'"
+          :class="[
+            'px-4 py-2 rounded-lg font-medium',
+            activeTab === 'history'
+              ? 'bg-blue-600 text-white'
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+          ]"
+        >
+          History
+        </button>
+      </div>
+
       <!--Page content-->
       <div v-if="loading" class="text-center w-full flex items-center justify-center">
         <div role="status flex flex-col items-center justify-center">
@@ -29,72 +55,43 @@
           </svg>
         </div>
       </div>
-      <div v-else-if="appointments.length === 0" class="text-center">No appointments found.</div>
-      <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-fit">
+      <div v-else-if="currentAppointments.length === 0" class="text-center">
+        No appointments found.
+      </div>
+      <div v-else class="grid grid-cols-1 gap-4 h-fit">
         <div
-          v-for="appointment in appointments"
+          v-for="appointment in currentAppointments"
           :key="appointment.id"
-          class="doc p-4 bg-white rounded-xl flex flex-col gap-4"
+          class="cardPayment bg-blue-50 flex flex-col gap-4 rounded-xl p-4"
         >
-          <div class="top w-full relative">
-            <img
-              :src="appointment.doctorImage"
-              alt=""
-              v-if="appointment.doctorImage"
-              class="rounded-lg h-75 w-full"
-            />
-            <div
-              v-else
-              class="w-full rounded-lg bg-gray-300 mr-4 flex items-center justify-center h-full"
-            >
-              <svg class="w-8 h-8 text-gray-600" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fill-rule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
-            </div>
-            <div class="exp p-2 px-4 bg-blue-50 rounded-full w-fit absolute top-4 right-4">
-              <p class="text-blue-600 font-medium">{{ appointment.service }}</p>
+          <div class="flex justify-between">
+            <h2 class="Internal">{{ appointment.speciality || "Appointment" }}</h2>
+            <div class="flex w-fit justify-end gap-2">
+              <span :class="getStatusClass(appointment.status)">{{ appointment.status }}</span>
             </div>
           </div>
-          <div class="bottom flex flex-col gap-4">
-            <div class="name flex flex-col gap-2">
-              <div class="flex justify-between items-start">
-                <div>
-                  <h1 class="text-xl font-medium">{{ appointment.doctorName }}</h1>
-                  <p class="text-lg text-gray-500">{{ appointment.speciality }}</p>
-                </div>
-                <div>
-                  <span class="Confirmed">Confirmed</span>
-                </div>
+          <div class="flex justify-start items-center w-full">
+            <div class="imgDoc mx-2">
+              <img :src="appointment.doctorImage || '/images/imgProfile.jpg'" alt="" />
+            </div>
+            <div class="w-full">
+              <div class="flex justify-between w-full">
+                <h2 class="nameDoc">{{ appointment.doctorName }}</h2>
+                <span class="linkVido">{{ appointment.service }}</span>
+              </div>
+              <div class="flex flex-row justify-between">
+                <span class="time">{{ appointment.time }} , {{ appointment.date }}</span>
+                <span class="linkVido"></span>
               </div>
             </div>
-
-            <div class="flex gap-2 items-center text-sm text-gray-500">
-              <svg
-                class="w-5 h-5 fill-gray-500"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 640 640"
-              >
-                <path
-                  d="M352 96C369.7 96 384 110.3 384 128L384 160 480 160C515.3 160 544 188.7 544 224L544 480C544 515.3 515.3 544 480 544L160 544C124.7 544 96 515.3 96 480L96 224C96 188.7 124.7 160 160 160L256 160 256 128C256 110.3 270.3 96 288 96 305.7 96 320 110.3 320 128L320 160 352 160zM448 288L192 288C174.3 288 160 302.3 160 320 160 337.7 174.3 352 192 352L448 352C465.7 352 480 337.7 480 320 480 302.3 465.7 288 448 288z"
-                />
-              </svg>
-              <span
-                >{{ appointment.dayName }} • {{ appointment.date }} • {{ appointment.time }}</span
-              >
-            </div>
-
-            <div class="flex gap-2 mt-2">
-              <button
-                @click="openCancelModal(appointment)"
-                class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
-              >
-                Cancel appointment
-              </button>
-            </div>
+          </div>
+          <div v-if="activeTab === 'upcoming'" class="flex gap-2 mt-2">
+            <button
+              @click="openCancelModal(appointment)"
+              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            >
+              Cancel appointment
+            </button>
           </div>
         </div>
       </div>
@@ -152,11 +149,35 @@ export default {
       loading: true,
       showCancelModal: false,
       appointmentToCancel: null,
+      activeTab: "upcoming",
     };
   },
   mounted() {
     this.checkAndSavePendingBooking();
     this.listenToAppointments();
+  },
+  computed: {
+    currentAppointments() {
+      if (this.activeTab === "upcoming") {
+        return this.upcomingAppointments;
+      } else {
+        return this.historyAppointments;
+      }
+    },
+    upcomingAppointments() {
+      const now = new Date();
+      return this.appointments.filter((app) => {
+        const appDate = new Date(`${app.date} ${app.time}`);
+        return app.status.toLowerCase() === "confirmed" && appDate >= now;
+      });
+    },
+    historyAppointments() {
+      const now = new Date();
+      return this.appointments.filter((app) => {
+        const appDate = new Date(`${app.date} ${app.time}`);
+        return app.status.toLowerCase() !== "confirmed" || appDate < now;
+      });
+    },
   },
   methods: {
     async logout() {
@@ -339,12 +360,9 @@ export default {
               };
             })
           );
-          // Keep only confirmed appointments and deduplicate by doctor/date/time
-          const onlyConfirmed = appointmentsData.filter(
-            (app) => app.status && app.status.toLowerCase() === "confirmed"
-          );
+          // Keep all appointments and deduplicate by doctor/date/time
           const dedupedMap = new Map();
-          for (const app of onlyConfirmed) {
+          for (const app of appointmentsData) {
             const key = `${app.doctorId || ""}-${app.date}-${app.time}`;
             // Prefer keeping the first encountered; adjust if priority rules change
             if (!dedupedMap.has(key)) {
@@ -359,6 +377,18 @@ export default {
       } catch (error) {
         console.error("Error listening to appointments:", error);
         this.loading = false;
+      }
+    },
+    getStatusClass(status) {
+      const lowerStatus = status.toLowerCase();
+      if (lowerStatus === "confirmed") {
+        return "Confirmed";
+      } else if (lowerStatus === "pending") {
+        return "Pending";
+      } else if (lowerStatus === "cancelled") {
+        return "Canceled";
+      } else {
+        return "done";
       }
     },
   },

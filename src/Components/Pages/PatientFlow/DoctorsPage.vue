@@ -544,10 +544,27 @@ export default {
       if (!dayAvail) return [];
 
       // Generate all possible slots based on availability
-      const slots = [];
-      const start = new Date(`1970-01-01T${dayAvail.start}:00`);
+      let slots = [];
+      let start = new Date(`1970-01-01T${dayAvail.start}:00`);
       const end = new Date(`1970-01-01T${dayAvail.end}:00`);
       const interval = 30 * 60 * 1000; // 30 minutes
+
+      // Adjust start time for today to avoid past slots
+      const today = new Date();
+      const isToday = this.selectedDay.date.toDateString() === today.toDateString();
+      if (isToday) {
+        const now = new Date();
+        const currentTime = new Date(1970, 0, 1, now.getHours(), now.getMinutes());
+        if (currentTime > start) {
+          // Round up to next 30-minute slot
+          const minutes = currentTime.getMinutes();
+          const remainder = minutes % 30;
+          const add = remainder === 0 ? 0 : 30 - remainder;
+          currentTime.setMinutes(minutes + add);
+          start = currentTime;
+        }
+      }
+
       for (let time = start.getTime(); time < end.getTime(); time += interval) {
         const slotTime = new Date(time);
         slots.push(slotTime.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }));
