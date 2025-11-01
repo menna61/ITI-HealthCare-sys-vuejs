@@ -13,7 +13,7 @@
             <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
           </div>
           <div class="flex flex-col justify-around items-start pl-6 py-4">
-            <p class="text-gray-50 text-xl">Hi. </p>
+            <p class="text-gray-50 text-xl">Hi. {{ currentPatient.firstName }} {{ currentPatient.secondName }} </p>
             <h1 class="h1 text-white md:w-3/4 text-3xl">Have You Had a Routine Health Check This Month?</h1>
             <button class="btnBooking my-2 rounded-xl mt-4">Booking Now</button>
           </div>
