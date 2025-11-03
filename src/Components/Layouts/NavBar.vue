@@ -1,9 +1,9 @@
 <template>
   <div class="w-full bg-white dark:bg-gray-800">
-    <nav class="w-full">
+    <nav class="w-full overflow-x-hidden">
       <div
         :class="isAuthPages ? 'cont' : 'mr-20 ml-8'"
-        class="py-4 flex justify-between items-center"
+        class="py-4 px-4 flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 lg:gap-0"
       >
         <div v-if="isAuthPages">
           <router-link to="/">
@@ -12,13 +12,10 @@
             </div>
           </router-link>
         </div>
-        <div v-if="!isAuthPages" class="search">
-          <form class="w-96">
-            <label
-              for="default-search"
-              class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
-              >Search</label
-            >
+
+        <!-- 🔍 Search Section -->
+        <div v-if="!isAuthPages" class="search w-full lg:w-auto relative" ref="searchWrapper">
+          <form class="w-full lg:w-96">
             <div class="relative">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg
@@ -38,16 +35,46 @@
                 </svg>
               </div>
               <input
+                ref="searchInput"
+                @focus="updateDropdownRect"
+                @input="updateDropdownRect"
                 type="search"
                 id="default-search"
+                v-model="searchQuery"
                 class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 placeholder="Search..."
                 required
               />
             </div>
           </form>
+
+          <!-- 🔽 Overlay Dropdown -->
+          <teleport to="body">
+            <div
+              v-if="searchQuery && recommendations.length > 0"
+              ref="dropdown"
+              :style="dropdownStyle"
+              class="absolute bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999] mt-1"
+            >
+              <ul class="divide-y divide-gray-100 dark:divide-gray-600">
+                <li
+                  v-for="rec in recommendations"
+                  :key="rec.path"
+                  class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                  @click="navigateTo(rec.fullPath)"
+                >
+                  <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
+                  <span class="block text-xs text-gray-500 dark:text-gray-400">
+                    {{ rec.fullPath }}
+                  </span>
+                </li>
+              </ul>
+            </div>
+          </teleport>
         </div>
-        <div class="right flex gap-4">
+
+        <!-- 🔔 Notifications & User Section -->
+        <div class="right flex flex-row flex-wrap gap-3 sm:gap-4 items-center">
           <div
             v-if="!isAuthPages"
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-600 relative cursor-pointer"
@@ -59,21 +86,23 @@
               viewBox="0 0 640 640"
               @click="testNotification"
             >
-              <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
               <path
                 d="M320 64C302.3 64 288 78.3 288 96L288 99.2C215 114 160 178.6 160 256L160 277.7C160 325.8 143.6 372.5 113.6 410.1L103.8 422.3C98.7 428.6 96 436.4 96 444.5C96 464.1 111.9 480 131.5 480L508.4 480C528 480 543.9 464.1 543.9 436.4 541.2 428.6 536.1 422.3L526.3 410.1C496.4 372.5 480 325.8 480 277.7L480 256C480 178.6 425 114 352 99.2L352 96C352 78.3 337.7 64 320 64zM258 528C265.1 555.6 290.2 576 320 576C349.8 576 374.9 555.6 382 528L258 528z"
               />
             </svg>
-            <!-- Red dot for unread notifications -->
+
+            <!-- 🔴 Red dot for unread notifications -->
             <div
               v-if="unreadCount > 0"
               class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-xs text-white font-bold z-50"
             >
               {{ unreadCount }}
             </div>
+
+            <!-- 📜 Notifications popup -->
             <div
               v-if="showNotifications"
-              class="absolute top-full right-0 mt-2 w-64 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-50"
+              class="fixed top-20 right-[284px] w-64 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-[100000] dark:text-white"
             >
               <div
                 v-if="notifications.length === 0"
@@ -113,11 +142,10 @@
           </div>
 
           <dark-mode-toggle />
-
           <lang-drop />
 
           <div
-            v-if="!isAuthPages && this.$route.path.startsWith ('/dashboard') "
+            v-if="!isAuthPages && this.$route.path.startsWith('/dashboard')"
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 relative cursor-pointer"
           >
             <img
@@ -190,6 +218,8 @@ export default {
       showNotifications: false,
       notifications: [],
       unreadCount: 0,
+      searchQuery: "",
+      dropdownRect: { left: 0, top: 0, width: 0 },
     };
   },
   mounted() {
@@ -205,22 +235,20 @@ export default {
         this.unreadCount = 0;
       }
     });
+    window.addEventListener("resize", this.updateDropdownRect);
+    window.addEventListener("scroll", this.updateDropdownRect, true);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateDropdownRect);
+    window.removeEventListener("scroll", this.updateDropdownRect, true);
   },
   methods: {
     async toggleNotifications() {
       this.showNotifications = !this.showNotifications;
-      // When opening the popup, mark all unread notifications as read
       if (this.showNotifications) {
         await this.markNotificationsRead();
         this.fetchNotifications();
       }
-    },
-    showLang() {
-      this.langShow = !this.langShow;
-    },
-    changeLanguage(language) {
-      this.$i18n.locale = language.code;
-      this.langShow = false;
     },
     goToDocProfile() {
       this.$router.push("/dashboard/profile");
@@ -232,68 +260,39 @@ export default {
       try {
         const doctorsCollection = collection(db, "doctors");
         const doctorsSnapshot = await getDocs(doctorsCollection);
-        const doctorsData = await Promise.all(
-          doctorsSnapshot.docs.map(async (doctorDoc) => {
-            const doctorData = { id: doctorDoc.id, ...doctorDoc.data() };
-            // Fetch availability from doctorAvailability collection
-            try {
-              const availRef = doc(db, "doctorAvailability", doctorData.id);
-              const availSnap = await getDoc(availRef);
-              if (availSnap.exists()) {
-                doctorData.availability = availSnap.data().availability;
-              }
-            } catch (error) {
-              console.error("Error fetching availability for doctor", doctorData.id, error);
-            }
-            return doctorData;
-          })
-        );
-        this.doctors = doctorsData;
+        this.doctors = doctorsSnapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       } catch (error) {
         console.error("Error fetching doctors:", error);
-      } finally {
-        this.loading = false;
       }
     },
     async getCurrentUser() {
       try {
         const user = auth.currentUser;
-        let currentUserRole = null;
-        if (user) {
-          // Check if user is a doctor
-          const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
-          if (doctorDoc.exists()) {
-            this.currentUser = { id: user.uid, ...doctorDoc.data() };
-            currentUserRole = doctorDoc.data().role || "doctor";
-          } else {
-            // Check if user is a patient
-            const patientDoc = await getDoc(doc(db, "patients", user.uid));
-            if (patientDoc.exists()) {
-              this.currentUser = { id: user.uid, ...patientDoc.data() };
-              currentUserRole = patientDoc.data().role || "patient";
-            } else {
-              // Check if admin
-              const adminDoc = await getDoc(doc(db, "admin", user.uid));
-              if (adminDoc.exists()) {
-                this.currentUser = { id: user.uid, ...adminDoc.data() };
-                currentUserRole = adminDoc.data().role || "admin";
-              } else {
-                this.currentUser = { id: user.uid };
-                currentUserRole = null;
-              }
-            }
-          }
-          this.currentUserRole = currentUserRole;
+        if (!user) return;
+        const doctorDoc = await getDoc(doc(db, "doctors", user.uid));
+        if (doctorDoc.exists()) {
+          this.currentUser = { id: user.uid, ...doctorDoc.data() };
+          this.currentUserRole = "doctor";
+          return;
+        }
+        const patientDoc = await getDoc(doc(db, "patients", user.uid));
+        if (patientDoc.exists()) {
+          this.currentUser = { id: user.uid, ...patientDoc.data() };
+          this.currentUserRole = "patient";
+          return;
+        }
+        const adminDoc = await getDoc(doc(db, "admin", user.uid));
+        if (adminDoc.exists()) {
+          this.currentUser = { id: user.uid, ...adminDoc.data() };
+          this.currentUserRole = "admin";
         }
       } catch (error) {
         console.error("Error getting current user:", error);
       }
     },
-
     async testNotification() {
       const user = auth.currentUser;
       if (user) {
-        console.log("Adding test notification for user:", user.uid);
         await addDoc(collection(db, "notifications"), {
           userId: user.uid,
           message:
@@ -301,12 +300,8 @@ export default {
           read: false,
           createdAt: new Date(),
         });
-        console.log("Test notification added");
-      } else {
-        console.log("No user logged in");
       }
     },
-
     async fetchNotifications() {
       const user = auth.currentUser;
       if (!user || this.currentUserRole !== "doctor") {
@@ -315,19 +310,16 @@ export default {
         return;
       }
       const querySnapshot = await getDocs(collection(db, "notifications"));
-      // filter notifications for this doctor only, newest first
       const notifs = querySnapshot.docs
         .map((doc) => ({ id: doc.id, ...doc.data() }))
         .filter((n) => n.userId === user.uid)
         .sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
-      // Remove duplicates based on message content
       const uniqueNotifs = notifs.filter(
         (notif, index, self) => index === self.findIndex((n) => n.message === notif.message)
       );
       this.notifications = uniqueNotifs;
       this.unreadCount = uniqueNotifs.filter((n) => !n.read).length;
     },
-
     async markNotificationsRead() {
       const user = auth.currentUser;
       if (!user) return;
@@ -335,29 +327,64 @@ export default {
       const unread = querySnapshot.docs.filter(
         (n) => n.data().userId === user.uid && !n.data().read
       );
-      const updatePromises = unread.map((docSnap) =>
-        updateDoc(doc(db, "notifications", docSnap.id), { read: true })
+      await Promise.all(
+        unread.map((docSnap) => updateDoc(doc(db, "notifications", docSnap.id), { read: true }))
       );
-      await Promise.all(updatePromises);
+    },
+    updateDropdownRect() {
+      this.$nextTick(() => {
+        const input = this.$refs.searchInput;
+        if (!input) return;
+        const rect = input.getBoundingClientRect();
+        const top = rect.bottom + window.scrollY + 8;
+        this.dropdownRect = {
+          left: rect.left + window.scrollX,
+          top,
+          width: rect.width,
+        };
+      });
+    },
+    navigateTo(path) {
+      this.$router.push(path);
+      this.searchQuery = "";
     },
   },
-
   computed: {
+    dropdownStyle() {
+      return {
+        position: "absolute",
+        left: `${this.dropdownRect.left}px`,
+        top: `${this.dropdownRect.top}px`,
+        width: `${this.dropdownRect.width}px`,
+      };
+    },
     isLoginPage() {
       return this.$route.path === "/login";
     },
-    currentLanguage() {
-      return this.languages.find((lang) => lang.code === this.$i18n.locale) || this.languages[0];
-    },
     isAuthPages() {
-      return (
-        this.$route.path === "/login" ||
-        this.$route.path === "/signupcards" ||
-        this.$route.path === "/patientSignup" ||
-        this.$route.path === "/doctorSignup" ||
-        this.$route.path === "/success" ||
-        this.$route.path === "/forgot-password"
+      return [
+        "/login",
+        "/signupcards",
+        "/patientSignup",
+        "/doctorSignup",
+        "/success",
+        "/forgot-password",
+      ].includes(this.$route.path);
+    },
+    recommendations() {
+      if (!this.searchQuery) return [];
+      const currentRoute = this.$route.matched.find(
+        (route) => route.children && route.children.length > 0
       );
+      if (!currentRoute || !currentRoute.children) return [];
+      const basePath = currentRoute.path;
+      return currentRoute.children
+        .filter((child) => child.path.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        .map((child) => ({
+          path: child.path,
+          name: child.name || child.path.replace("/", "").replace("-", " ").toUpperCase(),
+          fullPath: basePath + (child.path.startsWith("/") ? child.path : "/" + child.path),
+        }));
     },
   },
 };

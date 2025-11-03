@@ -1,21 +1,21 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
 
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Profile</h1>
-        <p class="text-gray-500">Manage your data</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
+        <p class="text-gray-500 dark:text-gray-400">Manage your data</p>
       </div>
 
       <!-- Profile Form -->
-      <div class="profile-form bg-white p-8 rounded-xl">
+      <div class="profile-form bg-white dark:bg-gray-800 p-6 lg:p-8 rounded-xl">
         <form @submit.prevent="saveProfile" class="flex flex-col gap-6">
           <!-- Profile Image -->
           <div class="flex flex-col gap-4">
             <div
-              class="w-24 h-24 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden cursor-pointer relative group"
+              class="w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center overflow-hidden cursor-pointer relative group"
               @click="triggerFileInput"
             >
               <img
@@ -24,7 +24,12 @@
                 alt="Profile"
                 class="w-full h-full object-cover"
               />
-              <svg v-else class="w-12 h-12 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                v-else
+                class="w-12 h-12 text-gray-400 dark:text-gray-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fill-rule="evenodd"
                   d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
@@ -51,7 +56,7 @@
               </div>
             </div>
             <p
-              class="text-sm text-gray-500 cursor-pointer hover:text-gray-700"
+              class="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300"
               @click="triggerFileInput"
             >
               Click to change profile image
@@ -68,39 +73,41 @@
           <!-- Personal Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">First Name</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
               <input
                 v-model="firstName"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter first name"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Last Name</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
               <input
                 v-model="lastName"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter last name"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Email</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
               <input
                 v-model="email"
                 type="email"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter email"
                 readonly
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Phone Number</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Phone Number</label
+              >
               <input
                 v-model="phoneNumber"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter phone number"
               />
             </div>
@@ -109,39 +116,43 @@
           <!-- Professional Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Years of Experience</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Years of Experience</label
+              >
               <input
                 v-model="yearsOfExperience"
                 type="number"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter years of experience"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Medical License Number</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Medical License Number</label
+              >
               <input
                 v-model="medicalLicenseNumber"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg bg-gray-50"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-gray-50 dark:bg-gray-600 text-gray-900 dark:text-white"
                 placeholder="Enter license number"
                 readonly
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Degree</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Degree</label>
               <input
                 v-model="degree"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter degree"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Speciality</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Speciality</label>
               <input
                 v-model="speciality"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter speciality"
               />
             </div>
@@ -150,20 +161,24 @@
           <!-- Clinic Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Clinic Name</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Clinic Name</label
+              >
               <input
                 v-model="clinicName"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter clinic name"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium">Clinic Address</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                >Clinic Address</label
+              >
               <input
                 v-model="clinicAddress"
                 type="text"
-                class="h-12 px-4 border border-gray-200 rounded-lg"
+                class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 placeholder="Enter clinic address"
               />
             </div>
@@ -171,27 +186,30 @@
 
           <!-- Bio -->
           <div class="flex flex-col gap-2">
-            <label class="text-sm font-medium">Bio</label>
+            <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Bio</label>
             <textarea
               v-model="bio"
-              class="h-32 px-4 py-3 border border-gray-200 rounded-lg resize-none"
+              class="h-32 px-4 py-3 border border-gray-200 dark:border-gray-600 rounded-lg resize-none bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="Enter your bio"
             ></textarea>
           </div>
 
           <!-- Messages -->
-          <div v-if="errorMsg" class="text-red-600 bg-red-50 border border-red-200 p-3 rounded-lg">
+          <div
+            v-if="errorMsg"
+            class="text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700 p-3 rounded-lg"
+          >
             {{ errorMsg }}
           </div>
           <div
             v-if="successMsg"
-            class="text-green-600 bg-green-50 border border-green-200 p-3 rounded-lg"
+            class="text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900 border border-green-200 dark:border-green-700 p-3 rounded-lg"
           >
             {{ successMsg }}
           </div>
 
           <!-- Save Button -->
-          <div class="flex justify-end">
+          <div class="flex justify-center lg:justify-end">
             <button
               type="submit"
               :disabled="loading"

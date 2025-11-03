@@ -1,13 +1,13 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page top-->
-      <div class="flex justify-between items-start">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <!--Titles-->
         <div class="title flex flex-col gap-4">
-          <h1 class="text-2xl font-bold">Services</h1>
-          <p class="text-gray-500">Track your services</p>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Services</h1>
+          <p class="text-gray-500 dark:text-gray-400">Track your services</p>
         </div>
 
         <!--Button at top right-->
@@ -59,8 +59,10 @@
                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
               ></path>
             </svg>
-            <h3 class="text-xl font-semibold text-gray-900 mb-2">No services yet</h3>
-            <p class="text-gray-500 mb-6">
+            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              No services yet
+            </h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6">
               Start by creating your first service to begin accepting appointments.
             </p>
             <button
@@ -89,7 +91,7 @@
         <div
           v-for="service in services"
           :key="service.id"
-          class="relative max-w-sm bg-white rounded-xl p-4 flex flex-col gap-4 justify-between"
+          class="relative bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-4 justify-between w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
         >
           <!-- Top Row: Text left + Icons right -->
           <div class="flex justify-between items-start gap-6">
@@ -98,7 +100,7 @@
               <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
                 {{ service.name }}
               </h5>
-              <p class="text-gray-500 text-sm mt-1">
+              <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
                 {{ service.description }}
               </p>
             </div>
@@ -142,7 +144,8 @@
           <div class="flex items-center justify-between">
             <!-- Price -->
             <span class="text-lg font-semibold dark:text-blue-400"
-              >${{ service.price }}<span class="text-gray-500">/session</span></span
+              >${{ service.price
+              }}<span class="text-gray-500 dark:text-gray-400">/session</span></span
             >
 
             <!-- Toggle -->
@@ -157,7 +160,9 @@
               <div
                 class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"
               ></div>
-              <div class="ml-[10px]">{{ service.isActive ? "Active" : "Inactive" }}</div>
+              <div class="ml-[10px] text-gray-900 dark:text-white">
+                {{ service.isActive ? "Active" : "Inactive" }}
+              </div>
             </label>
           </div>
         </div>
@@ -167,12 +172,15 @@
           v-if="showModal"
           class="fixed inset-0 bg-black/75 flex items-center justify-center z-50"
         >
-          <div class="bg-white rounded-lg p-6 w-full max-w-md mx-4 z-100">
+          <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 z-100">
             <div class="flex justify-between items-center mb-4">
-              <h3 class="text-lg font-semibold">
+              <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ isEditing ? "Edit Service" : "Create New Service" }}
               </h3>
-              <button @click="closeModal" class="text-gray-400 hover:text-gray-600">
+              <button
+                @click="closeModal"
+                class="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300"
+              >
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     stroke-linecap="round"
@@ -186,29 +194,33 @@
 
             <form @submit.prevent="saveService" class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Service Name</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Service Name</label
+                >
                 <input
                   v-model="serviceForm.name"
                   type="text"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="e.g., General Consultation"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                  >Description</label
+                >
                 <textarea
                   v-model="serviceForm.description"
                   required
                   rows="3"
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="Describe your service..."
                 ></textarea>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1"
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
                   >Price per Session ($)</label
                 >
                 <input
@@ -217,7 +229,7 @@
                   min="0"
                   step="0.01"
                   required
-                  class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   placeholder="0.00"
                 />
               </div>
@@ -226,16 +238,16 @@
                 <input
                   v-model="serviceForm.isActive"
                   type="checkbox"
-                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                  class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded"
                 />
-                <label class="ml-2 block text-sm text-gray-900">Active</label>
+                <label class="ml-2 block text-sm text-gray-900 dark:text-white">Active</label>
               </div>
 
               <div class="flex justify-end gap-3 pt-4">
                 <button
                   type="button"
                   @click="closeModal"
-                  class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-gray-300 rounded-md hover:bg-gray-200"
+                  class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
                   Cancel
                 </button>

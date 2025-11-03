@@ -1,7 +1,7 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page title-->
       <div class="title flex flex-col gap-4">
         <h1 class="text-2xl font-bold">Patients</h1>
@@ -13,8 +13,8 @@
       <div class="tablediv p-6 bg-white dark:bg-gray-800 rounded-xl">
         <div class="tableandsearch flex flex-col gap-4">
           <!--Search component-->
-          <div class="search">
-            <form class="w-96">
+          <div class="search w-full lg:w-auto">
+            <form class="w-full lg:w-96">
               <label
                 for="default-search"
                 class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white"
@@ -59,7 +59,6 @@
                   class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                 >
                   <tr>
-                    <th scope="col" class="px-6 py-3">ID</th>
                     <th scope="col" class="px-6 py-3">Name</th>
                     <th scope="col" class="px-6 py-3">Age</th>
                     <th scope="col" class="px-6 py-3">Gender</th>
@@ -70,16 +69,12 @@
                 <tbody>
                   <tr
                     v-for="patient in patients"
-                    :key="patient"
+                    :key="patient.id"
                     class="bg-white border-b dark:bg-gray-800 dark:border-gray-700 border-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600"
                   >
-                    <th
-                      scope="row"
+                    <td
                       class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                     >
-                      {{ patient.id }}
-                    </th>
-                    <td class="px-6 py-4">
                       {{ patient.name }}
                     </td>
                     <td class="px-6 py-4">
@@ -167,7 +162,9 @@
 
 <script>
 import MainNav from "../Layouts/MainNav.vue";
-import axios from "axios";
+import { collection, getDocs, query, where, getDoc, doc } from "firebase/firestore";
+import { db, auth } from "@/firebase";
+
 export default {
   name: "PatientsPage",
   components: { MainNav },
@@ -176,20 +173,51 @@ export default {
       patients: [],
     };
   },
-  methods: {
-    getAllPatients() {
-      axios
-        .get("http://localhost:5000/patients")
-        .then((response) => {
-          this.patients = response.data;
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    },
+  async mounted() {
+    await this.fetchDoctorPatients();
   },
-  mounted() {
-    this.getAllPatients();
+  methods: {
+    async fetchDoctorPatients() {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        // Fetch bookings for the current doctor
+        const bookingsCollection = collection(db, "bookings");
+        const q = query(bookingsCollection, where("doctorId", "==", user.uid));
+        const querySnapshot = await getDocs(q);
+
+        // Collect unique patient IDs
+        const patientIds = new Set();
+        querySnapshot.forEach((doc) => {
+          const booking = doc.data();
+          if (booking.patientId) {
+            patientIds.add(booking.patientId);
+          }
+        });
+
+        // Fetch patient details for each unique patient ID
+        const patients = [];
+        for (const patientId of patientIds) {
+          const patientRef = doc(db, "patients", patientId);
+          const patientSnap = await getDoc(patientRef);
+          if (patientSnap.exists()) {
+            const patientData = patientSnap.data();
+            patients.push({
+              id: patientId,
+              name: `${patientData.firstName || ""} ${patientData.lastName || ""}`.trim(),
+              age: patientData.age || "",
+              gender: patientData.gender || "",
+              email: patientData.email || "",
+            });
+          }
+        }
+
+        this.patients = patients;
+      } catch (error) {
+        console.error("Error fetching doctor patients:", error);
+      }
+    },
   },
 };
 </script>

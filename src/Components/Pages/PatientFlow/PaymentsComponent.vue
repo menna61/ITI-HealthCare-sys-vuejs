@@ -38,7 +38,7 @@
 
 <script>
 import { db, auth } from "/src/authHandler.js";
-import { collection, query, where, orderBy, limit, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 
 export default {
   data() {
@@ -94,7 +94,9 @@ export default {
               if (d.profileImageUrl) doctorImage = d.profileImageUrl;
             }
           }
-        } catch {}
+        } catch (e) {
+          console.error("Error fetching doctor details:", e);
+        }
         this.lastPayment = {
           id: b.id,
           doctorName,

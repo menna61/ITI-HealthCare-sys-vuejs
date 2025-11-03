@@ -1,30 +1,32 @@
 <template>
   <div>
-    <div class="w-dwh ml-[302px]">
+    <div class="w-dwh lg:ml-[302px] ml-0">
       <main-nav />
-      <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+      <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
         <!--Page titles-->
         <div class="title flex flex-col gap-4">
-          <h1 class="text-2xl font-bold">Calendar & Bookings</h1>
-          <p class="text-gray-500">Manage your appointments and schedule</p>
+          <h1 class="text-2xl font-bold dark:text-white">Calendar & Bookings</h1>
+          <p class="text-gray-500 dark:text-gray-400">Manage your appointments and schedule</p>
         </div>
 
         <!--Page content-->
 
-        <div class="content flex gap-6 w-full">
+        <div class="content flex flex-col lg:flex-row gap-6 w-full">
           <!--Calendar component-->
-          <div class="cal w-full">
+          <div class="cal w-full dark:text-white">
             <FullCalendar :options="calendarOptions" />
           </div>
 
           <!--Appointments card or Services card for new doctors-->
-          <div class="appointments" v-if="hasServices">
-            <h1 class="mb-4 text-xl font-semibold text-nowrap">{{ selectedDateText }}</h1>
+          <div class="appointments w-full lg:w-[378px]" v-if="hasServices">
+            <h1 class="mb-4 text-xl font-semibold text-nowrap dark:text-white">
+              {{ selectedDateText }}
+            </h1>
             <!--Appointments cards-->
 
             <div class="appCard flex flex-col gap-4" v-if="filteredAppointments.length > 0">
               <div
-                class="p-4 rounded-xl bg-white w-[378px] flex flex-col gap-4"
+                class="p-4 rounded-xl bg-white dark:bg-gray-800 w-[378px] flex flex-col gap-4"
                 v-for="appointment in filteredAppointments"
                 :key="appointment.id"
               >
@@ -48,19 +50,21 @@
                       </svg>
                     </div>
                     <div class="name flex flex-col gap-2">
-                      <p>{{ appointment.name }}</p>
+                      <p class="text-gray-900 dark:text-white">{{ appointment.name }}</p>
                       <div class="date flex gap-2">
                         <svg
-                          class="w-4 h-4 fill-gray-500"
+                          class="w-4 h-4 fill-gray-500 dark:fill-gray-400"
                           xmlns="http://www.w3.org/2000/svg"
                           viewBox="0 0 640 640"
                         >
-                          <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                          <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
                           <path
                             d="M320 64C461.4 64 576 178.6 576 320C576 461.4 461.4 576 320 576C178.6 576 64 461.4 64 320C64 178.6 178.6 64 320 64zM296 184L296 320C296 328 300 335.5 306.7 340L402.7 404C413.7 411.4 428.6 408.4 436 397.3C443.4 386.2 440.4 371.4 429.3 364L344 307.2L344 184C344 170.7 333.3 160 320 160C306.7 160 296 170.7 296 184z"
                           />
                         </svg>
-                        <p class="text-gray-500 text-xs">{{ appointment.time }}</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-xs">
+                          {{ appointment.time }}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -69,7 +73,7 @@
                       v-for="action in appointment.actions"
                       :key="action"
                       :class="getActionClass(action)"
-                      class="cursor-pointer"
+                      class="cursor-pointer hover:text-gray-700 dark:hover:text-gray-300"
                       @click="handleAction(action, appointment)"
                     >
                       {{ action }}
@@ -78,8 +82,11 @@
                 </div>
               </div>
             </div>
-            <div v-else class="p-4 rounded-xl bg-gray-50 w-[378px] text-center">
-              <p class="text-gray-500">No appointments for this day</p>
+            <div
+              class="p-4 rounded-xl bg-gray-50 dark:bg-gray-700 w-full lg:w-[378px] text-center"
+              v-else
+            >
+              <p class="text-gray-500 dark:text-gray-400">No appointments for this day</p>
             </div>
           </div>
 
@@ -91,8 +98,8 @@
                 class="p-4 rounded-xl w-[378px] flex flex-col gap-4"
                 :class="
                   hasUnionCard
-                    ? 'bg-yellow-50 border border-yellow-300'
-                    : 'bg-red-50 border border-red-200'
+                    ? 'bg-yellow-50 dark:bg-yellow-900 border border-yellow-300 dark:border-yellow-600'
+                    : 'bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700'
                 "
               >
                 <div class="flex items-center gap-3" v-if="hasUnionCard">
@@ -110,8 +117,10 @@
                     />
                   </svg>
                   <div>
-                    <h4 class="text-yellow-900 font-semibold">Documents Uploaded</h4>
-                    <p class="text-yellow-700 text-sm">
+                    <h4 class="text-yellow-900 dark:text-yellow-200 font-semibold">
+                      Documents Uploaded
+                    </h4>
+                    <p class="text-yellow-700 dark:text-yellow-300 text-sm">
                       You have uploaded the document and we will notify you once it is reviewed.
                     </p>
                   </div>
@@ -131,8 +140,12 @@
                     ></path>
                   </svg>
                   <div>
-                    <h4 class="text-red-800 font-semibold">Upload Union Membership Card</h4>
-                    <p class="text-red-600 text-sm">Required to access services and appointments</p>
+                    <h4 class="text-red-800 dark:text-red-200 font-semibold">
+                      Upload Union Membership Card
+                    </h4>
+                    <p class="text-red-600 dark:text-red-300 text-sm">
+                      Required to access services and appointments
+                    </p>
                   </div>
                 </div>
                 <div v-if="!hasUnionCard" class="flex flex-col gap-2">
@@ -181,8 +194,13 @@
                     {{ uploading ? "Uploading..." : "Upload Card" }}
                   </button>
                 </div>
-                <div v-if="uploadError" class="text-red-600 text-sm">{{ uploadError }}</div>
-                <div v-if="uploadSuccess && !hasUnionCard" class="text-green-600 text-sm">
+                <div v-if="uploadError" class="text-red-600 dark:text-red-400 text-sm">
+                  {{ uploadError }}
+                </div>
+                <div
+                  v-if="uploadSuccess && !hasUnionCard"
+                  class="text-green-600 dark:text-green-400 text-sm"
+                >
                   {{ uploadSuccess }}
                 </div>
               </div>
@@ -191,10 +209,10 @@
 
             <!-- Services Card -->
             <div
-              class="p-6 rounded-xl bg-white w-[378px] flex flex-col gap-4 items-center text-center"
+              class="p-6 rounded-xl bg-white dark:bg-gray-800 w-full lg:w-[378px] flex flex-col gap-4 items-center text-center"
             >
               <svg
-                class="w-16 h-16 text-gray-300 mx-auto"
+                class="w-16 h-16 text-gray-300 dark:text-gray-500 mx-auto"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -206,8 +224,10 @@
                   d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 ></path>
               </svg>
-              <h3 class="text-xl font-semibold text-gray-900">Create services</h3>
-              <p class="text-gray-500">Create your services to start taking appointments</p>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Create services</h3>
+              <p class="text-gray-500 dark:text-gray-400">
+                Create your services to start taking appointments
+              </p>
               <button
                 @click="goToServices"
                 :disabled="!isApproved"
@@ -235,11 +255,11 @@
     </div>
     <!-- Cancel Confirmation Modal -->
     <Modal v-model="showCancelModal" title="Confirm Cancellation" @close="closeCancelModal">
-      <p>Are you sure you want to cancel this appointment?</p>
+      <p class="text-gray-900 dark:text-white">Are you sure you want to cancel this appointment?</p>
       <template #footer>
         <button
           @click="closeCancelModal"
-          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
         >
           No
         </button>
@@ -469,6 +489,7 @@ export default {
                   console.error("Error fetching patient name:", err);
                 }
               }
+              const actions = ["Cancel"];
               return {
                 id: appointment.id,
                 date: appointment.date, // Assume date is in YYYY-MM-DD
@@ -478,7 +499,7 @@ export default {
                 status: appointment.status,
                 patientId: appointment.patientId,
                 price: appointment.price,
-                actions: ["Cancel"],
+                actions: actions,
               };
             })
         );
@@ -561,6 +582,15 @@ export default {
           amount: refundAmount,
           date: new Date(),
           type: "refund",
+        });
+
+        // Add notification to patient
+        await addDoc(collection(db, "notifications"), {
+          userId: appointment.patientId,
+          message: `Your appointment on ${appointment.date} at ${appointment.time} has been cancelled by the doctor. The amount has been refunded to your wallet.`,
+          read: false,
+          createdAt: new Date(),
+          type: "cancellation",
         });
 
         // Remove from local array

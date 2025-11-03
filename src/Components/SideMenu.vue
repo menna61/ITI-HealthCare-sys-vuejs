@@ -1,5 +1,8 @@
 <template>
-  <div class="w-[302px] bg-[#212D66] pt-10 flex flex-col items-center gap-20 h-screen fixed">
+  <div
+    class="z-[999999] w-[302px] bg-[#212D66] pt-10 flex flex-col items-center gap-20 h-screen fixed dark:bg-gray-800 transform transition-transform duration-300 -translate-x-full lg:translate-x-0"
+    :class="{ 'translate-x-0': isOpen }"
+  >
     <img src="../assets/pattern.svg" alt="" class="absolute bottom-0" />
     <div class="logo">
       <img src="../assets/logo-white.svg" alt="" />
@@ -170,9 +173,13 @@
             </svg>
           </div>
           <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 id="dialog-title" class="text-base font-semibold text-gray-900">Logout</h3>
+            <h3 id="dialog-title" class="text-base font-semibold text-gray-900 dark:text-white">
+              Logout
+            </h3>
             <div class="mt-2">
-              <p class="text-sm text-gray-500">Are you sure you want to logout ?</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400">
+                Are you sure you want to logout ?
+              </p>
             </div>
           </div>
         </div>
@@ -188,7 +195,7 @@
           <button
             type="button"
             @click="logout"
-            class="ml-2 inline-flex justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs"
+            class="ml-2 inline-flex justify-center rounded-md bg-white dark:bg-gray-700 px-3 py-2 text-sm font-semibold text-gray-900 dark:text-white shadow-xs"
           >
             Logout
           </button>
@@ -205,6 +212,12 @@ import UiModal from "./UI/Modal.vue";
 export default {
   name: "SideMenu",
   components: { UiModal },
+  props: {
+    isOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
 
   data() {
     return {

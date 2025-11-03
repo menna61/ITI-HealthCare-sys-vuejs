@@ -145,7 +145,9 @@ export default {
                   if (d.profileImageUrl) doctorImage = d.profileImageUrl;
                 }
               }
-            } catch {}
+            } catch (e) {
+          console.error("Error fetching doctor details:", e);
+        }
             return {
               id: b.id,
               doctorName,

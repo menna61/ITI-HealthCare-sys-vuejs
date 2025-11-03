@@ -228,7 +228,7 @@
             </div>
 
             <div
-              v-if="service.name.toLowerCase() === 'regular consultation'"
+              v-if="service.name.toLowerCase() !== 'telemedicine'"
               @click="selectService(service)"
               :class="[
                 'telemedicine border rounded-lg p-4 flex justify-between cursor-pointer',
@@ -464,7 +464,18 @@ export default {
               const availRef = doc(db, "doctorAvailability", doctorData.id);
               const availSnap = await getDoc(availRef);
               if (availSnap.exists()) {
-                doctorData.availability = availSnap.data().availability;
+                const raw = availSnap.data().availability || [];
+                // Normalize shape and times
+                doctorData.availability = raw.map((d) => ({
+                  name: d.name,
+                  available: !!d.available,
+                  start:
+                    typeof d.start === "string"
+                      ? d.start.slice(0, 5) // HH:MM
+                      : "",
+                  end: typeof d.end === "string" ? d.end.slice(0, 5) : "",
+                  date: typeof d.date === "string" ? d.date.split("T")[0] : d.date,
+                }));
               }
             } catch (error) {
               console.error("Error fetching availability for doctor", doctorData.id, error);
@@ -542,11 +553,15 @@ export default {
         (day) => day.name === dayName && day.available
       );
       if (!dayAvail) return [];
+      if (!dayAvail.start || !dayAvail.end) return [];
 
       // Generate all possible slots based on availability
       let slots = [];
       let start = new Date(`1970-01-01T${dayAvail.start}:00`);
       const end = new Date(`1970-01-01T${dayAvail.end}:00`);
+      if (isNaN(start.getTime()) || isNaN(end.getTime()) || end <= start) {
+        return [];
+      }
       const interval = 30 * 60 * 1000; // 30 minutes
 
       // Adjust start time for today to avoid past slots
