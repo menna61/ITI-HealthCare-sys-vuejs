@@ -1,7 +1,7 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
         <h1 class="text-2xl font-bold dark:text-white">My Appointments</h1>
@@ -9,73 +9,117 @@
       </div>
 
       <div class="appointments">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden animate-fade-in">
-          <table class="min-w-full">
-            <thead class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
-              <tr>
-                <th class="py-4 px-6 text-left font-semibold">Patient Name</th>
-                <th class="py-4 px-6 text-left font-semibold">Service</th>
-                <th class="py-4 px-6 text-left font-semibold">Date</th>
-                <th class="py-4 px-6 text-left font-semibold">Time</th>
-                <th class="py-4 px-6 text-left font-semibold">Status</th>
-                <th class="py-4 px-6 text-left font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="(appointment, index) in appointments"
-                :key="appointment.id"
-                class="hover:bg-blue-50 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-sm"
-                :style="{ animationDelay: `${index * 0.1}s` }"
-              >
-                <td class="py-4 px-6 text-gray-900 font-medium animate-slide-in-left">
-                  {{ appointment.patientName }}
-                </td>
-                <td
-                  class="py-4 px-6 text-gray-700 animate-slide-in-left"
-                  :style="{ animationDelay: `${index * 0.1 + 0.1}s` }"
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
+          <div class="relative overflow-x-auto">
+            <table class="min-w-full">
+              <thead class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+                <tr>
+                  <th class="py-4 px-6 text-left font-semibold">Patient Name</th>
+                  <th class="py-4 px-6 text-left font-semibold">Patient Email</th>
+                  <th class="py-4 px-6 text-left font-semibold">Patient Phone</th>
+                  <th class="py-4 px-6 text-left font-semibold">Service</th>
+                  <th class="py-4 px-6 text-left font-semibold">Date</th>
+                  <th class="py-4 px-6 text-left font-semibold">Time</th>
+                  <th class="py-4 px-6 text-left font-semibold">Status</th>
+                  <th class="py-4 px-6 text-left font-semibold">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                <tr
+                  v-for="(appointment, index) in appointments"
+                  :key="appointment.id"
+                  class="hover:bg-blue-50 dark:hover:bg-gray-700 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-sm"
+                  :style="{ animationDelay: `${index * 0.1}s` }"
                 >
-                  {{ appointment.service }}
-                </td>
-                <td
-                  class="py-4 px-6 animate-slide-in-left"
-                  :style="{ animationDelay: `${index * 0.1 + 0.2}s` }"
-                >
-                  {{ appointment.date }}
-                </td>
-                <td
-                  class="py-4 px-6 animate-slide-in-left"
-                  :style="{ animationDelay: `${index * 0.1 + 0.3}s` }"
-                >
-                  {{ appointment.time }}
-                </td>
-                <td
-                  class="py-4 px-6 animate-slide-in-left"
-                  :style="{ animationDelay: `${index * 0.1 + 0.4}s` }"
-                >
-                  <span
-                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 transition-all duration-300 hover:bg-green-200 hover:scale-105"
+                  <td
+                    class="py-4 px-6 text-gray-900 dark:text-white font-medium animate-slide-in-left"
                   >
-                    {{ appointment.status }}
-                  </span>
-                </td>
-                <td
-                  class="py-4 px-6 animate-slide-in-left"
-                  :style="{ animationDelay: `${index * 0.1 + 0.5}s` }"
-                >
-                  <button
-                    @click="cancelAppointment(appointment.id)"
-                    class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                    {{ appointment.patientName }}
+                  </td>
+                  <td
+                    class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.1}s` }"
                   >
-                    Cancel
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                    {{ appointment.patientEmail }}
+                  </td>
+                  <td
+                    class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.2}s` }"
+                  >
+                    {{ appointment.patientPhone }}
+                  </td>
+                  <td
+                    class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.3}s` }"
+                  >
+                    {{ appointment.service }}
+                  </td>
+                  <td
+                    class="py-4 px-6 text-gray-900 dark:text-white animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.4}s` }"
+                  >
+                    {{ appointment.date }}
+                  </td>
+                  <td
+                    class="py-4 px-6 text-gray-900 dark:text-white animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.5}s` }"
+                  >
+                    {{ appointment.time }}
+                  </td>
+                  <td
+                    class="py-4 px-6 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.6}s` }"
+                  >
+                    <span
+                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 transition-all duration-300 hover:bg-green-200 dark:hover:bg-green-800 hover:scale-105"
+                    >
+                      {{ appointment.status }}
+                    </span>
+                  </td>
+                  <td
+                    class="py-4 px-6 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.7}s` }"
+                  >
+                    <div class="flex gap-2">
+                      <button
+                        v-if="appointment.status === 'pending'"
+                        @click="acceptAppointment(appointment.id)"
+                        class="px-3 py-1 bg-green-500 text-white rounded hover:bg-green-600 transition-colors text-sm"
+                      >
+                        Accept
+                      </button>
+                      <button
+                        v-if="
+                          appointment.status === 'confirmed' &&
+                          appointment.date > new Date().toISOString().split('T')[0]
+                        "
+                        @click="cancelAppointment(appointment.id)"
+                        class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        v-if="appointment.status === 'confirmed'"
+                        @click="markCompleted(appointment.id)"
+                        class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
+                      >
+                        Mark Completed
+                      </button>
+                      <button
+                        @click="deleteAppointment(appointment.id)"
+                        class="px-3 py-1 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors text-sm"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
           <div v-if="appointments.length === 0" class="text-center py-12 animate-fade-in">
-            <div class="text-gray-500 text-lg">No appointments found</div>
-            <div class="text-gray-400 text-sm mt-2">
+            <div class="text-gray-500 dark:text-gray-400 text-lg">No appointments found</div>
+            <div class="text-gray-400 dark:text-gray-500 text-sm mt-2">
               Your scheduled appointments will appear here
             </div>
           </div>
@@ -97,6 +141,7 @@ import {
   getDoc,
   addDoc,
   setDoc,
+  deleteDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/firebase";
 
@@ -123,12 +168,32 @@ export default {
         const q = query(bookingsCollection, where("doctorId", "==", user.uid));
         const querySnapshot = await getDocs(q);
 
-        this.appointments = querySnapshot.docs
-          .map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }))
-          .filter((app) => (app.status || "").toLowerCase() !== "cancelled");
+        const appointments = [];
+        for (const docSnap of querySnapshot.docs) {
+          const appointment = { id: docSnap.id, ...docSnap.data() };
+          if ((appointment.status || "").toLowerCase() === "cancelled") continue;
+
+          // Check if past and pending, set to late
+          const today = new Date().toISOString().split("T")[0];
+          if (appointment.date < today && appointment.status === "pending") {
+            appointment.status = "late";
+          }
+
+          // Fetch patient details
+          if (appointment.patientId) {
+            const patientRef = doc(db, "patients", appointment.patientId);
+            const patientSnap = await getDoc(patientRef);
+            if (patientSnap.exists()) {
+              const patientData = patientSnap.data();
+              appointment.patientEmail = patientData.email || "";
+              appointment.patientPhone = patientData.phone || "";
+            }
+          }
+
+          appointments.push(appointment);
+        }
+
+        this.appointments = appointments;
       } catch (error) {
         console.error("Error fetching appointments:", error);
       }
@@ -139,7 +204,6 @@ export default {
         const appointmentRef = doc(db, "bookings", appointmentId);
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
-          alert("Appointment not found.");
           return;
         }
         const appointment = appointmentSnap.data();
@@ -172,11 +236,33 @@ export default {
 
         // Update local state
         this.appointments = this.appointments.filter((app) => app.id !== appointmentId);
-
-        alert("Appointment cancelled successfully and refund processed.");
       } catch (error) {
         console.error("Error cancelling appointment:", error);
-        alert("Failed to cancel appointment");
+      }
+    },
+    async acceptAppointment(appointmentId) {
+      try {
+        await updateDoc(doc(db, "bookings", appointmentId), { status: "confirmed" });
+        await this.fetchAppointments();
+      } catch (error) {
+        console.error("Error accepting appointment:", error);
+      }
+    },
+    async markCompleted(appointmentId) {
+      try {
+        await updateDoc(doc(db, "bookings", appointmentId), { status: "completed" });
+        await this.fetchAppointments();
+      } catch (error) {
+        console.error("Error marking completed:", error);
+      }
+    },
+
+    async deleteAppointment(appointmentId) {
+      try {
+        await deleteDoc(doc(db, "bookings", appointmentId));
+        this.appointments = this.appointments.filter((app) => app.id !== appointmentId);
+      } catch (error) {
+        console.error("Error deleting appointment:", error);
       }
     },
   },

@@ -1,22 +1,22 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Telemedicine</h1>
-        <p class="text-gray-500">Track your telemedicine sessions</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Telemedicine</h1>
+        <p class="text-gray-500 dark:text-gray-400">Track your telemedicine sessions</p>
       </div>
 
       <div class="content flex flex-col items-center w-full gap-6">
         <!-- 🟡 Waiting Room Section -->
-        <div class="w-full rounded-xl bg-white p-4 flex flex-col">
-          <h1 class="text-lg font-semibold text-gray-900 mb-2">
+        <div class="w-full rounded-xl bg-white dark:bg-gray-800 p-4 flex flex-col">
+          <h1 class="text-lg font-semibold text-gray-900 dark:text-white mb-2">
             Waiting Room for Telemedicine Sessions
           </h1>
 
           <div
-            class="flex items-center justify-between bg-amber-100/75 rounded h-[80px] w-full px-3"
+            class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-amber-100/75 rounded min-h-[80px] w-full px-3 py-3"
           >
             <!-- Left: User Info -->
             <div class="flex items-center gap-3">
@@ -36,8 +36,8 @@
               </div>
 
               <div class="flex flex-col">
-                <span class="text-gray-900 font-medium text-base">John Doe</span>
-                <div class="flex items-center gap-2 mt-1 text-gray-600">
+                <span class="text-gray-900 dark:text-white font-medium text-base">John Doe</span>
+                <div class="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                   <svg
                     class="w-4 h-4 fill-amber-500"
                     xmlns="http://www.w3.org/2000/svg"
@@ -73,13 +73,15 @@
         </div>
 
         <!-- 🟢 Upcoming Sessions Section -->
-        <div class="w-full rounded-xl bg-white p-4 flex flex-col">
-          <h1 class="text-lg font-semibold text-gray-900 mb-3">Upcoming Telemedicine Sessions</h1>
+        <div class="w-full rounded-xl bg-white dark:bg-gray-800 p-4 flex flex-col">
+          <h1 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            Upcoming Telemedicine Sessions
+          </h1>
 
           <div class="flex flex-col gap-3">
             <!-- Session 1 -->
             <div
-              class="flex items-center justify-between rounded h-[80px] w-full px-3 border border-gray-200"
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded min-h-[80px] w-full px-3 py-3 border border-gray-200 dark:border-gray-600"
             >
               <div class="flex items-center gap-3">
                 <div
@@ -97,10 +99,12 @@
                   </svg>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-gray-900 font-medium text-base">Michael Brown</span>
-                  <div class="flex items-center gap-2 mt-1 text-gray-600">
+                  <span class="text-gray-900 dark:text-white font-medium text-base"
+                    >Michael Brown</span
+                  >
+                  <div class="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                     <svg
-                      class="w-4 h-4 fill-gray-300"
+                      class="w-4 h-4 fill-gray-300 dark:fill-gray-500"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 640 640"
                     >
@@ -155,7 +159,7 @@
 
             <!-- Session 2 -->
             <div
-              class="flex items-center justify-between rounded h-[80px] w-full px-3 border border-gray-200/50"
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 rounded min-h-[80px] w-full px-3 py-3 border border-gray-200/50 dark:border-gray-600/50"
             >
               <div class="flex items-center gap-3">
                 <div
@@ -173,10 +177,12 @@
                   </svg>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-gray-900 font-medium text-base">Lisa Turner</span>
-                  <div class="flex items-center gap-2 mt-1 text-gray-600">
+                  <span class="text-gray-900 dark:text-white font-medium text-base"
+                    >Lisa Turner</span
+                  >
+                  <div class="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                     <svg
-                      class="w-4 h-4 fill-gray-300"
+                      class="w-4 h-4 fill-gray-300 dark:fill-gray-500"
                       xmlns="http://www.w3.org/2000/svg"
                       viewBox="0 0 640 640"
                     >
@@ -232,13 +238,15 @@
         </div>
 
         <!-- 🔵 Recent Sessions Section -->
-        <div class="w-full rounded-xl bg-white p-4 flex flex-col">
-          <h1 class="text-lg font-semibold text-gray-900 mb-3">Recent Telemedicine Sessions</h1>
+        <div class="w-full rounded-xl bg-white dark:bg-gray-800 p-4 flex flex-col">
+          <h1 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+            Recent Telemedicine Sessions
+          </h1>
 
           <div class="flex flex-col gap-3">
             <!-- Recent Session Card 1 -->
             <div
-              class="flex items-center justify-between border border-gray-200/50 rounded h-[80px] w-full px-3"
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border border-gray-200/50 dark:border-gray-600/50 rounded min-h-[80px] w-full px-3 py-3"
             >
               <div class="flex items-center gap-3">
                 <div
@@ -256,8 +264,10 @@
                   </svg>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-gray-900 font-medium text-base">Emily Davis</span>
-                  <div class="flex items-center gap-2 mt-1 text-gray-600">
+                  <span class="text-gray-900 dark:text-white font-medium text-base"
+                    >Emily Davis</span
+                  >
+                  <div class="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                     <svg
                       class="w-4 h-4 fill-gray-500"
                       xmlns="http://www.w3.org/2000/svg"
@@ -297,7 +307,7 @@
 
             <!-- Recent Session Card 2 -->
             <div
-              class="flex items-center justify-between border border-gray-200/50 rounded h-[80px] w-full px-3"
+              class="flex items-center justify-between border border-gray-200/50 dark:border-gray-600/50 rounded h-[80px] w-full px-3"
             >
               <div class="flex items-center gap-3">
                 <div
@@ -315,8 +325,10 @@
                   </svg>
                 </div>
                 <div class="flex flex-col">
-                  <span class="text-gray-900 font-medium text-base">Mark Wilson</span>
-                  <div class="flex items-center gap-2 mt-1 text-gray-600">
+                  <span class="text-gray-900 dark:text-white font-medium text-base"
+                    >Mark Wilson</span
+                  >
+                  <div class="flex items-center gap-2 mt-1 text-gray-600 dark:text-gray-400">
                     <svg
                       class="w-4 h-4 fill-gray-500"
                       xmlns="http://www.w3.org/2000/svg"

@@ -110,7 +110,7 @@
           />
         </div>
       </div>
-oo
+      oo
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
@@ -697,6 +697,7 @@ export default {
           profileImageUrl: this.profileImageUrl,
           unionMembershipCardUrl: "",
           role: "doctor",
+          approved: false,
         });
 
         this.successMsg = "Account created successfully.";
