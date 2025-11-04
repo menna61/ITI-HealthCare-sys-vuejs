@@ -4,9 +4,9 @@
       <div class="top flex flex-col gap-10">
         <back-btn />
         <div class="stepper flex flex-col gap-8">
-          <div class="top flex flex-col gap-4">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Login</h1>
-            <p class="text-gray-600 dark:text-gray-300 text-xl">Enter your credentials</p>
+          <div class="top flex flex-col gap-4">   
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white">{{ $t("login") }}</h1>
+            <p class="text-gray-600 dark:text-gray-300 text-xl">{{$t("Enter_your_credentials")}}</p>
           </div>
         </div>
       </div>
@@ -17,7 +17,7 @@
             <google-card />
             <div class="or flex gap-2 items-center justify-center">
               <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
-              <p class="text-gray-600 dark:text-gray-300">or</p>
+              <p class="text-gray-600 dark:text-gray-300">{{$t("or")}}</p>
               <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
             </div>
 
@@ -25,14 +25,14 @@
               <div class="inputs w-full flex flex-col gap-4">
                 <div class="name flex gap-4 items-center w-full">
                   <div class="fname flex flex-col gap-2 w-full">
-                    <label class="text-gray-700 dark:text-gray-300">Mobile or Email</label>
+                    <label class="text-gray-700 dark:text-gray-300">{{$t("Mobile_or_Email")}}</label>
                     <div
                       class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <input
                         v-model="email"
                         type="text"
-                        placeholder="Enter mobile or email"
+                        :placeholder="$t('Enter_mobile_or_email')"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                       />
                     </div>
@@ -42,14 +42,14 @@
                 <div class="pass flex gap-4 items-center w-full">
                   <div class="pass flex flex-col gap-2 w-full items-end">
                     <div class="flex flex-col gap-2 w-full">
-                      <label class="text-gray-700 dark:text-gray-300">Password</label>
+                      <label class="text-gray-700 dark:text-gray-300">{{$t("Password")}}</label>
                       <div
                         class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                       >
                         <input
                           v-model="password"
                           type="password"
-                          placeholder="Enter your password"
+                          :placeholder="$t('Enter_mobile_or_email')"
                           class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                       </div>
@@ -58,7 +58,7 @@
                       <router-link
                         to="/forgot-password"
                         class="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
-                        >Forgot password?</router-link
+                        >{{$t("Forgot_password?")}}</router-link
                       >
                     </div>
                   </div>
@@ -94,7 +94,8 @@
             />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
           </svg>
-          <p>{{ loading ? "Signing in..." : "Login" }}</p>
+          <p>{{ loading ? $t("Signing_in") : $t("Login") }}</p>
+
         </button>
       </div>
     </div>

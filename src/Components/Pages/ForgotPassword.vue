@@ -5,9 +5,11 @@
         <back-btn />
         <div class="stepper flex flex-col gap-8">
           <div class="top flex flex-col gap-4">
-            <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Forgot Password</h1>
+            <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+              {{ $t("Forgot_password") }}
+            </h1>
             <p class="text-gray-600 dark:text-gray-300 text-xl">
-              Enter your email to reset your password
+              {{ $t("Enter_email_to_reset_password") }}
             </p>
           </div>
         </div>
@@ -20,14 +22,16 @@
               <div class="inputs w-full flex flex-col gap-4">
                 <div class="email flex gap-4 items-center w-full">
                   <div class="email flex flex-col gap-2 w-full">
-                    <label class="text-gray-700 dark:text-gray-300">Email</label>
+                    <label class="text-gray-700 dark:text-gray-300">
+                      {{ $t("Email") }}
+                    </label>
                     <div
                       class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <input
                         v-model="email"
                         type="email"
-                        placeholder="Enter your email"
+                        :placeholder="$t('Enter_your_email')"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         required
                       />
@@ -69,7 +73,9 @@
             />
             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
           </svg>
-          <p>{{ loading ? "Sending..." : success ? "Login" : "Send Reset Email" }}</p>
+          <p>
+            {{ loading ? $t("Sending") : success ? $t("Login") : $t("Send_reset_email") }}
+          </p>
         </button>
       </div>
     </div>

@@ -1,70 +1,49 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
-      <!--Page titles-->
-      <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">All Users</h1>
-        <p class="text-gray-500">Manage and oversee all registered users</p>
+    <div class="pl-4 md:pl-8 pr-4 md:pr-8 lg:pr-20 mt-8 flex flex-col gap-6 overflow-hidden">
+      <!-- Page titles -->
+      <div class="title flex flex-col gap-4 px-4">
+        <h1 class="text-xl sm:text-2xl font-bold dark:text-white">{{ $t("allUsers") }}</h1>
+        <p class="text-gray-500 text-sm sm:text-base">{{ $t("manageUsers") }}</p>
       </div>
-      <div class="tableUsers">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden">
-          <table class="min-w-full divide-y divide-gray-200">
+
+      <!-- Users table -->
+      <div class="tableUsers px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gradient-to-r from-blue-500 to-purple-600">
               <tr>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider">
-                  Name
-                </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider">
-                  Email
-                </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider">
-                  Phone
-                </th>
-
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider">
-                  Actions
-                </th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">{{ $t("name") }}</th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">{{ $t("email") }}</th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">{{ $t("phone") }}</th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">{{ $t("actions") }}</th>
               </tr>
             </thead>
-            <tbody class="bg-white divide-y divide-gray-200 text-left">
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 text-left">
               <tr
                 v-for="(patient, index) in paginatedPatients"
                 :key="patient.id"
-                class="hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 cursor-pointer transition-all duration-500 animate-fadeInUp hover:scale-[1.02] hover:shadow-lg"
+                class="hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 cursor-pointer transition-all duration-500 animate-fadeInUp hover:scale-[1.02] hover:shadow-lg"
                 :style="{ animationDelay: `${index * 0.1}s` }"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {{ patient.firstName }}{{ patient.lastName }}
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  {{ patient.firstName }} {{ patient.lastName }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ patient.email }}
                 </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                   {{ patient.phone || "01156388768" }}
                 </td>
-
-                <td class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-around">
-                  <button
-                    @click.stop="openDeleteModal(patient)"
-                    class="text-red-600 hover:text-red-900 transition-colors duration-200 p-1 rounded-full hover:bg-red-100"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                      />
+                <td class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-center gap-2">
+                  <button @click.stop="openDeleteModal(patient)" class="text-red-600 hover:text-red-900 transition-colors duration-200 p-1 rounded-full hover:bg-red-100">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                     </svg>
                   </button>
-                  <button class="done" @click="openModal(patient)">view</button>
+                  <button class="done text-xs sm:text-sm px-2 sm:px-3 py-1" @click="openModal(patient)">{{ $t("view") }}</button>
                 </td>
               </tr>
             </tbody>
@@ -73,123 +52,56 @@
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-center mt-6">
-        <div class="flex items-center space-x-2">
-          <button
-            @click="prevPage"
-            :disabled="currentPage === 1"
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-          >
-            Previous
+      <div class="flex justify-center mt-6 px-4">
+        <div class="flex items-center space-x-2 flex-wrap gap-2">
+          <button @click="prevPage" :disabled="currentPage === 1"
+            class="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors text-sm sm:text-base">
+            {{ $t("previous") }}
           </button>
-          <span class="px-4 py-2 bg-gray-100 rounded-lg">
-            Page {{ currentPage }} of {{ totalPages }}
+          <span class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm sm:text-base">
+            {{ $t("pageOf", { current: currentPage, total: totalPages }) }}
           </span>
-          <button
-            @click="nextPage"
-            :disabled="currentPage === totalPages"
-            class="px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors"
-          >
-            Next
+          <button @click="nextPage" :disabled="currentPage === totalPages"
+            class="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors text-sm sm:text-base">
+            {{ $t("next") }}
           </button>
         </div>
       </div>
 
-      <!-- Modal for user details -->
-      <UiModal
-        v-model="showModal"
-        :title="'👤 Patient Details'"
-        @close="closeModal"
-        class="patient-details-modal"
-      >
+      <!-- Patient Details Modal -->
+      <UiModal v-model="showModal" :title="$t('patientDetails')" @close="closeModal" class="patient-details-modal">
         <div v-if="selectedPatient" class="patient-details-content">
-          <div class="patient-avatar">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-20 w-20 text-blue-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-              />
-            </svg>
-          </div>
           <div class="patient-info">
-            <div class="info-item">
-              <span class="info-label">👤 Name:</span>
-              <span class="info-value"
-                >{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</span
-              >
-            </div>
-            <div class="info-item">
-              <span class="info-label">📧 Email:</span>
-              <span class="info-value">{{ selectedPatient.email }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">📱 Phone:</span>
-              <span class="info-value">{{ selectedPatient.phone }}</span>
-            </div>
-            <div class="info-item">
-              <span class="info-label">👨‍⚕️ Doctor:</span>
-              <span class="info-value">{{ selectedPatient.doctor }}</span>
-            </div>
+            <div class="info-item"><span class="info-label">👤 {{ $t("name") }}:</span> <span class="info-value">{{ selectedPatient.firstName }} {{ selectedPatient.lastName }}</span></div>
+            <div class="info-item"><span class="info-label">📧 {{ $t("email") }}:</span> <span class="info-value">{{ selectedPatient.email }}</span></div>
+            <div class="info-item"><span class="info-label">📱 {{ $t("phone") }}:</span> <span class="info-value">{{ selectedPatient.phone }}</span></div>
+            <div class="info-item"><span class="info-label">👨‍⚕️ {{ $t("doctorName") }}:</span> <span class="info-value">{{ selectedPatient.doctor }}</span></div>
           </div>
           <div class="modal-actions">
-            <button @click="deleteFromModal" class="modal-delete-btn">🗑️ Delete User</button>
+            <button @click="deleteFromModal" class="modal-delete-btn">🗑️ {{ $t("deleteUser") }}</button>
           </div>
         </div>
       </UiModal>
 
-      <!-- Confirmation Modal for delete -->
-      <UiModal
-        v-model="showDeleteModal"
-        :title="'⚠️ Confirm Delete'"
-        @close="cancelDelete"
-        class="delete-modal"
-      >
+      <!-- Delete Confirmation Modal -->
+      <UiModal v-model="showDeleteModal" :title="$t('confirmDelete')" @close="cancelDelete" class="delete-modal">
         <div v-if="patientToDelete" class="delete-modal-content">
-          <div class="delete-icon">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-16 w-16 text-red-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
-              />
-            </svg>
-          </div>
-          <h3 class="delete-title">Are you sure you want to delete this user?</h3>
-          <div class="delete-user-info">
-            <p>
-              <strong>Name:</strong> {{ patientToDelete.firstName }} {{ patientToDelete.lastName }}
-            </p>
-            <p><strong>Email:</strong> {{ patientToDelete.email }}</p>
-          </div>
-          <p class="delete-warning">
-            This action cannot be undone. The user will be permanently removed from the system.
-          </p>
+          <h3 class="delete-title">{{ $t("confirmDeleteMessage") }}</h3>
+          <p><strong>{{ $t("name") }}:</strong> {{ patientToDelete.firstName }} {{ patientToDelete.lastName }}</p>
+          <p><strong>{{ $t("email") }}:</strong> {{ patientToDelete.email }}</p>
+          <p class="delete-warning">{{ $t("deleteWarning") }}</p>
         </div>
         <template #footer>
           <div class="delete-modal-footer">
-            <button @click="cancelDelete" class="cancel-btn">Cancel</button>
-            <button @click="confirmDelete" class="delete-btn">Yes, Delete</button>
+            <button @click="cancelDelete" class="cancel-btn">{{ $t("cancel") }}</button>
+            <button @click="confirmDelete" class="delete-btn">{{ $t("yesDelete") }}</button>
           </div>
         </template>
       </UiModal>
     </div>
   </div>
 </template>
+
 <script>
 import { collection, getDocs, doc, deleteDoc } from "firebase/firestore";
 import { db } from "@/firebase";

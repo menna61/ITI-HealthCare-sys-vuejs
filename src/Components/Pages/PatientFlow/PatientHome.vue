@@ -6,24 +6,27 @@
 
       <!--Page content-->
       <div
-          class="relative  flex items-center justify-start rounded-4xl h-80 bg-cover bg-center"
-          style="background-image: url('/images/bgHome.png')"
-        >
-          <div class="absolute right-4 md:right-20">
-            <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
-          </div>
-          <div class="flex flex-col justify-around items-start pl-6 py-4">
-            <p class="text-gray-50 text-xl">Hi. {{ currentPatient.firstName }} {{ currentPatient.secondName }} </p>
-            <h1 class="h1 text-white md:w-3/4 text-3xl">Have You Had a Routine Health Check This Month?</h1>
-            <button class="btnBooking my-2 rounded-xl mt-4">Booking Now</button>
-          </div>
+        class="relative flex items-center justify-start rounded-4xl h-80 bg-cover bg-center"
+        style="background-image: url('/images/bgHome.png')"
+      >
+        <div class="absolute right-4 md:right-20">
+          <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
         </div>
+        <div class="flex flex-col justify-around items-start pl-6 py-4">
+          <p v-if="currentPatient != null" class="text-gray-50 text-xl">
+            Hi. {{ currentPatient.firstName }}
+          </p>
+          <h1 class="h1 text-white md:w-3/4 text-3xl">
+            Have You Had a Routine Health Check This Month?
+          </h1>
+          <button class="btnBooking my-2 rounded-xl mt-4">Booking Now</button>
+        </div>
+      </div>
 
       <!-- Payments and Appointments Sections -->
       <div class="flex gap-6 w-full">
-        <payments-component/>
-        <appointments-component/>
-
+        <payments-component />
+        <appointments-component />
       </div>
     </div>
   </div>
@@ -104,7 +107,7 @@ export default {
 </script>
 
 <style scoped>
-  .btnBooking {
+.btnBooking {
   padding: 8px 16px;
   cursor: pointer;
   font-size: 15px;
@@ -118,5 +121,4 @@ export default {
   border-color: #101733;
   color: #101733;
 }
-
 </style>

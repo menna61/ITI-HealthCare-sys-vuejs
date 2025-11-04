@@ -221,6 +221,25 @@ export default {
           await updateDoc(patientRef, {
             wallet: currentWallet + refundAmount,
           });
+
+          // Send cancellation email to patient
+          try {
+            const patientName =
+              patientData.name || patientData.fullName || appointment.patientName || "Patient";
+            await fetch("http://localhost:4242/send-cancellation-email", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                patientId: appointment.patientId,
+                patientName,
+                doctorName: appointment.doctorName || "Doctor",
+                date: appointment.date,
+                time: appointment.time,
+              }),
+            });
+          } catch (e) {
+            console.error("Failed to send cancellation email:", e);
+          }
         } else {
           await setDoc(patientRef, { wallet: refundAmount }, { merge: true });
         }

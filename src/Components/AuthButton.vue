@@ -1,11 +1,15 @@
 <template>
   <div class="login-container">
     <div v-if="user">
-      <p>Signed in as: {{ user.displayName || user.email }}</p>
-      <button @click="signOut" class="btn">Sign out</button>
+    <p>{{ $t("Signed_in_as") }}: {{ user.displayName || user.email }}</p>
+<button @click="signOut" class="btn">{{ $t("Sign_out") }}</button>
+
     </div>
     <div v-else>
-      <button @click="signIn" class="btn">Sign in with Google</button>
+    <button @click="signIn" class="btn">
+  {{ $t("Sign_in_with_Google") }}
+</button>
+
     </div>
     <p v-if="error" class="error">{{ error }}</p>
   </div>

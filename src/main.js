@@ -5,6 +5,8 @@ import "../style.css";
 import { createRouter, createWebHashHistory } from "vue-router";
 // import VueToast from "vue-toast-notification";
 // import "vue-toast-notification/dist/theme-sugar.css";
+// import VueToast from "vue-toast-notification";
+// import "vue-toast-notification/dist/theme-sugar.css";
 import NotFound from "./Components/Pages/NotFound.vue";
 import DoctorSignup from "./Components/Pages/DoctorSignup.vue";
 import SignupCards from "./Components/Pages/SignupCards.vue";
@@ -14,9 +16,8 @@ import ForgotPassword from "./Components/Pages/ForgotPassword.vue";
 import PatientSignup from "./Components/Pages/PatientSignup.vue";
 import CalenDar from "./Components/Pages/CalenDar.vue";
 import { auth } from "./authHandler";
-import { createI18n } from "vue-i18n";
-import en from "/locales/en.json";
-import ar from "/locales/ar.json";
+// import en from "/locales/en.json";
+// import ar from "/locales/ar.json";
 import DashboardLayout from "./Components/Layouts/DashboardLayout.vue";
 import { watch } from "vue";
 import AuthNavbar from "./Components/Layouts/AuthNavbar.vue";
@@ -57,12 +58,20 @@ import PatientWallet from "./Components/Pages/PatientFlow/PatientWallet.vue";
 import PatientProfile from "./Components/Pages/PatientFlow/PatientProfile.vue";
 
 // import { h } from 'vue'
+import { createI18n } from "vue-i18n";
+import en from "../locales/en.json"
+import ar from "../locales/ar.json";
 
-const i18n = createI18n({
-  locale: "en", // اللغة الافتراضية
+export const i18n = createI18n({
+  locale: "ar",
   fallbackLocale: "en",
   messages: { en, ar },
 });
+// const i18n = createI18n({
+//   locale: "en", // اللغة الافتراضية
+//   fallbackLocale: "en",
+//   messages: { en, ar },
+// });
 
 const vueApp = createApp(App);
 vueApp.config.globalProperties.$auth = auth;

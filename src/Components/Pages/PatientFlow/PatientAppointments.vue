@@ -87,6 +87,26 @@
           </div>
           <div v-if="activeTab === 'upcoming'" class="flex gap-2 mt-2">
             <button
+              v-if="appointment.service && appointment.service.toLowerCase() === 'telemedicine'"
+              :disabled="!isJoinEnabled(appointment) || !appointment.roomLink"
+              @click="openRoom(appointment.roomLink)"
+              :class="[
+                'px-4 py-2 rounded text-white',
+                isJoinEnabled(appointment) && appointment.roomLink
+                  ? 'bg-[var(--main-color-500)] hover:bg-blue-700 cursor-pointer'
+                  : 'bg-gray-400 cursor-not-allowed',
+              ]"
+              title="Join your telemedicine session"
+            >
+              {{
+                !appointment.roomLink
+                  ? "Room link not set"
+                  : isJoinEnabled(appointment)
+                  ? "Join Telemedicine"
+                  : "Telemedicine (available at session time)"
+              }}
+            </button>
+            <button
               @click="openCancelModal(appointment)"
               class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
             >
@@ -126,7 +146,7 @@
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import Modal from "@/Components/UI/Modal.vue";
-import { signOutUser, db, auth } from "/src/authHandler.js";
+import { signOutUser, db, auth } from "@/authHandler.js";
 import {
   collection,
   query,
@@ -136,6 +156,7 @@ import {
   addDoc,
   updateDoc,
   onSnapshot,
+  getDocs,
 } from "firebase/firestore";
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
@@ -165,17 +186,13 @@ export default {
       }
     },
     upcomingAppointments() {
-      const now = new Date();
       return this.appointments.filter((app) => {
-        const appDate = new Date(`${app.date} ${app.time}`);
-        return app.status.toLowerCase() === "confirmed" && appDate >= now;
+        return app.status.toLowerCase() === "confirmed";
       });
     },
     historyAppointments() {
-      const now = new Date();
       return this.appointments.filter((app) => {
-        const appDate = new Date(`${app.date} ${app.time}`);
-        return app.status.toLowerCase() !== "confirmed" || appDate < now;
+        return app.status.toLowerCase() !== "confirmed";
       });
     },
   },
@@ -253,7 +270,6 @@ export default {
         const appointmentSnap = await getDoc(appointmentRef);
         if (!appointmentSnap.exists()) {
           this.closeCancelModal();
-          alert("Appointment not found.");
           return;
         }
         const appointment = appointmentSnap.data();
@@ -265,6 +281,25 @@ export default {
           cancelledBy: user.uid,
           cancelledByRole: "patient",
         });
+
+        // Refund half the price to patient's wallet
+        const refundAmount = appointment.price / 2;
+        const patientRef = doc(db, "patients", user.uid);
+        const patientSnap = await getDoc(patientRef);
+        if (patientSnap.exists()) {
+          const currentWallet = patientSnap.data().wallet || 0;
+          const newWallet = currentWallet + refundAmount;
+          await updateDoc(patientRef, { wallet: newWallet });
+
+          // Add transaction record
+          await addDoc(collection(db, "patients", user.uid, "transactions"), {
+            description: `Refund for cancelled appointment with ${
+              appointment.doctorName || "Doctor"
+            }`,
+            amount: refundAmount,
+            date: new Date(),
+          });
+        }
 
         // Notify doctor about cancellation
         if (appointment.doctorId) {
@@ -284,8 +319,21 @@ export default {
       } catch (error) {
         console.error("Error canceling appointment:", error);
         this.closeCancelModal();
-        alert("Failed to cancel appointment. Please try again.");
       }
+    },
+
+    isJoinEnabled(app) {
+      try {
+        const start = new Date(`${app.date} ${app.time}`);
+        const now = new Date();
+        return now >= start;
+      } catch {
+        return false;
+      }
+    },
+    openRoom(url) {
+      if (!url) return;
+      window.open(url, "_blank", "noopener");
     },
 
     // ---------- Listen to Appointments with Real-time Updates ----------
@@ -344,11 +392,40 @@ export default {
                 console.error("Error fetching doctor name:", err);
               }
 
+              // Ensure roomLink is present for telemedicine by backfilling from doctor's service if missing
+              let resolvedRoomLink = booking.roomLink || "";
+              try {
+                const isTelemedicine =
+                  booking.service && typeof booking.service === "string"
+                    ? booking.service.toLowerCase() === "telemedicine"
+                    : false;
+                if (!resolvedRoomLink && isTelemedicine && booking.doctorId) {
+                  const servicesRef = collection(db, "doctors", booking.doctorId, "services");
+                  const servicesSnap = await getDocs(servicesRef);
+                  const teleService = servicesSnap.docs
+                    .map((s) => ({ id: s.id, ...s.data() }))
+                    .find(
+                      (s) =>
+                        s &&
+                        s.name &&
+                        typeof s.name === "string" &&
+                        s.name.toLowerCase() === "telemedicine" &&
+                        s.roomLink
+                    );
+                  if (teleService && typeof teleService.roomLink === "string") {
+                    resolvedRoomLink = teleService.roomLink;
+                  }
+                }
+              } catch {
+                // Non-fatal: keep existing empty link if any error occurs
+              }
+
               return {
                 id: booking.id,
                 doctorName,
                 doctorImage,
                 service: booking.service,
+                roomLink: resolvedRoomLink,
                 speciality: booking.speciality || "Unknown Speciality",
                 date: booking.date,
                 time: booking.time,

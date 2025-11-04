@@ -39,7 +39,7 @@
 
 <script>
 import MainNav from "../../Layouts/MainNav.vue";
-import { db, auth } from "../../../authHandler.js";
+import { db, auth } from "/src/authHandler.js";
 import { doc, getDoc, collection, getDocs } from "firebase/firestore";
 
 export default {

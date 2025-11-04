@@ -17,7 +17,7 @@ function redirectByRole(role, next) {
   switch (role) {
     case "patient":
       // return next({ path: "/profile/home" });
-      return next({ path: "/patient/home" });
+      return next({ path: "/patient/homeP" });
     case "doctor":
       return next({ path: "/dashboard/calendar" });
     case "admin":

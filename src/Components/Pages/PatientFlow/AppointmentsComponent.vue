@@ -146,8 +146,8 @@ export default {
                 }
               }
             } catch (e) {
-          console.error("Error fetching doctor details:", e);
-        }
+              console.error("Error fetching doctor details:", e);
+            }
             return {
               id: b.id,
               doctorName,
