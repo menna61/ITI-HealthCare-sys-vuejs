@@ -1,40 +1,42 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div
+  class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300"
+>
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">All Appointments</h1>
-        <p class="text-gray-500">View all appointments across all doctors</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t('allAppointments') }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('viewAllAppointments') }}</p>
       </div>
 
       <!--Page content-->
-      <div v-if="loading" class="text-center animate-fade-in">Loading appointments...</div>
-      <div v-else-if="appointments.length === 0" class="text-center animate-fade-in">No appointments found.</div>
+      <div v-if="loading" class="text-center animate-fade-in">{{ $t('loadingAppointments') }}</div>
+      <div v-else-if="appointments.length === 0" class="text-center animate-fade-in">{{ $t('noAppointments') }}</div>
       <div v-else class="flex flex-col gap-6">
         <div
           v-for="(appointment, index) in appointments"
           :key="appointment.id"
-          class="cardPayment cardPayment1 bg-gradient-to-r from-blue-50 to-indigo-50 flex flex-col gap-4 rounded-xl h-[121px] shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01] animate-slide-in-up"
+          class="cardPayment cardPayment1 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 flex flex-col gap-4 rounded-xl h-[121px] shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01] animate-slide-in-up"
           :style="{ animationDelay: `${index * 0.1}s` }"
         >
           <div class="flex justify-between">
-            <h2 class="Internal">{{ appointment.speciality }}</h2>
+            <h2 class="Internal dark:text-gray-200">{{ appointment.speciality }}</h2>
             <div class="flex w-fit justify-end gap-2">
               <button v-if="appointment.status === 'Confirmed'"
-                class="Confirmed hover:cursor-pointer transition-all duration-300 hover:scale-105"
+                class="Confirmed hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-gray-600 dark:text-gray-300"
               >
-                {{ appointment.status }}
+                {{ $t('confirmed') }}
               </button>
                <button v-else-if="appointment.status === 'Pending'"
-                class="Pending hover:cursor-pointer transition-all duration-300 hover:scale-105"
+                class="Pending hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-blue-800 dark:text-blue-300"
               >
-                {{ appointment.status }}
+                {{ $t('pending') }}
               </button>
               <button v-else
-                class="Canceled hover:cursor-pointer transition-all duration-300 hover:scale-105"
+                class="Canceled hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-red-800 dark:text-red-300"
               >
-                {{ appointment.status }}
+                {{ $t('canceled') }}
               </button>
             </div>
           </div>
@@ -44,12 +46,12 @@
             </div>
             <div class="w-full">
               <div class="flex justify-between w-full">
-                <h2 class="nameDoc">{{ appointment.doctorName }}</h2>
-                <span class="done">Session Type : {{ appointment.service }}</span>
+                <h2 class="nameDoc dark:text-gray-100">{{ appointment.doctorName }}</h2>
+                <span class="done dark:bg-green-800 dark:text-green-300">{{ $t('sessionType') }} : {{ appointment.service }}</span>
               </div>
               <div class="flex flex-row justify-between">
-                <span class="time">{{ appointment.time }}, {{ appointment.date }}</span>
-                <span class="linkVido">Patient: {{ appointment.patientName }}</span>
+                <span class="time dark:text-gray-400">{{ appointment.time }}, {{ appointment.date }}</span>
+                <span class="linkVido dark:text-gray-300">{{ $t('patient') }}: {{ appointment.patientName }}</span>
               </div>
             </div>
           </div>
@@ -298,6 +300,31 @@ export default {
   }
   .cardPayment {
     padding: 10px;
+  }
+}
+
+@media (max-width: 768px) {
+  .cardPayment {
+    flex-direction: column;
+    height: auto;
+    padding: 12px;
+  }
+  .imgDoc {
+    width: 50px;
+    height: 50px;
+  }
+  .nameDoc {
+    font-size: 14px;
+  }
+  .time, .linkVido {
+    font-size: 11px;
+  }
+  .Internal {
+    font-size: 16px;
+  }
+  .Confirmed, .Pending, .Canceled, .done {
+    font-size: 11px;
+    padding: 2px 8px;
   }
 }
 </style>

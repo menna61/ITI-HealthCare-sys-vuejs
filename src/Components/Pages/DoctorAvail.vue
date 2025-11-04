@@ -312,7 +312,6 @@ export default {
     },
     async saveAvailability() {
       if (!this.isApproved) {
-        alert("You must be approved by the admin before setting availability.");
         return;
       }
 
@@ -324,7 +323,6 @@ export default {
 
       // Save to local storage (normalized date strings)
       localStorage.setItem("doctorAvailability", JSON.stringify(availabilityForFirebase));
-      alert("Saved locally!");
 
       // Firebase saving
       const user = auth.currentUser;
@@ -334,7 +332,6 @@ export default {
         await setDoc(doc(db, "doctorAvailability", user.uid), {
           availability: availabilityForFirebase,
         });
-        alert("Availability saved to Firebase!");
       } catch (error) {
         console.error("Error saving availability:", error);
       }

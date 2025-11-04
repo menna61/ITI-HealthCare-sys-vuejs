@@ -177,6 +177,17 @@ export default {
     await this.fetchDoctorPatients();
   },
   methods: {
+    calculateAge(birthdate) {
+      if (!birthdate) return "";
+      const today = new Date();
+      const birthDate = new Date(birthdate);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    },
     async fetchDoctorPatients() {
       try {
         const user = auth.currentUser;
@@ -203,10 +214,14 @@ export default {
           const patientSnap = await getDoc(patientRef);
           if (patientSnap.exists()) {
             const patientData = patientSnap.data();
+            let age = patientData.age;
+            if (!age && patientData.birthdate) {
+              age = this.calculateAge(patientData.birthdate);
+            }
             patients.push({
               id: patientId,
               name: `${patientData.firstName || ""} ${patientData.lastName || ""}`.trim(),
-              age: patientData.age || "",
+              age: age || "",
               gender: patientData.gender || "",
               email: patientData.email || "",
             });

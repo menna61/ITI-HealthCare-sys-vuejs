@@ -1,13 +1,16 @@
 import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
+import { sendCancellationEmail } from "../mail.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
 // ✅ Stripe secret key (test mode)
-const stripe = new Stripe("sk_test_51SMGyS5xDzYJEhy7m2UdB1dmwV3tLY3Ysv6qM2W2rzcOinc0dEgbFdDiphCVvChPYIXkHpF0YDSzgDbK41svXulX00Kxp8mByo");
+const stripe = new Stripe(
+  "sk_test_51SMGyS5xDzYJEhy7m2UdB1dmwV3tLY3Ysv6qM2W2rzcOinc0dEgbFdDiphCVvChPYIXkHpF0YDSzgDbK41svXulX00Kxp8mByo"
+);
 
 // ✅ Create checkout session endpoint
 app.post("/create-checkout-session", async (req, res) => {
@@ -33,6 +36,20 @@ app.post("/create-checkout-session", async (req, res) => {
     res.json({ url: session.url });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// ✅ Send cancellation email
+app.post("/send-cancellation-email", async (req, res) => {
+  try {
+    const { patientId, patientName, doctorName, date, time } = req.body || {};
+    if (!patientId) {
+      return res.status(400).json({ error: "'patientId' is required" });
+    }
+    await sendCancellationEmail({ patientId, patientName, doctorName, date, time });
+    res.json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: err.message || "Failed to send email" });
   }
 });
 

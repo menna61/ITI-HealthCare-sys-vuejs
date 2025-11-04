@@ -4,8 +4,13 @@
     @click="signIn"
   >
     <img src="../assets/google.svg" alt="" />
-    <p v-if="isSignup" class="text-gray-500">Sign up with google</p>
-    <p v-else class="text-gray-500">Continue with google</p>
+   <p v-if="isSignup" class="text-gray-500">
+  {{ $t("Sign_up_with_Google") }}
+</p>
+<p v-else class="text-gray-500">
+  {{ $t("Continue_with_Google") }}
+</p>
+
     <p v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</p>
   </div>
 </template>

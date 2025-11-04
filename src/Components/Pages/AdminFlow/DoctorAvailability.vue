@@ -1,45 +1,76 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
-      <!--Page titles-->
+    <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
+      <!-- Page titles -->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Doctors with Appointments</h1>
-        <p class="text-gray-500">View doctors who have active appointments</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t('doctorsWithAppointments') }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t('viewDoctorsWithActiveAppointments') }}</p>
       </div>
-      <div class="tableDoctors">
-        <div class="bg-white rounded-lg shadow-md overflow-hidden animate-fade-in">
-          <table class="min-w-full">
-            <thead class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+
+      <div class="tableDoctors px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gradient-to-r from-blue-500 to-purple-600">
               <tr>
-                <th class="py-4 px-6 text-left font-semibold">Doctor Name</th>
-                <th class="py-4 px-6 text-left font-semibold">Email</th>
-                <th class="py-4 px-6 text-left font-semibold">Speciality</th>
-                <th class="py-4 px-6 text-left font-semibold">Phone</th>
-                <th class="py-4 px-6 text-left font-semibold">Appointments</th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
+                  {{ $t('doctorName') }}
+                </th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
+                  {{ $t('email') }}
+                </th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
+                  {{ $t('speciality') }}
+                </th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
+                  {{ $t('phone') }}
+                </th>
+                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
+                  {{ $t('appointments') }}
+                </th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200">
-              <tr v-for="(doctor, index) in doctorsWithAppointments" :key="doctor.id" class="hover:bg-blue-50 transition-all duration-300 transform hover:scale-[1.01] hover:shadow-sm" :style="{ animationDelay: `${index * 0.1}s` }">
-                <td class="py-4 px-6 text-gray-900 font-medium animate-slide-in-left">{{ doctor.firstName }} {{ doctor.lastName }}</td>
-                <td class="py-4 px-6 text-gray-700 animate-slide-in-left" :style="{ animationDelay: `${index * 0.1 + 0.1}s` }">{{ doctor.email }}</td>
-                <td class="py-4 px-6 animate-slide-in-left" :style="{ animationDelay: `${index * 0.1 + 0.2}s` }">
-                  <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800 transition-all duration-300 hover:bg-green-200 hover:scale-105">
+
+            <tbody
+              class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 text-left"
+            >
+              <tr
+                v-for="(doctor, index) in doctorsWithAppointments"
+                :key="doctor.id"
+                class="hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 cursor-pointer transition-all duration-500 animate-fadeInUp hover:scale-[1.02] hover:shadow-lg"
+                :style="{ animationDelay: `${index * 0.1}s` }"
+              >
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                  {{ doctor.firstName }} {{ doctor.lastName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ doctor.email }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-300 transition-all duration-300 hover:bg-green-200 dark:hover:bg-green-700 hover:scale-105"
+                  >
                     {{ doctor.speciality }}
                   </span>
                 </td>
-                <td class="py-4 px-6 text-gray-700 animate-slide-in-left" :style="{ animationDelay: `${index * 0.1 + 0.3}s` }">{{ doctor.phone }}</td>
-                <td class="py-4 px-3 animate-slide-in-left text-center mx-auto" :style="{ animationDelay: `${index * 0.1 + 0.4}s` }">
-                  <span class="inline-flex items-center px-3  py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 transition-all duration-300 hover:bg-purple-200 hover:scale-105">
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ doctor.phone }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
+                  <span
+                    class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 dark:bg-purple-800 text-purple-800 dark:text-purple-300 transition-all duration-300 hover:bg-purple-200 dark:hover:bg-purple-700 hover:scale-105"
+                  >
                     {{ doctor.appointmentsCount }}
                   </span>
                 </td>
               </tr>
             </tbody>
           </table>
+
+          <!-- Empty state -->
           <div v-if="doctorsWithAppointments.length === 0" class="text-center py-12 animate-fade-in">
-            <div class="text-gray-500 text-lg">No doctors with appointments found</div>
-            <div class="text-gray-400 text-sm mt-2">Doctors will appear here once they have active appointments</div>
+            <div class="text-gray-500 dark:text-gray-400 text-lg">{{ $t('noDoctorsFound') }}</div>
+            <div class="text-gray-400 dark:text-gray-500 text-sm mt-2">{{ $t('doctorsWillAppear') }}</div>
           </div>
         </div>
       </div>
@@ -49,8 +80,8 @@
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { db } from '@/firebase';
+import { collection, getDocs, query, where } from "firebase/firestore";
+import { db } from "@/firebase";
 
 export default {
   name: "DoctorAvailability",
@@ -68,27 +99,23 @@ export default {
   methods: {
     async fetchDoctorsWithAppointments() {
       try {
-        // First, get all bookings to find doctors with appointments
         const bookingsCollection = collection(db, "bookings");
         const bookingsSnapshot = await getDocs(bookingsCollection);
 
-        // Get unique doctor IDs from bookings
-        const doctorIds = [...new Set(bookingsSnapshot.docs.map(doc => doc.data().doctorId))];
+        const doctorIds = [...new Set(bookingsSnapshot.docs.map((doc) => doc.data().doctorId))];
 
         if (doctorIds.length === 0) {
           this.doctorsWithAppointments = [];
           return;
         }
 
-        // Fetch doctor details for these IDs
         const doctorsCollection = collection(db, "doctors");
-        const doctorsPromises = doctorIds.map(doctorId =>
+        const doctorsPromises = doctorIds.map((doctorId) =>
           getDocs(query(doctorsCollection, where("__name__", "==", doctorId)))
         );
 
         const doctorsSnapshots = await Promise.all(doctorsPromises);
 
-        // Process doctors data and count appointments
         const doctorsData = [];
         for (let i = 0; i < doctorsSnapshots.length; i++) {
           const snapshot = doctorsSnapshots[i];
@@ -96,9 +123,8 @@ export default {
             const doctorDoc = snapshot.docs[0];
             const doctorData = { id: doctorDoc.id, ...doctorDoc.data() };
 
-            // Count appointments for this doctor
             const appointmentsCount = bookingsSnapshot.docs.filter(
-              doc => doc.data().doctorId === doctorData.id
+              (doc) => doc.data().doctorId === doctorData.id
             ).length;
 
             doctorsData.push({
@@ -110,7 +136,7 @@ export default {
 
         this.doctorsWithAppointments = doctorsData;
       } catch (error) {
-        console.error('Error fetching doctors with appointments:', error);
+        console.error("Error fetching doctors with appointments:", error);
       }
     },
   },
@@ -118,7 +144,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@keyframes fadeIn {
+@keyframes fadeInUp {
   from {
     opacity: 0;
     transform: translateY(20px);
@@ -129,23 +155,31 @@ export default {
   }
 }
 
-@keyframes slideInLeft {
-  from {
-    opacity: 0;
-    transform: translateX(-30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s ease-out;
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
-.animate-slide-in-left {
-  animation: slideInLeft 0.5s ease-out forwards;
-  opacity: 0;
+@media (max-width: 768px) {
+  .tableDoctors {
+    overflow-x: auto;
+  }
+  table {
+    min-width: 600px;
+  }
+  th,
+  td {
+    padding: 8px 12px;
+    font-size: 14px;
+  }
+  th {
+    font-size: 12px;
+  }
+  .title h1 {
+    font-size: 20px;
+  }
 }
 </style>

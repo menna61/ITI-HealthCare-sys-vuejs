@@ -4,8 +4,12 @@
       <back-btn />
       <div class="stepper flex flex-col gap-8">
         <div class="top flex flex-col gap-4">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Sign up as a patient</h1>
-          <p class="text-gray-600 dark:text-gray-300 text-xl">Create your patient account</p>
+          <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
+            {{ $t("Sign_up_as_patient") }}
+          </h1>
+          <p class="text-gray-600 dark:text-gray-300 text-xl">
+            {{ $t("Create_your_patient_account") }}
+          </p>
         </div>
       </div>
     </div>
@@ -41,23 +45,23 @@
                 <!-- Name -->
                 <div class="name flex gap-4 w-full">
                   <div class="fname w-full">
-                    <label>First name</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("First_name") }}</label>
                     <input
                       v-model="firstName"
                       required
                       type="text"
-                      placeholder="Enter first name"
-                      class="w-full h-12 px-4 border rounded-lg"
+                      :placeholder="$t('Enter_first_name')"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div class="sname w-full">
-                    <label>Last name</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("Last_name") }}</label>
                     <input
                       v-model="lastName"
                       required
                       type="text"
-                      placeholder="Enter last name"
-                      class="w-full h-12 px-4 border rounded-lg"
+                      :placeholder="$t('Enter_last_name')"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -65,23 +69,23 @@
                 <!-- Email & Phone -->
                 <div class="flex gap-4 w-full">
                   <div class="email w-full">
-                    <label>Email</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("Email") }}</label>
                     <input
                       v-model="email"
                       required
                       type="email"
-                      placeholder="Enter email"
-                      class="w-full h-12 px-4 border rounded-lg"
+                      :placeholder="$t('Enter_email')"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div class="phone w-full">
-                    <label>Phone number</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("Phone_number") }}</label>
                     <input
                       v-model="phoneNumber"
                       required
                       type="text"
-                      placeholder="+20 1234 223 43"
-                      class="w-full h-12 px-4 border rounded-lg"
+                      :placeholder="$t('Enter_phone_number')"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -89,71 +93,71 @@
                 <!-- Gender & Birthdate -->
                 <div class="flex gap-4 w-full">
                   <div class="gender w-full">
-                    <label>Gender</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("Gender") }}</label>
                     <select
                       v-model="selectedGender"
                       required
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     >
-                      <option disabled value="">Select gender</option>
-                      <option value="male">Male</option>
-                      <option value="female">Female</option>
+                      <option disabled value="">{{ $t("Select_gender") }}</option>
+                      <option value="male">{{ $t("Male") }}</option>
+                      <option value="female">{{ $t("Female") }}</option>
                     </select>
                   </div>
                   <div class="birthdate w-full">
-                    <label>Birthdate</label>
+                    <label class="text-gray-900 dark:text-white">{{ $t("Birthdate") }}</label>
                     <input
                       v-model="birthdate"
                       required
                       type="date"
-                      class="w-full h-12 px-4 border rounded-lg"
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
 
                 <!-- Password -->
                 <div class="pass w-full">
-                  <label>Password</label>
+                  <label>{{ $t("Password") }}</label>
                   <input
                     v-model="password"
                     required
                     type="password"
-                    placeholder="Enter your password"
+                    :placeholder="$t('Enter_password')"
                     class="w-full h-12 px-4 border rounded-lg"
                   />
                 </div>
-              </div>
 
-              <!-- Submit Button -->
-              <div class="w-full flex justify-end">
-                <button
-                  type="submit"
-                  :disabled="loading"
-                  class="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-60"
-                >
-                  <svg
-                    v-if="loading"
-                    class="animate-spin h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
+                <!-- Submit Button -->
+                <div class="w-full flex justify-end">
+                  <button
+                    type="submit"
+                    :disabled="loading"
+                    class="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-60"
                   >
-                    <circle
-                      class="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      stroke-width="4"
-                    />
-                    <path
-                      class="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                    />
-                  </svg>
-                  <span>{{ loading ? "Creating account..." : "Create account" }}</span>
-                </button>
+                    <svg
+                      v-if="loading"
+                      class="animate-spin h-5 w-5 text-white"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                      />
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                    <span>{{ loading ? $t("Creating_account") : $t("Create_account") }}</span>
+                  </button>
+                </div>
               </div>
             </div>
           </fieldset>
@@ -188,10 +192,21 @@ export default {
   },
 
   methods: {
+    calculateAge(birthdate) {
+      const today = new Date();
+      const birthDate = new Date(birthdate);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      return age;
+    },
     async registerPatient() {
       try {
         const cred = await registerWithEmail(this.email, this.password);
         const uid = cred.user.uid;
+        const age = this.calculateAge(this.birthdate);
 
         await setDoc(doc(db, "patients", uid), {
           firstName: this.firstName,
@@ -200,6 +215,7 @@ export default {
           phone: this.phoneNumber,
           gender: this.selectedGender,
           birthdate: this.birthdate,
+          age: age,
           role: "patient",
         });
         this.successMsg = "Account created successfully. Redirecting...";

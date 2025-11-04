@@ -393,7 +393,6 @@ export default {
       // Prepare booking data but don't save yet
       const user = auth.currentUser;
       if (!user) {
-        alert("Please log in to book an appointment.");
         return;
       }
 
@@ -404,6 +403,13 @@ export default {
         doctorName: `${this.selectedDoctor.firstName} ${this.selectedDoctor.lastName}`,
         speciality: this.selectedDoctor.speciality,
         service: this.selectedService.name,
+        roomLink:
+          this.selectedService &&
+          this.selectedService.name &&
+          this.selectedService.name.toLowerCase() === "telemedicine" &&
+          this.selectedService.roomLink
+            ? this.selectedService.roomLink
+            : "",
         price: this.selectedService.price,
         date: this.selectedDay.date.toISOString().split("T")[0], // YYYY-MM-DD
         time: this.selectedTime,
@@ -629,7 +635,6 @@ export default {
         );
         const querySnapshot = await getDocs(q);
         if (!querySnapshot.empty) {
-          alert("This time slot is already booked. Please select another time.");
           return;
         }
 
@@ -637,7 +642,6 @@ export default {
         this.checkout();
       } catch (error) {
         console.error("Error booking appointment:", error);
-        alert("Failed to book appointment. Please try again.");
         throw error; // Re-throw to prevent payment if booking fails
       }
     },

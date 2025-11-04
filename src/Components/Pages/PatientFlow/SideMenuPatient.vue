@@ -1,5 +1,7 @@
 <template>
-  <div class="w-[302px] bg-[#212D66] dark:bg-gray-800 pt-10 flex flex-col items-center gap-20 h-screen fixed">
+  <div
+    class="w-[302px] bg-[#212D66] dark:bg-gray-800 pt-10 flex flex-col items-center gap-20 h-screen fixed"
+  >
     <img src="../../../assets/pattern.svg" alt="" class="absolute bottom-0" />
     <div class="logo">
       <img src="../../../assets/logo-white.svg" alt="" />

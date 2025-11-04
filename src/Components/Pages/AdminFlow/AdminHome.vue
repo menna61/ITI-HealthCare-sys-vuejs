@@ -1,24 +1,28 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
-    <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
+    <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Dashboard</h1>
-        <p class="text-gray-500">Monitor and manage your healthcare platform</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("dashboard") }}</h1>
+        <p class="text-gray-500 dark:text-gray-200">{{ $t("monitor") }}</p>
       </div>
       <!-- Top Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         <!-- Total Users -->
         <router-link to="/admin/users">
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-500 text-sm">Total Users</p>
-                <p class="text-2xl font-bold">{{ totalUsers }}</p>
+                <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("totalUsers") }}</p>
+                <p class="text-2xl font-bold dark:text-white">{{ totalUsers }}</p>
               </div>
-              <div class="bg-blue-100 p-3 rounded-full">
-                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+                <svg
+                  class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"></path>
                 </svg>
               </div>
@@ -28,14 +32,18 @@
 
         <!-- Active Doctors -->
         <router-link to="/admin/doctors">
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-500 text-sm">Active Doctors</p>
-                <p class="text-2xl font-bold">{{ activeDoctors }}</p>
+                <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("activeDoctors") }}</p>
+                <p class="text-2xl font-bold dark:text-white">{{ activeDoctors }}</p>
               </div>
-              <div class="bg-green-100 p-3 rounded-full">
-                <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <div class="bg-green-100 dark:bg-green-900 p-3 rounded-full">
+                <svg
+                  class="w-6 h-6 text-green-600 dark:text-green-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fill-rule="evenodd"
                     d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
@@ -49,14 +57,18 @@
 
         <!-- Pending Approvals -->
         <router-link to="/admin/documents">
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-500 text-sm">Pending Approvals</p>
-                <p class="text-2xl font-bold">{{ pendingApprovals }}</p>
+                <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("pendingApprovals") }}</p>
+                <p class="text-2xl font-bold dark:text-white">{{ pendingApprovals }}</p>
               </div>
-              <div class="bg-yellow-100 p-3 rounded-full">
-                <svg class="w-6 h-6 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+              <div class="bg-yellow-100 dark:bg-yellow-900 p-3 rounded-full">
+                <svg
+                  class="w-6 h-6 text-yellow-600 dark:text-yellow-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fill-rule="evenodd"
                     d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
@@ -70,14 +82,20 @@
 
         <!-- Total Appointments -->
         <router-link to="/admin/totalAppointments">
-          <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
             <div class="flex items-center justify-between">
               <div>
-                <p class="text-gray-500 text-sm">Total Appointments</p>
-                <p class="text-2xl font-bold">{{ totalAppointments }}</p>
+                <p class="text-gray-500 dark:text-gray-200 text-sm">
+                  {{ $t("totalAppointments") }}
+                </p>
+                <p class="text-2xl font-bold dark:text-white">{{ totalAppointments }}</p>
               </div>
-              <div class="bg-purple-100 p-3 rounded-full">
-                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+              <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full">
+                <svg
+                  class="w-6 h-6 text-purple-600 dark:text-purple-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
                   <path
                     fill-rule="evenodd"
                     d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
@@ -90,39 +108,49 @@
         </router-link>
 
         <!-- Doctor Availability -->
-           <router-link to="/admin/doctorAvailability">
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <div class="flex items-center justify-between">
-            <div>
-              <p class="text-gray-500 text-sm">Doctor Availability</p>
-              <p class="text-2xl font-bold">{{ doctorAvailability }}</p>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <svg class="w-6 h-6 text-orange-600" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fill-rule="evenodd"
-                  d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                  clip-rule="evenodd"
-                ></path>
-              </svg>
+        <router-link to="/admin/doctorAvailability">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-gray-500 dark:text-gray-200 text-sm">
+                  {{ $t("doctorAvailability") }}
+                </p>
+                <p class="text-2xl font-bold dark:text-white">{{ doctorAvailability }}</p>
+              </div>
+              <div class="bg-orange-100 dark:bg-orange-900 p-3 rounded-full">
+                <svg
+                  class="w-6 h-6 text-orange-600 dark:text-orange-400"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+                    clip-rule="evenodd"
+                  ></path>
+                </svg>
+              </div>
             </div>
           </div>
-        </div>
         </router-link>
       </div>
       <!-- Charts Section -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         <!-- Appointments Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Appointments Overview</h3>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white">
+            {{ $t("appointmentsOverview") }}
+          </h3>
+
           <div class="h-64">
             <canvas ref="appointmentsChart"></canvas>
           </div>
         </div>
 
         <!-- Users Distribution Chart -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Users Distribution</h3>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white">{{ $t("usersDistribution") }}</h3>
+
           <div class="h-64">
             <canvas ref="usersChart"></canvas>
           </div>
@@ -131,51 +159,56 @@
       <!-- Bottom Cards -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <!-- Recent Activities -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Recent Activities</h3>
-          <div v-if="recentActivities.length === 0" class="text-gray-500">No recent activities</div>
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white">{{ $t("recentActivities") }}</h3>
+          <div v-if="recentActivities.length === 0" class="text-gray-500 dark:text-gray-200">
+            {{ $t("noRecentActivities") }}
+          </div>
           <div v-else class="space-y-3">
             <div
               v-for="activity in recentActivities"
               :key="activity.id"
-              class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+              class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
             >
               <div>
-                <p class="text-sm font-medium">
+                <p class="text-sm font-medium dark:text-white">
                   {{ activity.patientName }} booked with {{ activity.doctorName }}
                 </p>
-                <p class="text-xs text-gray-500">
+                <p class="text-xs text-gray-500 dark:text-gray-200">
                   {{ activity.service }} - {{ activity.date }} at {{ activity.time }}
                 </p>
               </div>
-              <span class="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">{{
-                activity.status
-              }}</span>
+              <span
+                class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded-full"
+                >{{ activity.status }}</span
+              >
             </div>
           </div>
         </div>
 
         <!-- Pending Approvals -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-          <h3 class="text-lg font-semibold mb-4">Pending Approvals</h3>
-          <div v-if="pendingApprovalsList.length === 0" class="text-gray-500">
-            No pending approvals
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <h3 class="text-lg font-semibold mb-4 dark:text-white">{{ $t("approvalsTitle") }}</h3>
+          <div v-if="pendingApprovalsList.length === 0" class="text-gray-500 dark:text-gray-200">
+            {{ $t("noPendingApprovals") }}
           </div>
           <div v-else class="space-y-3">
             <div
               v-for="item in pendingApprovalsList"
               :key="item.id"
-              class="flex items-center justify-between py-2 border-b border-gray-100 last:border-b-0"
+              class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-gray-700 last:border-b-0"
             >
               <div>
-                <p class="text-sm font-medium">
+                <p class="text-sm font-medium dark:text-white">
                   {{ item.firstName }} {{ item.lastName }}
-                  <span class="text-xs bg-blue-100 text-blue-800 px-1 py-0.5 rounded ml-2">{{
-                    item.type
-                  }}</span>
+                  <span
+                    class="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-1 py-0.5 rounded ml-2"
+                  >
+                    {{ item.type }}
+                  </span>
                 </p>
-                <p class="text-xs text-gray-500">
-                  {{ item.type === "doctor" ? item.speciality : "Union Card Pending" }}
+                <p class="text-xs text-gray-500 dark:text-gray-200">
+                  {{ item.type === "doctor" ? item.speciality : $t("unionCardPending") }}
                 </p>
                 <div v-if="item.type === 'doctor' && item.unionMembershipCardUrl" class="mt-2">
                   <a :href="item.unionMembershipCardUrl" target="_blank" class="cursor-pointer">
@@ -188,30 +221,31 @@
                 </div>
                 <p
                   v-if="item.type === 'patient' && item.unionCardUrl"
-                  class="text-xs text-blue-500"
+                  class="text-xs text-blue-500 dark:text-blue-400"
                 >
-                  <a :href="item.unionCardUrl" target="_blank" class="underline">View Union Card</a>
+                  <a :href="item.unionCardUrl" target="_blank" class="underline">
+                    {{ $t("viewUnionCard") }}</a
+                  >
                 </p>
               </div>
               <div class="flex gap-2">
                 <button
                   @click="approveItem(item.id, item.type)"
-                  class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full hover:bg-green-200"
+                  class="text-xs bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 px-2 py-1 rounded-full hover:bg-green-200 dark:hover:bg-green-800"
                 >
-                  Approve
+                  {{ $t("approve") }}
                 </button>
                 <button
                   @click="rejectItem(item.id, item.type)"
-                  class="text-xs bg-red-100 text-red-800 px-2 py-1 rounded-full hover:bg-red-200"
+                  class="text-xs bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200 px-2 py-1 rounded-full hover:bg-red-200 dark:hover:bg-red-800"
                 >
-                  Reject
+                  {{ $t("reject") }}
                 </button>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -244,6 +278,7 @@ import {
 } from "chart.js";
 
 // import { Bar, Pie } from "vue-chartjs";
+// import { Bar, Pie } from "vue-chartjs";
 
 ChartJS.register(
   CategoryScale,
@@ -267,7 +302,7 @@ export default {
       doctorsCount: 0,
       patientsCount: 0,
       bookingsCount: 0,
-      doctorAvailabilityCount: 0,
+      av: 0,
       totalUsers: 0,
       activeDoctors: 0,
       pendingApprovals: 0,
@@ -287,23 +322,76 @@ export default {
     };
   },
   mounted() {
+    const labelText = this.$t("appointments");
+    const titleText = this.$t("monthlyAppointments");
+    const usersTitle = this.$t("usersDistribution");
+    const totalUsersText = this.$t("totalUsers");
+    const doctorsLabel = this.$t("doctors");
+    const patientsLabel = this.$t("patients");
+    const bookingsLabel = this.$t("bookings");
+    const availabilityLabel = this.$t("doctorAvailability");
+    console.log(availabilityLabel);
+    console.log(this.av);
+
     this.fetchData().then(() => {
       this.$nextTick(() => {
-        this.initializeCharts();
+        this.initializeCharts({
+          labelText,
+          titleText,
+          usersTitle,
+          totalUsersText,
+          doctorsLabel,
+          patientsLabel,
+          bookingsLabel,
+          availabilityLabel,
+        });
       });
     });
   },
+
+  watch: {
+    "$i18n.locale"() {
+      // خدي النصوص الجديدة بعد التغيير
+      const labelText = this.$t("appointments");
+      const titleText = this.$t("monthlyAppointments");
+      const usersTitle = this.$t("usersDistribution");
+      const totalUsersText = this.$t("totalUsers");
+      const doctorsLabel = this.$t("doctors");
+      const patientsLabel = this.$t("patients");
+      const bookingsLabel = this.$t("bookings");
+      const availabilityLabel = this.$t("doctorAvailability");
+
+      // امسحي الجداول القديمة
+      if (this.appointmentsChart) this.appointmentsChart.destroy();
+      if (this.usersChart) this.usersChart.destroy();
+
+      // ارسمهم من جديد بالنصوص المحدثة
+      this.initializeCharts({
+        labelText,
+        titleText,
+        usersTitle,
+        totalUsersText,
+        doctorsLabel,
+        patientsLabel,
+        bookingsLabel,
+        availabilityLabel,
+      });
+    },
+  },
+
   methods: {
     async getCounts() {
       const doctorsSnap = await getDocs(collection(db, "doctors"));
       const patientsSnap = await getDocs(collection(db, "patients"));
       const bookingsSnap = await getDocs(collection(db, "bookings"));
       const availabilitySnap = await getDocs(collection(db, "doctorAvailability"));
+      console.log(availabilitySnap);
 
       this.doctorsCount = doctorsSnap.size;
       this.patientsCount = patientsSnap.size;
       this.bookingsCount = bookingsSnap.size;
-      this.doctorAvailabilityCount = availabilitySnap.size;
+      this.av = availabilitySnap.size;
+      console.log(this.av);
     },
 
     async fetchData() {
@@ -375,6 +463,8 @@ export default {
         }));
         this.activeDoctors = doctors.filter((doctor) => doctor.approved === true).length;
         // Calculate total pending approvals (doctors + patients)
+        console.log(this.activeDoctors);
+
         const pendingDoctorsCount = doctors.filter(
           (doctor) => doctor.approved === false || !doctor.approved
         ).length;
@@ -410,9 +500,11 @@ export default {
     },
     async fetchDoctorAvailability() {
       try {
-        const availabilityCollection = collection(db, "doctorAvailability");
-        const availabilitySnapshot = await getDocs(availabilityCollection);
-        this.doctorAvailability = availabilitySnapshot.size;
+        const bookingsCollection = collection(db, "bookings");
+        const bookingsSnapshot = await getDocs(bookingsCollection);
+        const doctorIds = [...new Set(bookingsSnapshot.docs.map((doc) => doc.data().doctorId))];
+        this.doctorAvailability = doctorIds.length;
+        console.log(doctorIds);
       } catch (error) {
         console.error("Error fetching doctor availability:", error);
       }
@@ -466,16 +558,16 @@ export default {
         console.error("Error fetching pending approvals:", error);
       }
     },
+
     async approveItem(itemId, type) {
       try {
         if (type === "doctor") {
           const doctorRef = doc(db, "doctors", itemId);
           await updateDoc(doctorRef, { approved: true });
-          // Add notification to doctor's notifications
+          // إضافة إشعار للطبيب
           await addDoc(collection(db, "notifications"), {
             userId: itemId,
-            message:
-              "Your union membership card has been approved! You can now create services and start accepting appointments.",
+            message: this.$t("doctorApprovalMessage"),
             type: "approval",
             read: false,
             createdAt: new Date(),
@@ -484,30 +576,30 @@ export default {
           const userRef = doc(db, "users", itemId);
           await updateDoc(userRef, { unionCardApproved: true });
         }
-        this.fetchData(); // Refresh data
+
+        this.fetchData(); // تحديث البيانات
       } catch (error) {
         console.error("Error approving item:", error);
-        alert("Failed to approve.");
       }
     },
+
     async rejectItem(itemId, type) {
       try {
         if (type === "doctor") {
           const doctorRef = doc(db, "doctors", itemId);
           await updateDoc(doctorRef, { approved: false });
-          alert("Doctor rejected.");
         } else if (type === "patient") {
           const userRef = doc(db, "users", itemId);
           await updateDoc(userRef, { unionCardApproved: false });
-          alert("Patient union card rejected.");
         }
-        this.fetchData(); // Refresh data
+
+        this.fetchData(); // تحديث البيانات
       } catch (error) {
         console.error("Error rejecting item:", error);
-        alert("Failed to reject.");
       }
     },
-    initializeCharts() {
+
+    initializeCharts(texts) {
       const colors = [
         "rgba(59, 130, 246, 0.6)",
         "rgba(34, 197, 94, 0.6)",
@@ -516,6 +608,8 @@ export default {
         "rgba(168, 85, 247, 0.6)",
         "rgba(14, 165, 233, 0.6)",
       ];
+
+      // ===== Appointments Chart =====
       if (this.$refs.appointmentsChart) {
         const ctx = this.$refs.appointmentsChart.getContext("2d");
         this.appointmentsChart = new ChartJS(ctx, {
@@ -524,14 +618,10 @@ export default {
             labels: this.chartData.appointments.map((item) => item.month),
             datasets: [
               {
-                label: "Appointments",
+                label: texts.labelText,
                 data: this.chartData.appointments.map((item) => item.count),
-                backgroundColor: this.chartData.appointments.map(
-                  (_, i) => colors[i % colors.length]
-                ),
-                borderColor: this.chartData.appointments.map((_, i) =>
-                  colors[i % colors.length].replace("0.6", "1")
-                ),
+                backgroundColor: colors,
+                borderColor: colors.map((c) => c.replace("0.6", "1")),
                 borderWidth: 1,
               },
             ],
@@ -545,13 +635,14 @@ export default {
               },
               title: {
                 display: true,
-                text: "Monthly Appointments",
+                text: texts.titleText,
               },
             },
           },
         });
       }
 
+      // ===== Users Chart (Doughnut) =====
       if (this.$refs.usersChart) {
         const ctx = this.$refs.usersChart.getContext("2d");
         const totalUsers = this.chartData.users.patients + this.chartData.users.doctors;
@@ -559,7 +650,7 @@ export default {
         // Plugin to draw center text
         const centerTextPlugin = {
           id: "centerText",
-          beforeDraw: function (chart) {
+          beforeDraw(chart) {
             const { width, height, ctx } = chart;
             ctx.restore();
             const fontSize = (height / 114).toFixed(2);
@@ -570,16 +661,14 @@ export default {
             const text = totalUsers.toString();
             const textX = Math.round((width - ctx.measureText(text).width) / 2);
             const textY = height / 2;
-
             ctx.fillText(text, textX, textY);
 
             // Subtitle
             ctx.font = fontSize * 0.5 + "em sans-serif";
-            const subText = "Total Users";
+            const subText = texts.totalUsersText;
             const subTextX = Math.round((width - ctx.measureText(subText).width) / 2);
             const subTextY = textY + 25;
             ctx.fillText(subText, subTextX, subTextY);
-
             ctx.save();
           },
         };
@@ -587,7 +676,12 @@ export default {
         this.usersChart = new ChartJS(ctx, {
           type: "doughnut",
           data: {
-            labels: ["Doctors", "Patients", "Bookings", "Doctor Availability"],
+            labels: [
+              this.$t("doctors"),
+              this.$t("patients"),
+              this.$t("bookings"),
+              this.$t("doctorAvailability"),
+            ],
             datasets: [
               {
                 data: [
@@ -600,7 +694,7 @@ export default {
                   "rgba(34, 197, 94, 0.8)", // Doctors
                   "rgba(59, 130, 246, 0.8)", // Patients
                   "rgba(234, 179, 8, 0.8)", // Bookings
-                  "rgba(168, 85, 247, 0.8)", // Doctor Availability
+                  "rgba(168, 85, 247, 0.8)", // Availability
                 ],
                 borderColor: [
                   "rgba(34, 197, 94, 1)",
@@ -609,7 +703,6 @@ export default {
                   "rgba(168, 85, 247, 1)",
                 ],
                 borderWidth: 2,
-                hoverBorderWidth: 3,
               },
             ],
           },
@@ -623,21 +716,12 @@ export default {
                 labels: {
                   padding: 20,
                   usePointStyle: true,
-                  font: {
-                    size: 14,
-                  },
+                  font: { size: 14 },
                 },
               },
-              tooltip: {
-                callbacks: {
-                  label: function (context) {
-                    const label = context.label || "";
-                    const value = context.parsed;
-                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                    const percentage = Math.round((value / total) * 100);
-                    return `${label}: ${value} (${percentage}%)`;
-                  },
-                },
+              title: {
+                display: true,
+                text: texts.usersTitle,
               },
             },
           },
@@ -674,6 +758,11 @@ export default {
   cursor: pointer;
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md::before {
   content: "";
   position: absolute;
@@ -687,6 +776,10 @@ export default {
   border-radius: 14px;
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md::before {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:hover::before {
   opacity: 1;
 }
@@ -697,13 +790,26 @@ export default {
   border-color: rgba(14, 165, 233, 0.3);
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md:hover {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(59, 130, 246, 0.3);
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(1) {
   --card-index: 1;
   background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(1) {
+  background: linear-gradient(135deg, #374151 0%, #2c354e 0%);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(1):hover {
   background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+}
+
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(1):hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
 
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(2) {
@@ -711,8 +817,16 @@ export default {
   background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(2) {
+  background: linear-gradient(135deg, #374151 0%, #166534 100%);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(2):hover {
   background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
+}
+
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(2):hover {
+  background: linear-gradient(135deg, #166534 0%, #14532d 100%);
 }
 
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(3) {
@@ -720,8 +834,16 @@ export default {
   background: linear-gradient(135deg, #ffffff 0%, #fffbeb 100%);
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(3) {
+  background: linear-gradient(135deg, #374151 0%, #92400e 100%);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(3):hover {
   background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+}
+
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(3):hover {
+  background: linear-gradient(135deg, #92400e 0%, #78350f 100%);
 }
 
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(4) {
@@ -729,8 +851,16 @@ export default {
   background: linear-gradient(135deg, #ffffff 0%, #faf5ff 100%);
 }
 
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(4) {
+  background: linear-gradient(135deg, #374151 0%, #6b21a8 100%);
+}
+
 .bg-white.p-6.rounded-lg.shadow-md:nth-child(4):hover {
   background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+}
+
+.dark .bg-white.p-6.rounded-lg.shadow-md:nth-child(4):hover {
+  background: linear-gradient(135deg, #6b21a8 0%, #581c87 100%);
 }
 
 /* Icon Containers */
@@ -747,6 +877,13 @@ export default {
 .bg-white.p-6.rounded-lg.shadow-md:hover .bg-purple-100.p-3.rounded-full {
   transform: scale(1.1);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.dark .bg-white.p-6.rounded-lg.shadow-md:hover .bg-blue-100.p-3.rounded-full,
+.dark .bg-white.p-6.rounded-lg.shadow-md:hover .bg-green-100.p-3.rounded-full,
+.dark .bg-white.p-6.rounded-lg.shadow-md:hover .bg-yellow-100.p-3.rounded-full,
+.dark .bg-white.p-6.rounded-lg.shadow-md:hover .bg-purple-100.p-3.rounded-full {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Numbers Animation */
@@ -769,10 +906,21 @@ export default {
   animation-delay: 0.5s;
 }
 
+.dark .grid.grid-cols-1.lg\\:grid-cols-2 > div {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  border: 1px solid #4b5563;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
 .grid.grid-cols-1.lg\\:grid-cols-2 > div:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1);
   border-color: #0ea5e9;
+}
+
+.dark .grid.grid-cols-1.lg\\:grid-cols-2 > div:hover {
+  box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.4);
+  border-color: #3b82f6;
 }
 
 /* Activity Items */
@@ -785,6 +933,10 @@ export default {
 .space-y-3 > div:hover {
   background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   transform: translateX(5px);
+}
+
+.dark .space-y-3 > div:hover {
+  background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
 }
 
 .space-y-3 > div:nth-child(1) {
@@ -814,9 +966,17 @@ export default {
   transform: scale(1.05);
 }
 
+.dark .text-xs.bg-green-100:hover {
+  background: linear-gradient(135deg, #166534 0%, #14532d 100%);
+}
+
 .text-xs.bg-red-100:hover {
   background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
   transform: scale(1.05);
+}
+
+.dark .text-xs.bg-red-100:hover {
+  background: linear-gradient(135deg, #7f1d1d 0%, #991b1b 100%);
 }
 
 /* Images */
@@ -827,6 +987,10 @@ export default {
 .w-20.h-20.object-cover:hover {
   transform: scale(1.1);
   box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.dark .w-20.h-20.object-cover:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.5);
 }
 
 /* Keyframes */

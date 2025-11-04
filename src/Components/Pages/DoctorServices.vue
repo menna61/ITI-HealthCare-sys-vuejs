@@ -103,6 +103,58 @@
               <p class="text-gray-500 dark:text-gray-400 text-sm mt-1">
                 {{ service.description }}
               </p>
+              <!-- Sign up on Doxy.me for telemedicine services -->
+              <div
+                v-if="service.name.toLowerCase().includes('telemedicine')"
+                class="mt-2 flex flex-col gap-2"
+              >
+                <a
+                  href="https://doxy.me/signup"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="inline-flex w-fit items-center px-3 py-1 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition"
+                >
+                  Sign up on Doxy.me
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                    ></path>
+                  </svg>
+                </a>
+                <!-- Room link input + save -->
+                <div class="flex items-center gap-2">
+                  <input
+                    v-model="service._roomLinkDraft"
+                    type="url"
+                    inputmode="url"
+                    placeholder="Add room link (e.g., https://doxy.me/your-room)"
+                    class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  />
+                  <button
+                    type="button"
+                    @click="saveRoomLink(service)"
+                    class="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
+                  >
+                    Save
+                  </button>
+                </div>
+                <div
+                  v-if="service.roomLink"
+                  class="text-sm text-gray-600 dark:text-gray-300 break-all"
+                >
+                  Current room:
+                  <a
+                    :href="service.roomLink"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-blue-600 hover:underline"
+                    >{{ service.roomLink }}</a
+                  >
+                </div>
+              </div>
             </div>
 
             <!-- Icons -->
@@ -284,6 +336,7 @@ export default {
       currentServiceId: null,
       hasUnionCard: false,
       isApproved: false,
+      toast: { type: "", message: "" },
       serviceForm: {
         name: "",
         description: "",
@@ -306,10 +359,12 @@ export default {
         const servicesRef = collection(db, "doctors", user.uid, "services");
         const querySnapshot = await getDocs(servicesRef);
 
-        this.services = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+        this.services = querySnapshot.docs.map((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          // local draft field for room link input (not persisted)
+          data._roomLinkDraft = data.roomLink || "";
+          return data;
+        });
       } catch (error) {
         console.error("Error loading services:", error);
       }
@@ -384,6 +439,27 @@ export default {
         isActive: service.isActive,
       };
     },
+    async saveRoomLink(service) {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+        const link = (service._roomLinkDraft || "").trim();
+        if (!link) {
+          return;
+        }
+        // Basic validation: must be a URL and include doxy.me
+        const urlPattern = /^(https?:\/\/)[^\s]+$/i;
+        if (!urlPattern.test(link) || !link.includes("doxy.me")) {
+          return;
+        }
+        const serviceDoc = doc(db, "doctors", user.uid, "services", service.id);
+        await updateDoc(serviceDoc, { roomLink: link });
+        service.roomLink = link;
+        this.toast = { type: "success", message: "Room link saved." };
+      } catch (error) {
+        console.error("Error saving room link:", error);
+      }
+    },
     async saveService() {
       try {
         this.loading = true;
@@ -429,8 +505,6 @@ export default {
       }
     },
     async deleteService(service) {
-      if (!confirm(`Are you sure you want to delete "${service.name}"?`)) return;
-
       try {
         const user = auth.currentUser;
         if (!user) return;
