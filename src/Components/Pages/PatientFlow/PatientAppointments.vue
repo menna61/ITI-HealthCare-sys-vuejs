@@ -4,8 +4,8 @@
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Appointments</h1>
-        <p class="text-gray-500">Manage your appointments and schedule</p>
+        <h1 class="text-2xl font-bold dark:text-white">Appointments</h1>
+        <p class="text-gray-500 dark:text-gray-400">Manage your appointments and schedule</p>
       </div>
 
       <!-- Tabs -->
@@ -16,7 +16,7 @@
             'px-4 py-2 rounded-lg font-medium',
             activeTab === 'upcoming'
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
           ]"
         >
           Upcoming
@@ -27,7 +27,7 @@
             'px-4 py-2 rounded-lg font-medium',
             activeTab === 'history'
               ? 'bg-blue-600 text-white'
-              : 'bg-gray-200 text-gray-700 hover:bg-gray-300',
+              : 'bg-gray-200 text-gray-700 hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600',
           ]"
         >
           History
@@ -55,17 +55,20 @@
           </svg>
         </div>
       </div>
-      <div v-else-if="currentAppointments.length === 0" class="text-center">
+      <div
+        v-else-if="currentAppointments.length === 0"
+        class="text-center text-gray-500 dark:text-gray-400"
+      >
         No appointments found.
       </div>
       <div v-else class="grid grid-cols-1 gap-4 h-fit">
         <div
           v-for="appointment in currentAppointments"
           :key="appointment.id"
-          class="cardPayment bg-blue-50 flex flex-col gap-4 rounded-xl p-4"
+          class="cardPayment bg-blue-50 dark:bg-gray-800 flex flex-col gap-4 rounded-xl p-4 dark:border dark:border-gray-700"
         >
           <div class="flex justify-between">
-            <h2 class="Internal">{{ appointment.speciality || "Appointment" }}</h2>
+            <h2 class="Internal text-[var(--main-color-500)] dark:text-gray-300">{{ appointment.speciality || "Appointment" }}</h2>
             <div class="flex w-fit justify-end gap-2">
               <span :class="getStatusClass(appointment.status)">{{ appointment.status }}</span>
             </div>
@@ -76,12 +79,14 @@
             </div>
             <div class="w-full">
               <div class="flex justify-between w-full">
-                <h2 class="nameDoc">{{ appointment.doctorName }}</h2>
-                <span class="linkVido">{{ appointment.service }}</span>
+                <h2 class="nameDoc dark:text-white">{{ appointment.doctorName }}</h2>
+                <span class="linkVido dark:text-gray-300">{{ appointment.service }}</span>
               </div>
               <div class="flex flex-row justify-between">
-                <span class="time">{{ appointment.time }} , {{ appointment.date }}</span>
-                <span class="linkVido">{{
+                <span class="time dark:text-gray-400"
+                  >{{ appointment.time }} , {{ appointment.date }}</span
+                >
+                <span class="linkVido dark:text-gray-300">{{
                   appointment.medicalDetails ? "Details Added" : ""
                 }}</span>
               </div>
@@ -110,7 +115,7 @@
             </button>
             <button
               @click="openCancelModal(appointment)"
-              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+              class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
             >
               Cancel appointment
             </button>
@@ -120,8 +125,10 @@
 
       <Modal v-model="showCancelModal" title="Cancel appointment?" @close="closeCancelModal">
         <div>
-          <p class="text-gray-600">Are you sure you want to cancel this appointment?</p>
-          <p v-if="appointmentToCancel" class="text-sm text-gray-500 mt-2">
+          <p class="text-gray-600 dark:text-gray-300">
+            Are you sure you want to cancel this appointment?
+          </p>
+          <p v-if="appointmentToCancel" class="text-sm text-gray-500 dark:text-gray-400 mt-2">
             {{ appointmentToCancel.doctorName }} • {{ appointmentToCancel.date }} •
             {{ appointmentToCancel.time }}
           </p>
@@ -129,21 +136,21 @@
         <template #footer>
           <button
             @click="closeCancelModal"
-            class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+            class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
           >
             Keep
           </button>
           <button
             @click="cancelAppointmentConfirmed"
-            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+            class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 dark:bg-red-600 dark:hover:bg-red-700"
           >
             Cancel appointment
           </button>
         </template>
       </Modal>
     </div>
-  </div>
-</template>
+    </div>
+  </template>
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
@@ -565,7 +572,6 @@ export default {
   font-weight: 600;
   font-size: 18px;
   line-height: 19px;
-  color: #212d66;
 }
 
 .Confirmed,
@@ -632,7 +638,6 @@ export default {
 .nameDoc {
   font-weight: 500;
   font-size: 16px;
-  color: #101828;
 }
 .linkVido {
   font-size: 12px;

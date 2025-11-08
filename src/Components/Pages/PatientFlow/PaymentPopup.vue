@@ -19,25 +19,25 @@
           <input
             type="text"
             placeholder="Cardholder Name"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
           />
           <input
             type="text"
             placeholder="Card Number"
             maxlength="16"
-            class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+            class="w-full border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
           />
           <div class="flex space-x-2">
             <input
               type="text"
               placeholder="MM/YY"
-              class="w-1/2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              class="w-1/2 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
             />
             <input
               type="text"
               placeholder="CVV"
               maxlength="3"
-              class="w-1/2 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              class="w-1/2 border border-gray-300 dark:border-gray-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none dark:bg-gray-800 dark:text-white dark:placeholder-gray-400"
             />
           </div>
         </div>
@@ -45,13 +45,13 @@
 
       <div class="flex justify-between mt-6">
         <button
-          class="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100 transition"
+          class="px-5 py-2 rounded-lg border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 transition dark:text-gray-300"
           @click="$emit('close')"
         >
           Cancel
         </button>
         <button
-          class="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+          class="px-5 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-700 dark:hover:bg-blue-800 transition"
           @click="$emit('confirm')"
         >
           Pay Now

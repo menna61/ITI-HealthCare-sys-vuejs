@@ -4,7 +4,7 @@
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Doctors</h1>
+        <h1 class="text-2xl font-bold dark:text-white">Doctors</h1>
         <p class="text-gray-500">Manage your appointments and schedule</p>
       </div>
 
@@ -65,7 +65,7 @@
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 h-fit">
           <div
             @click="openModal(doctor)"
-            class="doc p-4 bg-white rounded-xl flex flex-col gap-4 cursor-pointer"
+            class="doc p-4 bg-white rounded-xl flex flex-col gap-4 cursor-pointer dark:bg-gray-800"
             v-for="doctor in filteredDoctors"
             :key="doctor.id"
           >
@@ -99,8 +99,8 @@
             <div class="bottom flex flex-col gap-4">
               <div class="name flex flex-col gap-2">
                 <div class="flex justify-between">
-                  <h1 class="text-xl font-medium">{{ doctor.firstName }} {{ doctor.lastName }}</h1>
-                  <p class="text-lg text-gray-500">{{ doctor.speciality }}</p>
+                  <h1 class="text-xl font-medium dark:text-white">{{ doctor.firstName }} {{ doctor.lastName }}</h1>
+                  <p class="text-lg text-gray-500 dark:text-gray-300">{{ doctor.speciality }}</p>
                 </div>
               </div>
 
@@ -115,7 +115,7 @@
                     d="M128 252.6C128 148.4 214 64 320 64C426 64 512 148.4 512 252.6C512 371.9 391.8 514.9 341.6 569.4C329.8 582.2 310.1 582.2 298.3 569.4C248.1 514.9 127.9 371.9 127.9 252.6zM320 320C355.3 320 384 291.3 384 256C384 220.7 355.3 192 320 192C284.7 192 256 220.7 256 256C256 291.3 284.7 320 320 320z"
                   />
                 </svg>
-                <p>{{ doctor.clinicAddress }}</p>
+                <p class="dark:text-gray-300">{{ doctor.clinicAddress }}</p>
               </div>
 
               <div class="flex gap-2 items-center">
@@ -131,7 +131,7 @@
                 </svg>
                 <div
                   v-if="getFirstAvailableDay(doctor.availability)"
-                  class="availability text-sm text-gray-500"
+                  class="availability text-sm text-gray-500 dark:text-gray-300"
                 >
                   <span class="flex gap-2 items-center">
                     Next available: {{ getFirstAvailableDay(doctor.availability).name }} ({{
@@ -171,11 +171,11 @@
               </svg>
             </div>
             <div>
-              <h2 class="text-xl font-semibold">
+              <h2 class="text-xl font-semibold dark:text-white">
                 {{ selectedDoctor.firstName }} {{ selectedDoctor.lastName }}
               </h2>
-              <p class="text-gray-600">{{ selectedDoctor.speciality }}</p>
-              <p class="text-sm text-gray-500">
+              <p class="text-gray-600 dark:text-gray-300">{{ selectedDoctor.speciality }}</p>
+              <p class="text-sm text-gray-500 dark:text-gray-300">
                 {{ selectedDoctor.yearsOfExperience }} years experience
               </p>
             </div>
@@ -190,7 +190,7 @@
                 d="M128 252.6C128 148.4 214 64 320 64C426 64 512 148.4 512 252.6C512 371.9 391.8 514.9 341.6 569.4C329.8 582.2 310.1 582.2 298.3 569.4C248.1 514.9 127.9 371.9 127.9 252.6zM320 320C355.3 320 384 291.3 384 256C384 220.7 355.3 192 320 192C284.7 192 256 220.7 256 256C256 291.3 284.7 320 320 320z"
               />
             </svg>
-            <p>{{ selectedDoctor.clinicAddress }}</p>
+            <p class="dark:text-gray-300">{{ selectedDoctor.clinicAddress }}</p>
           </div>
           <!-- Services Section -->
           <div v-for="service in selectedDoctor.services" :key="service.name">
@@ -218,7 +218,7 @@
                   </svg>
                 </div>
                 <div class="txts flex flex-col gap-2">
-                  <h1 class="text-lg font-medium">Telemedicine</h1>
+                  <h1 class="text-lg font-medium dark:text-white">Telemedicine</h1>
                   <p class="text-gray-500 font-medium">online consultation from anywhere</p>
                 </div>
               </div>
@@ -265,11 +265,11 @@
 
           <!-- Booking Section -->
           <div class="booking-section mt-6">
-            <h3 class="text-lg font-medium mb-4">Book an Appointment</h3>
+            <h3 class="text-lg font-medium mb-4 dark:text-white">Book an Appointment</h3>
 
             <!-- Next 7 Days -->
             <div class="days mb-4">
-              <h4 class="text-md font-medium mb-2">Select a Day:</h4>
+              <h4 class="text-md font-medium mb-2 dark:text-gray-300">Select a Day:</h4>
               <div class="flex overflow-x-auto gap-2 pb-2">
                 <button
                   v-for="day in next7Days"
@@ -289,7 +289,7 @@
 
             <!-- Time Slots -->
             <div v-if="selectedDay && availableSlots.length > 0" class="time-slots mb-4">
-              <h4 class="text-md font-medium mb-2">Select a Time Slot:</h4>
+              <h4 class="text-md font-medium mb-2 dark:text-gray-300">Select a Time Slot:</h4>
               <div class="flex flex-wrap gap-2">
                 <button
                   v-for="slot in availableSlots"

@@ -664,19 +664,27 @@ export default {
     async submitRejection() {
       if (!this.rejectionReason.trim()) return;
 
-      // Close the modal immediately to avoid blocking on network errors
-      this.showRejectionModal = false;
-
       try {
+        // Close the modal immediately
+        this.showRejectionModal = false;
+
         const { id, type } = this.currentRejectionItem;
 
         if (type === "doctor") {
+          // Fetch doctor data first to get email
           const doctorRef = doc(db, "doctors", id);
+          const doctorSnap = await getDoc(doctorRef);
+          const doctorData = doctorSnap.data();
+
+          // Update doctor status in Firestore
           await updateDoc(doctorRef, {
             approved: false,
             status: "rejected",
+            needsResubmit: true,
             rejectionReason: this.rejectionReason,
+            rejectedAt: new Date(),
           });
+
           // إضافة إشعار للطبيب
           await addDoc(collection(db, "notifications"), {
             userId: id,
@@ -685,39 +693,68 @@ export default {
             read: false,
             createdAt: new Date(),
           });
-          // Send rejection email (fire-and-forget so UI isn't blocked)
-          fetch("http://localhost:4242/send-rejection-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: id,
-              userType: type,
-              rejectionReason: this.rejectionReason,
-            }),
-          }).catch(() => {});
+
+          // Send rejection email using EmailJS
+          try {
+            await emailjs.send(
+              "service_ocr8arp", // Service ID
+              "template_uoqp1sl", // Template ID
+              {
+                to_email: doctorData.email,
+                doctor_name: `Dr. ${doctorData.firstName} ${doctorData.lastName}`,
+                user_name: `Dr. ${doctorData.firstName} ${doctorData.lastName}`,
+                rejection_reason: this.rejectionReason,
+                document_type: "documents",
+                name: "MedLink Team",
+                email: doctorData.email,
+                message: `Your submitted documents have been rejected. Reason: ${this.rejectionReason}. Please review the feedback and re-upload your documents with the necessary corrections.`,
+              },
+              "jPio5EtzFqeJ_k9wB" // Public Key
+            );
+            console.log("Rejection email sent successfully via EmailJS");
+          } catch (emailError) {
+            console.error("Error sending rejection email:", emailError);
+            // Continue even if email fails - the rejection is still saved
+          }
         } else if (type === "patient") {
+          // Fetch patient data first to get email
           const userRef = doc(db, "users", id);
+          const userSnap = await getDoc(userRef);
+          const userData = userSnap.data();
+
+          // Update patient status in Firestore
           await updateDoc(userRef, {
             unionCardApproved: false,
             rejectionReason: this.rejectionReason,
           });
-          // Send rejection email (fire-and-forget so UI isn't blocked)
-          fetch("http://localhost:4242/send-rejection-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              userId: id,
-              userType: type,
-              rejectionReason: this.rejectionReason,
-            }),
-          }).catch(() => {});
+
+          // Send rejection email using EmailJS
+          try {
+            await emailjs.send(
+              "service_ocr8arp", // Service ID
+              "template_uoqp1sl", // Template ID
+              {
+                to_email: userData.email,
+                user_name: `${userData.firstName} ${userData.lastName}`,
+                rejection_reason: this.rejectionReason,
+                document_type: "union card",
+                name: "MedLink Team",
+                email: userData.email,
+                message: `Your submitted union card has been rejected. Reason: ${this.rejectionReason}. Please review the feedback and re-upload your union card with the necessary corrections.`,
+              },
+              "jPio5EtzFqeJ_k9wB" // Public Key
+            );
+            console.log("Rejection email sent successfully via EmailJS");
+          } catch (emailError) {
+            console.error("Error sending rejection email:", emailError);
+            // Continue even if email fails - the rejection is still saved
+          }
         }
+
+        this.closeRejectionModal();
         this.fetchData(); // تحديث البيانات
       } catch (error) {
         console.error("Error rejecting item:", error);
-      } finally {
-        // Ensure local state is reset even if an error occurs
-        this.closeRejectionModal();
       }
     },
 

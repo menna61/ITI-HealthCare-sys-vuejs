@@ -4,26 +4,26 @@
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Payments</h1>
-        <p class="text-gray-500">Manage your payments</p>
+        <h1 class="text-2xl font-bold dark:text-white">Payments</h1>
+        <p class="text-gray-500 dark:text-gray-400">Manage your payments</p>
       </div>
 
       <!--Page content-->
       <div class="patient-dashboard">
         <div v-if="loading" class="text-center py-8">
-          <div class="text-sm text-gray-500">Loading payments...</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">Loading payments...</div>
         </div>
         <div v-else-if="payments.length === 0" class="text-center py-8">
-          <div class="text-sm text-gray-500">No payments found.</div>
+          <div class="text-sm text-gray-500 dark:text-gray-400">No payments found.</div>
         </div>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div
             v-for="payment in payments"
             :key="payment.id"
-            class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl"
+            class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl dark:bg-gray-800 dark:border dark:border-gray-700"
           >
             <div class="flex justify-between w-full">
-              <h2 class="Internal">{{ payment.speciality }}</h2>
+              <h2 class="Internal dark:text-white">{{ payment.speciality }}</h2>
               <button class="done hover:cursor-pointer">Done</button>
             </div>
             <div class="flex justify-start items-center w-full">
@@ -32,13 +32,13 @@
               </div>
               <div class="w-full">
                 <div class="flex justify-between w-full">
-                  <h2 class="nameDoc">{{ payment.doctorName }}</h2>
+                  <h2 class="nameDoc dark:text-white">{{ payment.doctorName }}</h2>
                   <div>
-                    <i class="fa-brands fa-cc-visa">visa</i>
-                    <span class="price">${{ payment.amount }}</span>
+                    <i class="fa-brands fa-cc-visa dark:bg-blue-600">visa</i>
+                    <span class="price dark:text-gray-300">${{ payment.amount }}</span>
                   </div>
                 </div>
-                <span class="time">{{ payment.time }} , {{ payment.date }}</span>
+                <span class="time dark:text-gray-400">{{ payment.time }} , {{ payment.date }}</span>
               </div>
             </div>
           </div>
