@@ -68,7 +68,9 @@
           class="cardPayment bg-blue-50 dark:bg-gray-800 flex flex-col gap-4 rounded-xl p-4 dark:border dark:border-gray-700"
         >
           <div class="flex justify-between">
-            <h2 class="Internal text-[var(--main-color-500)] dark:text-gray-300">{{ appointment.speciality || "Appointment" }}</h2>
+            <h2 class="Internal text-[var(--main-color-500)] dark:text-gray-300">
+              {{ appointment.speciality || "Appointment" }}
+            </h2>
             <div class="flex w-fit justify-end gap-2">
               <span :class="getStatusClass(appointment.status)">{{ appointment.status }}</span>
             </div>
@@ -149,8 +151,8 @@
         </template>
       </Modal>
     </div>
-    </div>
-  </template>
+  </div>
+</template>
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
@@ -184,82 +186,125 @@ export default {
       activeTab: "upcoming",
     };
   },
-  mounted() {
-    this.checkAndSavePendingBooking();
+  async mounted() {
+    await this.processPendingBooking();
     this.listenToAppointments();
   },
   computed: {
     currentAppointments() {
       if (this.activeTab === "upcoming") {
+        console.log("📊 Computing upcomingAppointments...");
         return this.upcomingAppointments;
       } else {
+        console.log("📊 Computing historyAppointments...");
         return this.historyAppointments;
       }
     },
     upcomingAppointments() {
-      return this.appointments.filter((app) => {
-        return app.status.toLowerCase() === "confirmed";
+      const upcoming = this.appointments.filter((app) => {
+        const isConfirmed = app.status.toLowerCase() === "confirmed";
+        console.log(
+          `🔍 Checking appointment ${app.id}: status="${app.status}", isConfirmed=${isConfirmed}`
+        );
+        return isConfirmed;
       });
+      console.log("✅ Upcoming appointments count:", upcoming.length);
+      console.log("✅ Upcoming appointments:", upcoming);
+      return upcoming;
     },
     historyAppointments() {
-      return this.appointments.filter((app) => {
+      const history = this.appointments.filter((app) => {
         return app.status.toLowerCase() !== "confirmed";
       });
+      console.log("📜 History appointments count:", history.length);
+      return history;
     },
   },
   methods: {
+    // ---------- Process Pending Booking After Payment ----------
+    async processPendingBooking() {
+      try {
+        const pendingBookingStr = localStorage.getItem("pendingBooking");
+        if (!pendingBookingStr) {
+          console.log("✅ No pending booking found in localStorage");
+          return;
+        }
+
+        console.log("🔄 Processing pending booking after payment...");
+        const bookingData = JSON.parse(pendingBookingStr);
+        console.log("📦 Booking data from localStorage:", bookingData);
+
+        const user = auth.currentUser;
+        if (!user) {
+          console.error("❌ No user logged in");
+          localStorage.removeItem("pendingBooking");
+          return;
+        }
+
+        // Verify this booking belongs to current user
+        if (bookingData.patientId !== user.uid) {
+          console.error("❌ Booking doesn't belong to current user");
+          localStorage.removeItem("pendingBooking");
+          return;
+        }
+
+        // Save booking to Firebase
+        console.log("💾 Saving booking to Firebase...");
+        const bookingsRef = collection(db, "bookings");
+        const bookingDoc = await addDoc(bookingsRef, {
+          ...bookingData,
+          createdAt: new Date(),
+          status: "confirmed",
+        });
+        console.log("✅ Booking saved with ID:", bookingDoc.id);
+
+        // Save payment record
+        console.log("💰 Saving payment record...");
+        const paymentsRef = collection(db, "payments");
+        await addDoc(paymentsRef, {
+          patientId: bookingData.patientId,
+          doctorId: bookingData.doctorId,
+          doctorName: bookingData.doctorName,
+          speciality: bookingData.speciality,
+          service: bookingData.service,
+          amount: bookingData.price,
+          date: bookingData.date,
+          time: bookingData.time,
+          createdAt: new Date(),
+          status: "paid",
+        });
+        console.log("✅ Payment record saved");
+
+        // Send notification to doctor
+        console.log("📧 Sending notification to doctor...");
+        const notificationsRef = collection(db, "notifications");
+        await addDoc(notificationsRef, {
+          userId: bookingData.doctorId,
+          message: `New booking from ${bookingData.patientName || "Patient"} for ${
+            bookingData.date
+          } at ${bookingData.time}`,
+          read: false,
+          createdAt: new Date(),
+          type: "new_booking",
+          bookingId: bookingDoc.id,
+        });
+        console.log("✅ Notification sent to doctor");
+
+        // Clear localStorage
+        localStorage.removeItem("pendingBooking");
+        console.log("✅ Pending booking processed successfully and cleared from localStorage");
+      } catch (error) {
+        console.error("❌ Error processing pending booking:", error);
+        // Don't remove from localStorage if there's an error, so user can retry
+      }
+    },
+
     async logout() {
       try {
         await signOutUser();
         this.$router.push("/login");
       } catch (error) {
         console.error("Logout error:", error);
-      }
-    },
-
-    async checkAndSavePendingBooking() {
-      const pendingBooking = localStorage.getItem("pendingBooking");
-      if (pendingBooking) {
-        try {
-          const bookingData = JSON.parse(pendingBooking);
-          // Save booking after successful payment
-          const docRef = await addDoc(collection(db, "bookings"), bookingData);
-          // Record payment entry (Stripe) for patient history
-          try {
-            await addDoc(collection(db, "payments"), {
-              patientId: bookingData.patientId,
-              doctorId: bookingData.doctorId,
-              bookingId: docRef.id,
-              amount: bookingData.price,
-              currency: "USD",
-              method: "stripe",
-              status: "succeeded",
-              createdAt: new Date(),
-              service: bookingData.service,
-              speciality: bookingData.speciality,
-              doctorName: bookingData.doctorName,
-              date: bookingData.date,
-              time: bookingData.time,
-            });
-          } catch (e) {
-            console.warn("Failed to record payment document", e);
-          }
-          // Notify doctor after successful booking save
-          if (bookingData.doctorId) {
-            await addDoc(collection(db, "notifications"), {
-              userId: bookingData.doctorId,
-              message: `A patient ${bookingData.patientName} has booked an appointment.`,
-              read: false,
-              createdAt: new Date(),
-              type: "appointment_booked",
-              bookingId: docRef.id,
-            });
-          }
-          localStorage.removeItem("pendingBooking"); // Remove after saving
-          console.log("Booking saved after payment");
-        } catch (error) {
-          console.error("Error saving booking after payment:", error);
-        }
       }
     },
 
@@ -376,14 +421,23 @@ export default {
           return;
         }
 
+        console.log("👤 PatientAppointments: Current user ID:", user.uid);
+
         // عرفنا bookingsRef هنا قبل ما نستخدمه
         const bookingsRef = collection(db, "bookings");
 
         // لو عايزة تجيبي مواعيد المريض الحالي:
         const q = query(bookingsRef, where("patientId", "==", user.uid));
 
+        console.log("🔍 PatientAppointments: Listening to bookings for patient:", user.uid);
+
         // Use onSnapshot for real-time updates
         this.unsubscribe = onSnapshot(q, async (querySnapshot) => {
+          console.log(
+            "📡 PatientAppointments: Received snapshot with",
+            querySnapshot.docs.length,
+            "documents"
+          );
           const storage = getStorage(firebaseApp);
           const batch = writeBatch(db);
           const appointmentsData = await Promise.all(
@@ -503,6 +557,25 @@ export default {
           const deduped = Array.from(dedupedMap.values());
           deduped.sort((a, b) => new Date(b.date) - new Date(a.date));
           this.appointments = deduped;
+
+          console.log(
+            "📋 PatientAppointments: Total appointments after dedup:",
+            this.appointments.length
+          );
+          console.log("📋 PatientAppointments: All appointments:", this.appointments);
+
+          // Log each appointment's status
+          this.appointments.forEach((app, index) => {
+            console.log(`📌 Appointment ${index + 1}:`, {
+              id: app.id,
+              doctorName: app.doctorName,
+              date: app.date,
+              time: app.time,
+              status: app.status,
+              statusLowerCase: app.status?.toLowerCase(),
+            });
+          });
+
           this.loading = false;
 
           // Commit any status updates for overdue appointments
