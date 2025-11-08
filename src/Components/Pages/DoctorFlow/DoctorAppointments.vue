@@ -4,10 +4,13 @@
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">My Appointments</h1>
-        <p class="text-gray-500">Manage your scheduled appointments</p>
+        <h1 class="text-2xl font-bold dark:text-white">Doctor Dashboard</h1>
+        <p class="text-gray-500">Manage your appointments and patients</p>
       </div>
 
+      <!-- Appointments Tab -->
+
+      <!-- Appointments Tab -->
       <div class="appointments">
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
           <div class="relative overflow-x-auto">
@@ -21,6 +24,7 @@
                   <th class="py-4 px-6 text-left font-semibold">Date</th>
                   <th class="py-4 px-6 text-left font-semibold">Time</th>
                   <th class="py-4 px-6 text-left font-semibold">Status</th>
+                  <th class="py-4 px-6 text-left font-semibold">Mark as Completed</th>
                   <th class="py-4 px-6 text-left font-semibold">Actions</th>
                 </tr>
               </thead>
@@ -70,11 +74,21 @@
                     class="py-4 px-6 animate-slide-in-left"
                     :style="{ animationDelay: `${index * 0.1 + 0.6}s` }"
                   >
-                    <span
-                      class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 transition-all duration-300 hover:bg-green-200 dark:hover:bg-green-800 hover:scale-105"
-                    >
+                    <span :class="getStatusClass(appointment.status)">
                       {{ appointment.status }}
                     </span>
+                  </td>
+                  <td
+                    class="py-4 px-6 animate-slide-in-left"
+                    :style="{ animationDelay: `${index * 0.1 + 0.65}s` }"
+                  >
+                    <input
+                      type="checkbox"
+                      :checked="appointment.status === 'completed'"
+                      :disabled="appointment.status !== 'confirmed'"
+                      @change="markCompleted(appointment.id)"
+                      class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
                   </td>
                   <td
                     class="py-4 px-6 animate-slide-in-left"
@@ -99,11 +113,17 @@
                         Cancel
                       </button>
                       <button
-                        v-if="appointment.status === 'confirmed'"
+                        v-if="appointment.status === 'confirmed' && isTodayOrPast(appointment.date)"
                         @click="markCompleted(appointment.id)"
                         class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
                       >
                         Mark Completed
+                      </button>
+                      <button
+                        @click="addDetails(appointment.id)"
+                        class="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                      >
+                        {{ hasMedicalDetails(appointment.id) ? "Edit Details" : "Add Details" }}
                       </button>
                       <button
                         @click="deleteAppointment(appointment.id)"
@@ -125,12 +145,179 @@
           </div>
         </div>
       </div>
+
+      <!-- Add Details Modal -->
+      <UiModal v-model="showAddDetailsModal" title="Add Medical Details">
+        <!-- Tab Navigation -->
+        <div class="mb-6">
+          <div class="flex border-b border-gray-200 dark:border-gray-700">
+            <button
+              @click="activeTab = 'complaint'"
+              :class="[
+                'py-2 px-4 text-sm font-medium transition-colors',
+                activeTab === 'complaint'
+                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
+              ]"
+            >
+              Complaint
+            </button>
+            <button
+              @click="activeTab = 'prescription'"
+              :class="[
+                'py-2 px-4 text-sm font-medium transition-colors',
+                activeTab === 'prescription'
+                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
+              ]"
+            >
+              Prescription
+            </button>
+          </div>
+        </div>
+
+        <!-- Complaint Tab -->
+        <div v-if="activeTab === 'complaint'" class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Patient Complaint
+            </label>
+            <textarea
+              v-model="medicalDetails.patientComplaint"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="3"
+              placeholder="Describe the patient's complaint..."
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Diagnosis
+            </label>
+            <textarea
+              v-model="medicalDetails.diagnosis"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="3"
+              placeholder="Enter diagnosis..."
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Instructions
+            </label>
+            <textarea
+              v-model="medicalDetails.instructions"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="3"
+              placeholder="Provide instructions for the patient..."
+            ></textarea>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+              Allergies
+            </label>
+            <textarea
+              v-model="medicalDetails.allergies"
+              class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+              rows="2"
+              placeholder="List any known allergies..."
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- Prescription Tab -->
+        <div v-if="activeTab === 'prescription'" class="space-y-4">
+          <div
+            v-for="(medication, index) in medicalDetails.prescriptions"
+            :key="index"
+            class="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Medication Name
+                </label>
+                <input
+                  v-model="medication.name"
+                  type="text"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="Enter medication name"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Dosage
+                </label>
+                <input
+                  v-model="medication.dosage"
+                  type="text"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="e.g., 500mg"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Frequency
+                </label>
+                <input
+                  v-model="medication.frequency"
+                  type="text"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="e.g., twice daily"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Duration
+                </label>
+                <input
+                  v-model="medication.duration"
+                  type="text"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  placeholder="e.g., 7 days"
+                />
+              </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+              <button
+                @click="removeMedication(index)"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+              >
+                Remove
+              </button>
+            </div>
+          </div>
+          <div class="flex justify-center">
+            <button
+              @click="addMedication"
+              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            >
+              Add Medication
+            </button>
+          </div>
+        </div>
+
+        <template #footer>
+          <button
+            @click="showAddDetailsModal = false"
+            class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+          >
+            Cancel
+          </button>
+          <button
+            @click="saveDetails"
+            class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Save Details
+          </button>
+        </template>
+      </UiModal>
     </div>
   </div>
 </template>
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
+import UiModal from "@/Components/UI/Modal.vue";
 import {
   collection,
   getDocs,
@@ -144,19 +331,43 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/firebase";
+import { calculateRefund } from "@/utils/refundUtils.js";
 
 export default {
   name: "DoctorAppointments",
   components: {
     MainNav,
+    UiModal,
   },
   data() {
     return {
       appointments: [],
+      showAddDetailsModal: false,
+      selectedAppointment: null,
+      activeTab: "complaint",
+      medicalDetails: {
+        patientComplaint: "",
+        diagnosis: "",
+        instructions: "",
+        allergies: "",
+        prescriptions: [],
+      },
+      pendingReminders: [],
+      notificationInterval: null,
+      appointmentsWithDetails: new Set(),
     };
   },
   async mounted() {
     await this.fetchAppointments();
+    this.loadPendingReminders();
+    if (this.pendingReminders.length > 0) {
+      this.startNotificationInterval();
+    }
+  },
+  beforeUnmount() {
+    if (this.notificationInterval) {
+      clearInterval(this.notificationInterval);
+    }
   },
   methods: {
     async fetchAppointments() {
@@ -169,9 +380,14 @@ export default {
         const querySnapshot = await getDocs(q);
 
         const appointments = [];
+        const uniquePatientIds = new Set();
+
         for (const docSnap of querySnapshot.docs) {
           const appointment = { id: docSnap.id, ...docSnap.data() };
-          if ((appointment.status || "").toLowerCase() === "cancelled") continue;
+          const status = (appointment.status || "").toLowerCase();
+
+          // We want to show all statuses except for cancelled ones which are handled elsewhere
+          if (status === "cancelled") continue;
 
           // Check if past and pending, set to late
           const today = new Date().toISOString().split("T")[0];
@@ -181,10 +397,17 @@ export default {
 
           // Fetch patient details
           if (appointment.patientId) {
+            uniquePatientIds.add(appointment.patientId);
             const patientRef = doc(db, "patients", appointment.patientId);
             const patientSnap = await getDoc(patientRef);
             if (patientSnap.exists()) {
               const patientData = patientSnap.data();
+              appointment.patientName =
+                `${patientData.firstName || ""} ${patientData.lastName || ""}`.trim() ||
+                patientData.name ||
+                patientData.fullName ||
+                appointment.patientName ||
+                "";
               appointment.patientEmail = patientData.email || "";
               appointment.patientPhone = patientData.phone || "";
             }
@@ -194,9 +417,27 @@ export default {
         }
 
         this.appointments = appointments;
+
+        // Check which appointments have medical details
+        await this.checkAppointmentsWithDetails();
       } catch (error) {
         console.error("Error fetching appointments:", error);
       }
+    },
+    isTodayOrPast(dateString) {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0); // Set to start of today
+      const appointmentDate = new Date(dateString);
+      return appointmentDate <= today;
+    },
+    getStatusClass(status) {
+      const baseClass =
+        "inline-flex items-center px-3 py-1 rounded-full text-sm font-medium transition-all duration-300 hover:scale-105";
+      if (status === "completed")
+        return `${baseClass} bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800`;
+      if (status === "confirmed")
+        return `${baseClass} bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 hover:bg-green-200 dark:hover:bg-green-800`;
+      return `${baseClass} bg-gray-100 dark:bg-gray-600 text-gray-800 dark:text-gray-200`;
     },
     async cancelAppointment(appointmentId) {
       try {
@@ -271,6 +512,20 @@ export default {
       try {
         await updateDoc(doc(db, "bookings", appointmentId), { status: "completed" });
         await this.fetchAppointments();
+        // Check if medical details exist
+        const detailsRef = collection(db, "bookings", appointmentId, "medicalDetails");
+        const querySnapshot = await getDocs(detailsRef);
+        if (querySnapshot.empty) {
+          const appointment = this.appointments.find((app) => app.id === appointmentId);
+          if (appointment) {
+            this.pendingReminders.push({
+              appointmentId,
+              patientName: appointment.patientName,
+            });
+            this.savePendingReminders();
+            this.startNotificationInterval();
+          }
+        }
       } catch (error) {
         console.error("Error marking completed:", error);
       }
@@ -282,6 +537,190 @@ export default {
         this.appointments = this.appointments.filter((app) => app.id !== appointmentId);
       } catch (error) {
         console.error("Error deleting appointment:", error);
+      }
+    },
+
+    addDetails(appointmentId) {
+      this.selectedAppointment = this.appointments.find((app) => app.id === appointmentId);
+      if (this.selectedAppointment) {
+        this.fetchMedicalDetails(appointmentId);
+        this.activeTab = "complaint";
+        this.showAddDetailsModal = true;
+      }
+    },
+
+    async fetchMedicalDetails(appointmentId) {
+      try {
+        const detailsRef = collection(db, "bookings", appointmentId, "medicalDetails");
+        const querySnapshot = await getDocs(detailsRef);
+        if (!querySnapshot.empty) {
+          const doc = querySnapshot.docs[0];
+          const data = doc.data();
+          this.medicalDetails = {
+            id: doc.id,
+            patientComplaint: data.patientComplaint || "",
+            diagnosis: data.diagnosis || "",
+            instructions: data.instructions || "",
+            allergies: data.allergies || "",
+            prescriptions: data.prescriptions || [],
+          };
+        } else {
+          this.medicalDetails = {
+            patientComplaint: "",
+            diagnosis: "",
+            instructions: "",
+            allergies: "",
+            prescriptions: [],
+          };
+        }
+      } catch (error) {
+        console.error("Error fetching medical details:", error);
+        this.medicalDetails = {
+          patientComplaint: "",
+          diagnosis: "",
+          instructions: "",
+          allergies: "",
+          prescriptions: [],
+        };
+      }
+    },
+    async saveDetails() {
+      if (this.selectedAppointment) {
+        // Save from appointment modal
+        try {
+          const detailsRef = collection(
+            db,
+            "bookings",
+            this.selectedAppointment.id,
+            "medicalDetails"
+          );
+
+          // Check if medical details already exist for this appointment
+          const existingDocs = await getDocs(detailsRef);
+          if (!existingDocs.empty) {
+            // Update existing document
+            const existingDocId = existingDocs.docs[0].id;
+            await updateDoc(
+              doc(db, "bookings", this.selectedAppointment.id, "medicalDetails", existingDocId),
+              {
+                patientComplaint: this.medicalDetails.patientComplaint,
+                diagnosis: this.medicalDetails.diagnosis,
+                instructions: this.medicalDetails.instructions,
+                allergies: this.medicalDetails.allergies,
+                prescriptions: this.medicalDetails.prescriptions,
+                updatedAt: new Date(),
+              }
+            );
+          } else {
+            // Add new document
+            await addDoc(detailsRef, {
+              patientComplaint: this.medicalDetails.patientComplaint,
+              diagnosis: this.medicalDetails.diagnosis,
+              instructions: this.medicalDetails.instructions,
+              allergies: this.medicalDetails.allergies,
+              prescriptions: this.medicalDetails.prescriptions,
+              createdAt: new Date(),
+            });
+          }
+
+          this.showAddDetailsModal = false;
+          this.selectedAppointment = null;
+          this.medicalDetails = {
+            patientComplaint: "",
+            diagnosis: "",
+            instructions: "",
+            allergies: "",
+            prescriptions: [],
+          };
+          // Remove from pending reminders
+          this.pendingReminders = this.pendingReminders.filter(
+            (r) => r.appointmentId !== this.selectedAppointment.id
+          );
+          this.savePendingReminders();
+          if (this.pendingReminders.length === 0 && this.notificationInterval) {
+            clearInterval(this.notificationInterval);
+            this.notificationInterval = null;
+          }
+
+          // Update the appointmentsWithDetails set
+          this.appointmentsWithDetails.add(this.selectedAppointment.id);
+
+          // Send notification to patient
+          await addDoc(collection(db, "notifications"), {
+            userId: this.selectedAppointment.patientId,
+            message: `Your medical details for the appointment on ${this.selectedAppointment.date} at ${this.selectedAppointment.time} have been added by Dr. ${this.selectedAppointment.doctorName}.`,
+            read: false,
+            createdAt: new Date(),
+            type: "medical_details_added",
+            bookingId: this.selectedAppointment.id,
+          });
+        } catch (error) {
+          console.error("Error saving medical details:", error);
+        }
+      }
+    },
+    addMedication() {
+      this.medicalDetails.prescriptions.push({
+        name: "",
+        dosage: "",
+        frequency: "",
+        duration: "",
+      });
+    },
+    removeMedication(index) {
+      this.medicalDetails.prescriptions.splice(index, 1);
+    },
+    loadPendingReminders() {
+      const stored = localStorage.getItem("pendingReminders");
+      if (stored) {
+        this.pendingReminders = JSON.parse(stored);
+      }
+    },
+    savePendingReminders() {
+      localStorage.setItem("pendingReminders", JSON.stringify(this.pendingReminders));
+    },
+    startNotificationInterval() {
+      if (this.notificationInterval) return;
+      this.notificationInterval = setInterval(() => {
+        this.pendingReminders.forEach((reminder) => {
+          this.showNotification(reminder.patientName);
+        });
+      }, 30 * 60 * 1000); // 30 minutes
+    },
+    showNotification(patientName) {
+      if ("Notification" in window) {
+        if (Notification.permission === "granted") {
+          new Notification("Medical Details Reminder", {
+            body: `Please enter medical details for patient ${patientName}.`,
+            icon: "/favicon.ico",
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then((permission) => {
+            if (permission === "granted") {
+              new Notification("Medical Details Reminder", {
+                body: `Please enter medical details for patient ${patientName}.`,
+                icon: "/favicon.ico",
+              });
+            }
+          });
+        }
+      }
+    },
+    hasMedicalDetails(appointmentId) {
+      return this.appointmentsWithDetails.has(appointmentId);
+    },
+    async checkAppointmentsWithDetails() {
+      this.appointmentsWithDetails.clear();
+      for (const appointment of this.appointments) {
+        try {
+          const detailsRef = collection(db, "bookings", appointment.id, "medicalDetails");
+          const querySnapshot = await getDocs(detailsRef);
+          if (!querySnapshot.empty) {
+            this.appointmentsWithDetails.add(appointment.id);
+          }
+        } catch (error) {
+          console.error(`Error checking medical details for appointment ${appointment.id}:`, error);
+        }
       }
     },
   },

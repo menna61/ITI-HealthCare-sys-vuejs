@@ -102,7 +102,10 @@
                     : 'bg-red-50 dark:bg-red-900 border border-red-200 dark:border-red-700'
                 "
               >
-                <div class="flex items-center gap-3" v-if="hasUnionCard">
+                <div
+                  class="flex items-center gap-3"
+                  v-if="hasUnionCard && !isApproved && status !== 'rejected'"
+                >
                   <svg
                     class="w-8 h-8 text-yellow-400"
                     fill="none"
@@ -125,7 +128,31 @@
                     </p>
                   </div>
                 </div>
-                <div class="flex items-center gap-3" v-else>
+                <div class="flex items-center gap-3" v-if="hasUnionCard && status === 'rejected'">
+                  <svg
+                    class="w-8 h-8 text-red-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
+                    />
+                  </svg>
+                  <div>
+                    <h4 class="text-red-800 dark:text-red-200 font-semibold">Document Rejected</h4>
+                    <p class="text-red-600 dark:text-red-300 text-sm">
+                      Your previous document was rejected. Please upload a new one.
+                    </p>
+                    <p class="text-red-500 dark:text-red-400 text-xs mt-1" v-if="rejectionReason">
+                      Reason: {{ rejectionReason }}
+                    </p>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3" v-else-if="!hasUnionCard">
                   <svg
                     class="w-8 h-8 text-red-500"
                     fill="none"
@@ -148,7 +175,10 @@
                     </p>
                   </div>
                 </div>
-                <div v-if="!hasUnionCard" class="flex flex-col gap-2">
+                <div
+                  v-if="!hasUnionCard || (hasUnionCard && status === 'rejected')"
+                  class="flex flex-col gap-2"
+                >
                   <input
                     ref="unionCardInput"
                     type="file"
@@ -230,10 +260,10 @@
               </p>
               <button
                 @click="goToServices"
-                :disabled="!isApproved"
+                :disabled="!isApproved || status === 'rejected'"
                 :class="[
                   'font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2',
-                  isApproved
+                  isApproved && status !== 'rejected'
                     ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                     : 'bg-gray-400 text-white cursor-not-allowed',
                 ]"
@@ -271,6 +301,27 @@
         </button>
       </template>
     </Modal>
+
+    <!-- Mark as Completed Confirmation Modal -->
+    <Modal v-model="showCompletedModal" title="Confirm Completion" @close="closeCompletedModal">
+      <p class="text-gray-900 dark:text-white">
+        Are you sure you want to mark this appointment as completed?
+      </p>
+      <template #footer>
+        <button
+          @click="closeCompletedModal"
+          class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
+        >
+          No
+        </button>
+        <button
+          @click="confirmCompleted"
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+        >
+          Yes, Mark as Completed
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
@@ -293,12 +344,16 @@ export default {
       hasServices: false,
       hasUnionCard: false,
       isApproved: false,
+      status: "",
+      rejectionReason: "",
       uploading: false,
       uploadError: "",
       uploadSuccess: "",
       allAppointments: [],
       showCancelModal: false,
       appointmentToCancel: null,
+      showCompletedModal: false,
+      appointmentToComplete: null,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin],
         initialView: "dayGridMonth",
@@ -367,12 +422,18 @@ export default {
         if (docSnap.exists()) {
           const data = docSnap.data();
           this.isApproved = data.approved === true;
+          this.status = data.status || "";
+          this.rejectionReason = data.rejectionReason || "";
         } else {
           this.isApproved = false;
+          this.status = "";
+          this.rejectionReason = "";
         }
       } catch (error) {
         console.error("Error checking approval status:", error);
         this.isApproved = false;
+        this.status = "";
+        this.rejectionReason = "";
       }
     },
     handleDateClick(info) {
@@ -387,10 +448,25 @@ export default {
         year: "numeric",
       });
     },
+    parseAppointmentTime(date, time) {
+      // Parse 12-hour time format (e.g., "1:00 PM") to 24-hour and create Date object
+      const [timePart, period] = time.split(" ");
+      const [hours, minutes] = timePart.split(":").map(Number);
+      let hour24 = hours;
+      if (period.toUpperCase() === "PM" && hours !== 12) {
+        hour24 += 12;
+      } else if (period.toUpperCase() === "AM" && hours === 12) {
+        hour24 = 0;
+      }
+      const time24 = `${hour24.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+      return new Date(`${date}T${time24}`);
+    },
     getActionClass(action) {
       switch (action) {
         case "Cancel":
           return "text-red-500 font-medium hover:underline";
+        case "Mark as Completed":
+          return "text-blue-500 font-medium hover:underline";
         case "Approve":
           return "text-green-500 font-medium hover:underline";
         case "Reject":
@@ -454,7 +530,20 @@ export default {
         const docRef = doc(db, "doctors", user.uid);
         await updateDoc(docRef, {
           unionMembershipCardUrl: url,
+          status: "", // Reset status when uploading new card
+          rejectionReason: "", // Clear rejection reason
         });
+        // Notify admins about new doctor document upload
+        await addDoc(collection(db, "notifications"), {
+          recipientRole: "admin",
+          type: "doctor_document_uploaded",
+          doctorId: user.uid,
+          message: "A doctor uploaded new documents and is pending review.",
+          read: false,
+          createdAt: new Date(),
+        });
+        this.status = "";
+        this.rejectionReason = "";
       } catch (error) {
         console.error("Error saving union card URL:", error);
       }
@@ -489,7 +578,14 @@ export default {
                   console.error("Error fetching patient name:", err);
                 }
               }
-              const actions = ["Cancel"];
+              // Determine actions based on appointment time
+              const now = new Date();
+              const appointmentDateTime = this.parseAppointmentTime(
+                appointment.date,
+                appointment.time
+              );
+              const actions = appointmentDateTime <= now ? ["Mark as Completed"] : ["Cancel"];
+
               return {
                 id: appointment.id,
                 date: appointment.date, // Assume date is in YYYY-MM-DD
@@ -546,6 +642,9 @@ export default {
       if (action === "Cancel") {
         this.appointmentToCancel = appointment;
         this.showCancelModal = true;
+      } else if (action === "Mark as Completed") {
+        this.appointmentToComplete = appointment;
+        this.showCompletedModal = true;
       }
     },
     async cancelAppointment(appointment) {
@@ -599,6 +698,34 @@ export default {
         console.error("Error cancelling appointment:", error);
       }
     },
+    async markAsCompleted(appointment) {
+      try {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        // Update appointment status to completed
+        const appointmentRef = doc(db, "bookings", appointment.id);
+        await updateDoc(appointmentRef, {
+          status: "completed",
+          completedAt: new Date(),
+          completedBy: user.uid,
+        });
+
+        // Add notification to patient
+        await addDoc(collection(db, "notifications"), {
+          userId: appointment.patientId,
+          message: `Your appointment on ${appointment.date} at ${appointment.time} has been marked as completed by the doctor.`,
+          read: false,
+          createdAt: new Date(),
+          type: "completion",
+        });
+
+        // Remove from local array
+        this.allAppointments = this.allAppointments.filter((app) => app.id !== appointment.id);
+      } catch (error) {
+        console.error("Error marking appointment as completed:", error);
+      }
+    },
     async confirmCancel() {
       if (this.appointmentToCancel) {
         await this.cancelAppointment(this.appointmentToCancel);
@@ -609,6 +736,17 @@ export default {
     closeCancelModal() {
       this.showCancelModal = false;
       this.appointmentToCancel = null;
+    },
+    async confirmCompleted() {
+      if (this.appointmentToComplete) {
+        await this.markAsCompleted(this.appointmentToComplete);
+        this.showCompletedModal = false;
+        this.appointmentToComplete = null;
+      }
+    },
+    closeCompletedModal() {
+      this.showCompletedModal = false;
+      this.appointmentToComplete = null;
     },
   },
 };

@@ -130,7 +130,8 @@
                 <!-- Submit Button -->
                 <div class="w-full flex justify-end">
                   <button
-                    type="submit"
+                    type="button"
+                    @click="handleCreateAccountClick"
                     :disabled="loading"
                     class="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-60"
                   >
@@ -164,17 +165,62 @@
         </form>
       </div>
     </div>
+
+    <!-- Terms and Conditions Modal -->
+    <Modal v-model="showTermsModal" :title="$t('Terms_and_Conditions')">
+      <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-300">
+        <p class="font-semibold text-gray-900 dark:text-white">{{ $t("Terms_and_Conditions") }}</p>
+        <ul class="flex flex-col gap-3 list-disc list-inside">
+          <li>{{ $t("terms_cancel_12h") }}</li>
+          <li>{{ $t("terms_cancel_6h") }}</li>
+          <li>{{ $t("terms_doctor_cancel") }}</li>
+        </ul>
+      </div>
+      <template #footer>
+        <button
+          @click="showTermsModal = false"
+          class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+        >
+          {{ $t("Decline") }}
+        </button>
+        <button
+          @click="acceptTermsAndRegister"
+          :disabled="loading"
+          class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-60 transition-colors flex items-center gap-2"
+        >
+          <svg
+            v-if="loading"
+            class="animate-spin h-4 w-4 text-white"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              class="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              stroke-width="4"
+            />
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+          </svg>
+          {{ $t("Accept") }}
+        </button>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script>
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
+import Modal from "../UI/Modal.vue";
 import { registerWithEmail, db } from "../../authHandler.js";
 import { doc, setDoc } from "firebase/firestore";
 
 export default {
-  components: { GoogleCard, BackBtn },
+  components: { GoogleCard, BackBtn, Modal },
   name: "PatientSignup",
   data() {
     return {
@@ -188,10 +234,21 @@ export default {
       loading: false,
       errorMsg: "",
       successMsg: "",
+      showTermsModal: false,
     };
   },
 
   methods: {
+    handleCreateAccountClick() {
+      // Check if form is valid
+      const form = this.$el.querySelector("form");
+      if (form && form.checkValidity()) {
+        this.showTermsModal = true;
+      } else {
+        // Trigger HTML5 validation
+        form.reportValidity();
+      }
+    },
     calculateAge(birthdate) {
       const today = new Date();
       const birthDate = new Date(birthdate);
@@ -204,6 +261,8 @@ export default {
     },
     async registerPatient() {
       try {
+        this.loading = true;
+        this.errorMsg = "";
         const cred = await registerWithEmail(this.email, this.password);
         const uid = cred.user.uid;
         const age = this.calculateAge(this.birthdate);
@@ -225,7 +284,13 @@ export default {
       } catch (error) {
         console.error("Error signing up:", error);
         this.errorMsg = error?.message || "Something went wrong. Please try again.";
+      } finally {
+        this.loading = false;
       }
+    },
+    acceptTermsAndRegister() {
+      this.showTermsModal = false;
+      this.registerPatient();
     },
   },
 };

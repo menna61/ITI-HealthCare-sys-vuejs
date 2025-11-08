@@ -1,18 +1,18 @@
 <template>
-  <div
-  class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300"
->
+  <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
     <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">{{ $t('allAppointments') }}</h1>
-        <p class="text-gray-500 dark:text-gray-400">{{ $t('viewAllAppointments') }}</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("allAppointments") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t("viewAllAppointments") }}</p>
       </div>
 
       <!--Page content-->
-      <div v-if="loading" class="text-center animate-fade-in">{{ $t('loadingAppointments') }}</div>
-      <div v-else-if="appointments.length === 0" class="text-center animate-fade-in">{{ $t('noAppointments') }}</div>
+      <div v-if="loading" class="text-center animate-fade-in">{{ $t("loadingAppointments") }}</div>
+      <div v-else-if="appointments.length === 0" class="text-center animate-fade-in">
+        {{ $t("noAppointments") }}
+      </div>
       <div v-else class="flex flex-col gap-6">
         <div
           v-for="(appointment, index) in appointments"
@@ -23,20 +23,23 @@
           <div class="flex justify-between">
             <h2 class="Internal dark:text-gray-200">{{ appointment.speciality }}</h2>
             <div class="flex w-fit justify-end gap-2">
-              <button v-if="appointment.status === 'Confirmed'"
+              <button
+                v-if="appointment.status === 'Confirmed'"
                 class="Confirmed hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-gray-600 dark:text-gray-300"
               >
-                {{ $t('confirmed') }}
+                {{ $t("confirmed") }}
               </button>
-               <button v-else-if="appointment.status === 'Pending'"
+              <button
+                v-else-if="appointment.status === 'Pending'"
                 class="Pending hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-blue-800 dark:text-blue-300"
               >
-                {{ $t('pending') }}
+                {{ $t("pending") }}
               </button>
-              <button v-else
+              <button
+                v-else
                 class="Canceled hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-red-800 dark:text-red-300"
               >
-                {{ $t('canceled') }}
+                {{ $t("canceled") }}
               </button>
             </div>
           </div>
@@ -47,11 +50,17 @@
             <div class="w-full">
               <div class="flex justify-between w-full">
                 <h2 class="nameDoc dark:text-gray-100">{{ appointment.doctorName }}</h2>
-                <span class="done dark:bg-green-800 dark:text-green-300">{{ $t('sessionType') }} : {{ appointment.service }}</span>
+                <span class="done dark:bg-green-800 dark:text-green-300"
+                  >{{ $t("sessionType") }} : {{ appointment.service }}</span
+                >
               </div>
               <div class="flex flex-row justify-between">
-                <span class="time dark:text-gray-400">{{ appointment.time }}, {{ appointment.date }}</span>
-                <span class="linkVido dark:text-gray-300">{{ $t('patient') }}: {{ appointment.patientName }}</span>
+                <span class="time dark:text-gray-400"
+                  >{{ appointment.time }}, {{ appointment.date }}</span
+                >
+                <span class="linkVido dark:text-gray-300"
+                  >{{ $t("patient") }}: {{ appointment.patientName }}</span
+                >
               </div>
             </div>
           </div>
@@ -64,7 +73,7 @@
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import { db } from "@/firebase";
-import { collection,doc, getDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
 
 export default {
   name: "TotalAppointments",
@@ -92,7 +101,7 @@ export default {
 
               // Get doctor details
               let doctorName = booking.doctorName || "Unknown Doctor";
-              let doctorImage = "/images/imgProfile.jpg";
+              let doctorImage = "https://via.placeholder.com/45x40/cccccc/000000?text=Doctor";
               try {
                 if (booking.doctorId) {
                   const doctorRef = doc(db, "doctors", booking.doctorId);
@@ -228,14 +237,13 @@ export default {
   background: #d1fadf;
   border-radius: 18px;
 }
-.done{
- padding: 3px 10px;
+.done {
+  padding: 3px 10px;
   color: #05603a;
   background: #d1fadf;
   border-radius: 18px;
   font-size: 12px;
   margin: 1px 3px;
-
 }
 .Pending {
   color: #0cb8b6;
@@ -316,13 +324,17 @@ export default {
   .nameDoc {
     font-size: 14px;
   }
-  .time, .linkVido {
+  .time,
+  .linkVido {
     font-size: 11px;
   }
   .Internal {
     font-size: 16px;
   }
-  .Confirmed, .Pending, .Canceled, .done {
+  .Confirmed,
+  .Pending,
+  .Canceled,
+  .done {
     font-size: 11px;
     padding: 2px 8px;
   }

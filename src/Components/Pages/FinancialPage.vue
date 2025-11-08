@@ -300,8 +300,8 @@ export default {
 
           const price = parseFloat(booking.price) || 0;
 
-          // Use confirmed bookings for totals and breakdown, matching top cards
-          if (booking.status === "confirmed") {
+          // Use confirmed and completed bookings for totals and breakdown, matching top cards
+          if (booking.status === "confirmed" || booking.status === "completed") {
             totalEarnings += price;
             totalAppointments += 1;
             uniquePatients.add(booking.patientId);

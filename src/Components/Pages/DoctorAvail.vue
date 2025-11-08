@@ -12,6 +12,16 @@
         >
           <p>You must be approved by the admin before you can set your availability.</p>
         </div>
+        <div
+          v-if="isApproved && !hasAnyAvailability"
+          class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded"
+        >
+          <p class="font-medium">Welcome! Please set your availability.</p>
+          <p class="text-sm mt-1">
+            Toggle the days you're available and set your working hours. Patients will be able to
+            book appointments based on your schedule.
+          </p>
+        </div>
       </div>
 
       <!-- Page content -->
@@ -123,6 +133,9 @@ export default {
     };
   },
   computed: {
+    hasAnyAvailability() {
+      return this.days.some((day) => day.available === true);
+    },
     currentTime() {
       const now = new Date();
       const hours = now.getHours().toString().padStart(2, "0");

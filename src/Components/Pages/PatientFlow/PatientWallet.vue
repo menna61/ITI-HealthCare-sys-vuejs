@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
@@ -40,7 +40,7 @@
 <script>
 import MainNav from "../../Layouts/MainNav.vue";
 import { db, auth } from "/src/authHandler.js";
-import { doc, getDoc, collection, getDocs } from "firebase/firestore";
+import { doc,  collection,  onSnapshot } from "firebase/firestore";
 
 export default {
   name: "PatientWallet",
@@ -49,33 +49,47 @@ export default {
     return {
       walletBalance: 0,
       transactions: [],
+      unsubscribeWallet: null, // للاستماع للرصيد
+      unsubscribeTransactions: null, // للاستماع للمعاملات
     };
   },
   async mounted() {
-    await this.fetchWalletData();
+    await this.setupListeners();
+  },
+  beforeUnmount() {
+    // إلغاء الاستماع عشان نتجنب التسريبات
+    if (this.unsubscribeWallet) this.unsubscribeWallet();
+    if (this.unsubscribeTransactions) this.unsubscribeTransactions();
   },
   methods: {
-    async fetchWalletData() {
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
+    async setupListeners() {
+      const user = auth.currentUser;
+      if (!user) return;
 
-        const patientRef = doc(db, "patients", user.uid);
-        const patientSnap = await getDoc(patientRef);
-        if (patientSnap.exists()) {
-          this.walletBalance = patientSnap.data().wallet || 0;
+      // Listener للرصيد (real-time update)
+      const patientRef = doc(db, "patients", user.uid);
+      this.unsubscribeWallet = onSnapshot(patientRef, (docSnap) => {
+        if (docSnap.exists()) {
+          this.walletBalance = docSnap.data().wallet || 0;
         }
+      }, (error) => {
+        console.error("Error listening to wallet:", error);
+      });
 
-        // Fetch transactions (assuming a transactions subcollection)
-        const transactionsRef = collection(db, "patients", user.uid, "transactions");
-        const querySnapshot = await getDocs(transactionsRef);
+      // Listener للمعاملات (real-time update)
+      const transactionsRef = collection(db, "patients", user.uid, "transactions");
+      this.unsubscribeTransactions = onSnapshot(transactionsRef, (querySnapshot) => {
         this.transactions = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      } catch (error) {
-        console.error("Error fetching wallet data:", error);
-      }
+      }, (error) => {
+        console.error("Error listening to transactions:", error);
+      });
     },
     formatDate(date) {
-      return new Date(date.seconds * 1000).toLocaleDateString();
+      // تأكد إن date بتنسيق timestamp (seconds)
+      if (date && date.seconds) {
+        return new Date(date.seconds * 1000).toLocaleDateString();
+      }
+      return new Date(date).toLocaleDateString(); // لو string
     },
   },
 };

@@ -14,10 +14,10 @@
         <button
           type="button"
           @click="openServiceModal"
-          :disabled="!isApproved"
+          :disabled="!isApproved || status === 'rejected'"
           :class="[
             'focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center gap-2',
-            isApproved
+            isApproved && status !== 'rejected'
               ? 'text-white bg-blue-600 hover:bg-blue-700 cursor-pointer'
               : 'text-white bg-gray-400 cursor-not-allowed',
           ]"
@@ -67,10 +67,10 @@
             </p>
             <button
               @click="openServiceModal"
-              :disabled="!isApproved"
+              :disabled="!isApproved || status === 'rejected'"
               :class="[
                 'font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2',
-                isApproved
+                isApproved && status !== 'rejected'
                   ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
                   : 'bg-gray-400 text-white cursor-not-allowed',
               ]"
@@ -336,6 +336,7 @@ export default {
       currentServiceId: null,
       hasUnionCard: false,
       isApproved: false,
+      status: "",
       toast: { type: "", message: "" },
       serviceForm: {
         name: "",
@@ -399,12 +400,15 @@ export default {
         if (docSnap.exists()) {
           const data = docSnap.data();
           this.isApproved = data.approved === true;
+          this.status = data.status || "";
         } else {
           this.isApproved = false;
+          this.status = "";
         }
       } catch (error) {
         console.error("Error checking approval status:", error);
         this.isApproved = false;
+        this.status = "";
       }
     },
     openServiceModal() {

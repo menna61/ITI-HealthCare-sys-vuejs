@@ -12,6 +12,7 @@
       </svg>
     </button>
 
+
     <!-- الخلفية الداكنة عند فتح القائمة -->
     <div
       v-if="menuOpen"
@@ -63,6 +64,8 @@
         </div>
 
         <!-- Logout Modal -->
+      </div>
+    </div>
         <UiModal v-model="showLogoutModal" title="">
           <div class="sm:flex sm:items-start z-50">
             <div class="mx-auto flex size-12 shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:size-10">
@@ -96,8 +99,6 @@
             </button>
           </template>
         </UiModal>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -114,7 +115,7 @@ export default {
       menuOpen: false,
       links: [
         { to: "/admin/dashboard", label: "Dashboard", icon: "DashboardIcon" },
-        { to: "/admin/users", label: "Users", icon: "UsersIcon" },
+        { to: "/admin/patients", label: "Patients", icon: "UsersIcon" },
         { to: "/admin/doctors", label: "All Doctors", icon: "DoctorsIcon" },
         { to: "/admin/totalAppointments", label: "Total Appointments", icon: "AppointmentsIcon" },
         { to: "/admin/doctorAvailability", label: "Doctors Availability", icon: "AvailabilityIcon" },

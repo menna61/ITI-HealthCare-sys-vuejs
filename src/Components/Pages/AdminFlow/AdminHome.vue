@@ -2,11 +2,44 @@
   <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
     <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
-      <!--Page titles-->
+      <!-- Page titles -->
       <div class="title flex flex-col gap-4">
         <h1 class="text-2xl font-bold dark:text-white">{{ $t("dashboard") }}</h1>
         <p class="text-gray-500 dark:text-gray-200">{{ $t("monitor") }}</p>
       </div>
+
+      <!-- Rejection Modal -->
+      <UiModal v-model="showRejectionModal" :title="$t('rejectionReason')">
+        <form @submit.prevent="submitRejection">
+          <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              {{ $t("enterRejectionReason") }}
+            </label>
+            <textarea
+              v-model="rejectionReason"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white"
+              rows="4"
+              :placeholder="$t('rejectionReasonPlaceholder')"
+              required
+            ></textarea>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button
+              type="button"
+              @click="closeRejectionModal"
+              class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-500"
+            >
+              {{ $t("cancel") }}
+            </button>
+            <button
+              type="submit"
+              class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+            >
+              {{ $t("submitRejection") }}
+            </button>
+          </div>
+        </form>
+      </UiModal>
       <!-- Top Cards -->
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         <!-- Total Users -->
@@ -252,6 +285,7 @@
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
+import UiModal from "@/Components/UI/Modal.vue";
 import { db } from "@/firebase";
 import {
   collection,
@@ -296,7 +330,7 @@ Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 export default {
   name: "AdminHome",
-  components: { MainNav },
+  components: { MainNav, UiModal },
   data() {
     return {
       doctorsCount: 0,
@@ -319,6 +353,9 @@ export default {
           doctors: 0,
         },
       },
+      showRejectionModal: false,
+      rejectionReason: "",
+      currentRejectionItem: null,
     };
   },
   mounted() {
@@ -466,7 +503,8 @@ export default {
         console.log(this.activeDoctors);
 
         const pendingDoctorsCount = doctors.filter(
-          (doctor) => doctor.approved === false || !doctor.approved
+          (doctor) =>
+            (doctor.approved === false || !doctor.approved) && doctor.status !== "rejected"
         ).length;
         const pendingPatientsCount = await this.getPendingPatientsCount();
         this.pendingApprovals = pendingDoctorsCount + pendingPatientsCount;
@@ -535,7 +573,10 @@ export default {
             type: "doctor",
             ...doc.data(),
           }))
-          .filter((doctor) => doctor.approved === false || !doctor.approved);
+          .filter(
+            (doctor) =>
+              (doctor.approved === false || !doctor.approved) && doctor.status !== "rejected"
+          );
         pendingItems.push(...pendingDoctors);
 
         // Fetch pending patients (users with union card uploaded but not approved)
@@ -583,19 +624,74 @@ export default {
       }
     },
 
-    async rejectItem(itemId, type) {
-      try {
-        if (type === "doctor") {
-          const doctorRef = doc(db, "doctors", itemId);
-          await updateDoc(doctorRef, { approved: false });
-        } else if (type === "patient") {
-          const userRef = doc(db, "users", itemId);
-          await updateDoc(userRef, { unionCardApproved: false });
-        }
+    rejectItem(itemId, type) {
+      this.currentRejectionItem = { id: itemId, type };
+      this.showRejectionModal = true;
+    },
 
+    closeRejectionModal() {
+      this.showRejectionModal = false;
+      this.rejectionReason = "";
+      this.currentRejectionItem = null;
+    },
+
+    async submitRejection() {
+      if (!this.rejectionReason.trim()) return;
+
+      // Close the modal immediately to avoid blocking on network errors
+      this.showRejectionModal = false;
+
+      try {
+        const { id, type } = this.currentRejectionItem;
+
+        if (type === "doctor") {
+          const doctorRef = doc(db, "doctors", id);
+          await updateDoc(doctorRef, {
+            approved: false,
+            status: "rejected",
+            rejectionReason: this.rejectionReason,
+          });
+          // إضافة إشعار للطبيب
+          await addDoc(collection(db, "notifications"), {
+            userId: id,
+            message: `${this.$t("documentRejected")}: ${this.rejectionReason}`,
+            type: "rejection",
+            read: false,
+            createdAt: new Date(),
+          });
+          // Send rejection email (fire-and-forget so UI isn't blocked)
+          fetch("http://localhost:4242/send-rejection-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: id,
+              userType: type,
+              rejectionReason: this.rejectionReason,
+            }),
+          }).catch(() => {});
+        } else if (type === "patient") {
+          const userRef = doc(db, "users", id);
+          await updateDoc(userRef, {
+            unionCardApproved: false,
+            rejectionReason: this.rejectionReason,
+          });
+          // Send rejection email (fire-and-forget so UI isn't blocked)
+          fetch("http://localhost:4242/send-rejection-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              userId: id,
+              userType: type,
+              rejectionReason: this.rejectionReason,
+            }),
+          }).catch(() => {});
+        }
         this.fetchData(); // تحديث البيانات
       } catch (error) {
         console.error("Error rejecting item:", error);
+      } finally {
+        // Ensure local state is reset even if an error occurs
+        this.closeRejectionModal();
       }
     },
 

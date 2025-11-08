@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->

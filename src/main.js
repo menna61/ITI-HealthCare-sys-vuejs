@@ -61,6 +61,9 @@ import PatientProfile from "./Components/Pages/PatientFlow/PatientProfile.vue";
 import { createI18n } from "vue-i18n";
 import en from "../locales/en.json"
 import ar from "../locales/ar.json";
+import MedicalHistory from "./Components/Pages/PatientFlow/MedicalHistory.vue";
+// import Vue3Toastify from 'vue3-toastify';
+// import 'vue3-toastify/dist/index.css';
 
 export const i18n = createI18n({
   locale: "ar",
@@ -200,6 +203,7 @@ const routes = [
       { path: "appointments", component: PatientAppointments },
       { path: "wallet", component: PatientWallet },
       { path: "profile", component: PatientProfile },
+      { path: "medical-history", component: MedicalHistory}
     ],
   },
 
@@ -209,7 +213,7 @@ const routes = [
     meta: { requiresAuth: true },
     children: [
       { path: "dashboard", component: AdminHome },
-      { path: "users", component: UsersPage },
+      { path: "patients", component: UsersPage },
       { path: "doctors", component: AllDoctorsPage },
       { path: "documents", component: DocumentApproval },
       { path: "totalAppointments", component: TotalAppointments },
@@ -365,6 +369,7 @@ router.beforeEach(async (to, from, next) => {
 
 vueApp.use(router);
 vueApp.use(i18n);
+// vueApp.use(Vue3Toastify, { position: "top-right" });
 // vueApp.use(VueToast, {
 //   position: "top-right",
 //   duration: 3000,
