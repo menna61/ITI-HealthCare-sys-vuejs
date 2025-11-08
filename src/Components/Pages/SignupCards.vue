@@ -99,7 +99,8 @@
         </div>
       </div>
 
-      <div class="doctor p-8 bg-white rounded-xl flex flex-col gap-9 w-full">
+      <!--doctor card-->
+      <div class="doctor p-8 bg-white rounded-xl flex flex-col gap-9 w-full dark:bg-gray-800">
         <div class="top flex flex-col items-center justify-center">
           <div
             class="icon w-20 h-20 flex justify-center items-center rounded-full bg-[#E7F8F8] mb-4"
@@ -117,8 +118,8 @@
             </svg>
           </div>
           <div class="titles flex flex-col items-center justify-center">
-            <p class="mb-2 text-xl text-gray-900">{{ $t("doctor") }}</p>
-            <p class="text-gray-500 w-full md:w-[600px] text-center">
+            <p class="mb-2 text-xl text-gray-900 dark:text-white">{{ $t("doctor") }}</p>
+            <p class="text-gray-500 w-full md:w-[600px] text-center dark:text-gray-300">
               {{ $t("droledesc") }}
             </p>
           </div>

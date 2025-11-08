@@ -155,21 +155,13 @@ export async function sendRejectionEmail({ userId, userType, rejectionReason }) 
   }
 }
 
-export async function sendApprovalEmail({ userId }) {
-  let userRef, userSnap, userData, to, userName, subject, text, html;
-
+export async function sendApprovalEmail({ email, firstName, lastName }) {
   try {
-    userRef = doc(db, "doctors", userId);
-    userSnap = await getDoc(userRef);
-    if (!userSnap.exists()) {
-      throw new Error("Doctor not found");
-    }
-    userData = userSnap.data();
-    to = userData.email;
-    userName = `Dr. ${userData.firstName} ${userData.lastName}`;
-    subject = "Document Approval Notification";
-    text = `Hello ${userName},\n\nCongratulations! We are pleased to inform you that your submitted documents have been approved.\n\nYou can now log in to your account and start using our platform.\n\nBest regards,\nHealthcare Team`;
-    html = `<div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#111">
+    const to = email;
+    const userName = `Dr. ${firstName} ${lastName}`;
+    const subject = "Document Approval Notification";
+    const text = `Hello ${userName},\n\nCongratulations! We are pleased to inform you that your submitted documents have been approved.\n\nYou can now log in to your account and start using our platform.\n\nBest regards,\nHealthcare Team`;
+    const html = `<div style="font-family:Arial,Helvetica,sans-serif;line-height:1.6;color:#111">
 <h2 style="margin:0 0 12px">Documents Approved</h2>
 <p>Hello ${userName},</p>
 <p>Congratulations! We are pleased to inform you that your submitted documents have been approved.</p>

@@ -6,6 +6,7 @@ import { sendCancellationEmail } from "./mail.js";
 import { sendDoctorRemovalEmail } from "./mail.js";
 import { sendDeletionEmail } from "./mail.js";
 import { sendDoctorDeletionCancellationEmail } from "./mail.js";
+import { sendApprovalEmail } from "./mail.js";
 
 dotenv.config();
 const app = express();
@@ -113,6 +114,26 @@ app.post("/send-doctor-deletion-cancellation-email", async (req, res) => {
     });
     res.json({ ok: true });
   } catch (err) {
+    res.status(500).json({ error: err.message || "Failed to send email" });
+  }
+});
+
+// ✅ Send approval email
+app.post("/send-approval-email", async (req, res) => {
+  console.log("📧 Received approval email request:", req.body);
+  try {
+    const { userId, email, firstName, lastName } = req.body || {};
+    if (!userId || !email || !firstName || !lastName) {
+      console.error("❌ Error: Missing required fields");
+      return res.status(400).json({ error: "userId, email, firstName, and lastName are required" });
+    }
+    console.log("📤 Sending approval email to:", email);
+    await sendApprovalEmail({ email, firstName, lastName });
+    console.log("✅ Approval email sent successfully to:", email);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("❌ Error sending approval email:", err.message);
+    console.error("Full error:", err);
     res.status(500).json({ error: err.message || "Failed to send email" });
   }
 });
