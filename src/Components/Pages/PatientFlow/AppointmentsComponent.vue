@@ -95,7 +95,7 @@
 
 <script>
 import { db, auth } from "/src/authHandler.js";
-import { collection, query, where, onSnapshot, doc, getDoc } from "firebase/firestore";
+import { collection, query, where, onSnapshot, doc, getDoc, updateDoc } from "firebase/firestore";
 
 export default {
   data() {
@@ -148,6 +148,21 @@ export default {
             } catch (e) {
               console.error("Error fetching doctor details:", e);
             }
+
+            // Check for overdue appointments (wait 15 minutes after appointment time)
+            let status = (b.status || "").toLowerCase();
+            if (status === "confirmed") {
+              const appointmentDateTime = new Date(`${b.date} ${b.time}`);
+              const now = new Date();
+              const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
+              if (appointmentDateTime < fifteenMinutesAgo) {
+                // Update status to overdue
+                const appointmentRef = doc(db, "bookings", b.id);
+                await updateDoc(appointmentRef, { status: "Overdue" });
+                status = "overdue";
+              }
+            }
+
             return {
               id: b.id,
               doctorName,
@@ -156,7 +171,7 @@ export default {
               speciality: b.speciality,
               date: b.date,
               time: b.time,
-              status: (b.status || "").toLowerCase(),
+              status,
             };
           })
         );

@@ -673,6 +673,44 @@ export default {
         this.profileImageUrl = ""; // Reset on failure
       }
     },
+    async initializeDefaultAvailability(doctorId) {
+      try {
+        // Generate next 7 days with default availability (all unavailable initially)
+        const days = [];
+        const today = new Date();
+        const dayNames = [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday",
+        ];
+
+        for (let i = 0; i < 7; i++) {
+          const date = new Date(today);
+          date.setDate(today.getDate() + i);
+          days.push({
+            date: date.toISOString().split("T")[0], // Store as YYYY-MM-DD string
+            name: dayNames[date.getDay()],
+            available: false, // Default to unavailable
+            start: "", // Empty time slots
+            end: "",
+          });
+        }
+
+        // Create the availability document in Firebase
+        await setDoc(doc(db, "doctorAvailability", doctorId), {
+          availability: days,
+        });
+
+        console.log("Default availability initialized for doctor:", doctorId);
+      } catch (error) {
+        console.error("Error initializing default availability:", error);
+        // Don't throw error - availability can be set later
+      }
+    },
     async registerDoctor() {
       try {
         this.errorMsg = "";
@@ -682,6 +720,7 @@ export default {
         const cred = await registerWithEmail(this.email, this.password);
         const uid = cred.user.uid;
 
+        // Create doctor document
         await setDoc(doc(db, "doctors", uid), {
           firstName: this.firstName,
           lastName: this.lastName,
@@ -699,6 +738,9 @@ export default {
           role: "doctor",
           approved: false,
         });
+
+        // Initialize default availability for the new doctor
+        await this.initializeDefaultAvailability(uid);
 
         this.successMsg = "Account created successfully.";
         this.loading = false;

@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
@@ -16,62 +16,32 @@
         <div v-else-if="payments.length === 0" class="text-center py-8">
           <div class="text-sm text-gray-500">No payments found.</div>
         </div>
-        <div v-else class="overflow-x-auto bg-white shadow-md rounded-lg">
-          <table class="min-w-full table-auto">
-            <thead class="bg-gray-50">
-              <tr>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Date
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Doctor Name
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Service
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Amount
-                </th>
-                <th
-                  class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-                >
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="payment in payments" :key="payment.id">
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ formatDate(payment.createdAt) }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ payment.doctorName || "Unknown Doctor" }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {{ payment.service || "N/A" }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  ${{ payment.amount }}
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span
-                    :class="getStatusClass(payment.status)"
-                    class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
-                  >
-                    {{ payment.status }}
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div
+            v-for="payment in payments"
+            :key="payment.id"
+            class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl"
+          >
+            <div class="flex justify-between w-full">
+              <h2 class="Internal">{{ payment.speciality }}</h2>
+              <button class="done hover:cursor-pointer">Done</button>
+            </div>
+            <div class="flex justify-start items-center w-full">
+              <div class="imgDoc mx-2">
+                <img :src="payment.doctorImage" alt="" />
+              </div>
+              <div class="w-full">
+                <div class="flex justify-between w-full">
+                  <h2 class="nameDoc">{{ payment.doctorName }}</h2>
+                  <div>
+                    <i class="fa-brands fa-cc-visa">visa</i>
+                    <span class="price">${{ payment.amount }}</span>
+                  </div>
+                </div>
+                <span class="time">{{ payment.time }} , {{ payment.date }}</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -103,49 +73,60 @@ export default {
           this.loading = false;
           return;
         }
-        // Fetch all confirmed bookings (representing payments done)
-        const q = query(
-          collection(db, "bookings"),
-          where("patientId", "==", user.uid),
-          where("status", "==", "confirmed")
-        );
+        // Fetch all payments for the patient
+        const q = query(collection(db, "payments"), where("patientId", "==", user.uid));
         const snap = await getDocs(q);
-        const bookings = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const paymentsData = snap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 
-        // Enrich with doctor names
-        this.payments = await Promise.all(
-          bookings.map(async (booking) => {
-            let doctorName = booking.doctorName || "Unknown Doctor";
+        // Enrich with doctor names and images, only include if doctor exists
+        const enrichedPayments = await Promise.all(
+          paymentsData.map(async (payment) => {
+            let doctorName = payment.doctorName || "Unknown Doctor";
+            let doctorImage = "/images/imgProfile.jpg";
+            let doctorExists = false;
             try {
-              if (booking.doctorId) {
-                const dref = doc(db, "doctors", booking.doctorId);
+              if (payment.doctorId) {
+                const dref = doc(db, "doctors", payment.doctorId);
                 const ds = await getDoc(dref);
                 if (ds.exists()) {
                   const d = ds.data();
                   doctorName = `${d.firstName || ""} ${d.lastName || ""}`.trim() || doctorName;
+                  doctorImage = d.profileImageUrl || doctorImage;
+                  doctorExists = true;
                 }
               }
             } catch (e) {
-              console.warn("Error fetching doctor name:", e);
+              console.warn("Error fetching doctor details:", e);
             }
-            return {
-              id: booking.id,
-              doctorName,
-              service: booking.service || "N/A",
-              amount: booking.price || 0,
-              status: "Paid", // Since confirmed
-              date: booking.date,
-              time: booking.time,
-              createdAt: booking.createdAt || null,
-            };
+            if (doctorExists) {
+              return {
+                id: payment.id,
+                doctorName,
+                doctorImage,
+                speciality: payment.speciality || payment.service || "Payment",
+                service: payment.service || "N/A",
+                amount: payment.amount || 0,
+                status: "Paid", // Since it's a payment record
+                date: payment.date,
+                time: payment.time,
+                createdAt: payment.createdAt || null,
+              };
+            } else {
+              return null; // Will be filtered out
+            }
           })
         );
+        this.payments = enrichedPayments.filter((p) => p !== null);
 
-        // Sort by date descending
+        // Sort by createdAt descending, fallback to date/time
         this.payments.sort((a, b) => {
-          const aDate = new Date(`${a.date} ${a.time}`);
-          const bDate = new Date(`${b.date} ${b.time}`);
-          return bDate - aDate;
+          const aTs = a.createdAt
+            ? a.createdAt.toDate().getTime()
+            : new Date(`${a.date} ${a.time}`).getTime();
+          const bTs = b.createdAt
+            ? b.createdAt.toDate().getTime()
+            : new Date(`${b.date} ${b.time}`).getTime();
+          return bTs - aTs;
         });
       } catch (error) {
         console.error("Error fetching payments:", error);
@@ -170,5 +151,67 @@ export default {
 </script>
 
 <style scoped>
-/* Additional styles if needed */
+/* Card styles */
+.cardPayment {
+  background: #fff;
+  width: 100%;
+  padding: 15px;
+}
+.cardPayment1 {
+  background-image: url("/images/bgcardPayment.png");
+  background-position: center;
+  background-size: cover;
+}
+.Internal {
+  font-weight: 600;
+  font-size: 18px;
+  color: #212d66;
+}
+.done {
+  padding: 1px 10px;
+  color: #05603a;
+  background: #d1fadf;
+  border-radius: 18px;
+  font-size: 12px;
+}
+.imgDoc {
+  width: 45px;
+  height: 40px;
+  border-radius: 50%;
+}
+.imgDoc img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.price {
+  font-weight: 500;
+  font-size: 15px;
+  color: #667085;
+}
+.time {
+  font-weight: 600;
+  font-size: 12px;
+  color: #667085;
+}
+.nameDoc {
+  font-weight: 500;
+  font-size: 16px;
+  color: #101828;
+}
+.fa-brands {
+  font-size: 10px;
+  margin-right: 8px;
+  background-color: #1d499c;
+  color: #fff;
+  padding: 0px 3px 1px;
+  border-radius: 3px;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .cardPayment {
+    padding: 10px;
+  }
+}
 </style>

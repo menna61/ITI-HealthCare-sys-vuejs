@@ -35,7 +35,7 @@
                 />
               </svg>
             </div>
-            
+
             <div class="filter-box">
               <select
                 v-model="specialtyFilter"
@@ -44,6 +44,18 @@
                 <option value="">{{ $t("allSpecialties") }}</option>
                 <option v-for="specialty in uniqueSpecialties" :key="specialty" :value="specialty">
                   {{ specialty }}
+                </option>
+              </select>
+            </div>
+
+            <div class="filter-box">
+              <select
+                v-model="statusFilter"
+                class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+              >
+                <option value="">{{ $t("allStatuses") }}</option>
+                <option v-for="status in uniqueStatuses" :key="status" :value="status">
+                  {{ status }}
                 </option>
               </select>
             </div>
@@ -61,7 +73,7 @@
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              {{ $t('exportCSV') }}
+              {{ $t("exportCSV") }}
             </button>
             <button
               @click="exportToPDF"
@@ -75,7 +87,7 @@
                   d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                 />
               </svg>
-              {{ $t('exportPDF') }}
+              {{ $t("exportPDF") }}
             </button>
           </div>
         </div>
@@ -104,12 +116,16 @@
                 fill="currentFill"
               />
             </svg>
-            <p class="mt-4 text-gray-600 dark:text-gray-400">{{ $t('loadingDoctors') }}</p>
+            <p class="mt-4 text-gray-600 dark:text-gray-400">{{ $t("loadingDoctors") }}</p>
           </div>
         </div>
         <div v-else-if="filteredDoctors.length === 0" class="text-center py-8 sm:py-12">
           <p class="text-gray-500 dark:text-gray-400 text-lg">
-            {{ specialtyFilter ? $t('noDoctorsInSpecialty', { specialty: specialtyFilter }) : $t('noDoctorsFound') }}
+            {{
+              specialtyFilter
+                ? $t("noDoctorsInSpecialty", { specialty: specialtyFilter })
+                : $t("noDoctorsFound")
+            }}
           </p>
         </div>
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -139,7 +155,7 @@
                 class="absolute top-4 right-4 backdrop-blur-sm rounded-full px-3 py-1 bg-blue-100 dark:bg-blue-900"
               >
                 <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                  {{ doctor.yearsOfExperience }} {{ $t('yearsExp') }}
+                  {{ doctor.yearsOfExperience }} {{ $t("yearsExp") }}
                 </p>
               </div>
               <!-- <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg p-3">
@@ -203,11 +219,13 @@
                     class="text-sm text-gray-600 dark:text-gray-400 cursor-pointer px-1 hover:text-blue-600 dark:hover:text-blue-400"
                     @click.stop="openBookingsModal(doctor)"
                   >
-                    {{ doctor.patientCount || 0 }} {{ $t('patients') }}
+                    {{ doctor.patientCount || 0 }} {{ $t("patients") }}
                   </p>
                 </div>
                 <div class="flex flex-wrap gap-1">
-                  <span class="text-sm text-blue-600 dark:text-blue-400 font-medium">{{ $t('services') }}:</span>
+                  <span class="text-sm text-blue-600 dark:text-blue-400 font-medium"
+                    >{{ $t("services") }}:</span
+                  >
                   <div class="flex flex-wrap gap-1">
                     <span
                       v-for="service in doctor.services"
@@ -224,7 +242,7 @@
                   @click.stop="openDetailsModal(doctor)"
                   class="flex-1 bg-[#212D66] text-white py-2 px-4 rounded-lg font-medium hover:bg-blue-700 dark:hover:bg-blue-800 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg"
                 >
-                 {{ $t('viewDetails') }}
+                  {{ $t("viewDetails") }}
                 </button>
                 <button
                   @click.stop="openDeleteModal(doctor)"
@@ -275,50 +293,60 @@
           </div>
           <div class="doctor-info">
             <div class="info-item">
-              <span class="info-label">👤 {{ $t('name') }}:</span>
+              <span class="info-label">👤 {{ $t("name") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100"
                 >{{ selectedDoctor.firstName }} {{ selectedDoctor.lastName }}</span
               >
             </div>
             <div class="info-item">
-              <span class="info-label">📧 {{ $t('email') }}:</span>
+              <span class="info-label">📧 {{ $t("email") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
                 selectedDoctor.email
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">📱 {{ $t('phone') }}:</span>
+              <span class="info-label">📱 {{ $t("phone") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
                 selectedDoctor.phone
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">🏥 {{ $t('speciality') }}:</span>
+              <span class="info-label">🏥 {{ $t("speciality") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
                 selectedDoctor.speciality
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">📍 {{ $t('clinicAddress') }}:</span>
+              <span class="info-label">📍 {{ $t("clinicAddress") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
                 selectedDoctor.clinicAddress
               }}</span>
             </div>
             <div class="info-item">
-              <span class="info-label">⭐{{ $t('experience') }}</span>
+              <span class="info-label">⭐{{ $t("experience") }}</span>
               <span class="info-value text-gray-900 dark:text-gray-100"
                 >{{ selectedDoctor.yearsOfExperience }} years</span
               >
             </div>
             <div class="info-item">
-              <span class="info-label">📊 {{ $t('patientCount') }}:</span>
+              <span class="info-label">📊 {{ $t("patientCount") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
                 selectedDoctor.patientCount || 0
               }}</span>
             </div>
+            <div class="info-item">
+              <span class="info-label">📊 {{ $t("status") }}:</span>
+              <span class="info-value text-gray-900 dark:text-gray-100">{{
+                selectedDoctor.status || "pending"
+              }}</span>
+            </div>
           </div>
           <div class="modal-actions">
-            <button @click="deleteFromDetails" class="modal-delete-btn">🗑️ {{ $t('deleteDoctor') }}</button>
+            <div class="flex gap-4 justify-center">
+              <button @click="deleteFromDetails" class="modal-delete-btn">
+                🗑️ {{ $t("deleteDoctor") }}
+              </button>
+            </div>
           </div>
         </div>
       </UiModal>
@@ -352,26 +380,38 @@
           </h3>
           <div class="delete-doctor-info">
             <p class="text-gray-900 dark:text-gray-100">
-              <strong class="text-gray-700 dark:text-gray-300">{{ $t('name') }}:</strong>
+              <strong class="text-gray-700 dark:text-gray-300">{{ $t("name") }}:</strong>
               {{ doctorToDelete.firstName }} {{ doctorToDelete.lastName }}
             </p>
             <p class="text-gray-900 dark:text-gray-100">
-              <strong class="text-gray-700 dark:text-gray-300">{{ $t('email') }}:</strong>
+              <strong class="text-gray-700 dark:text-gray-300">{{ $t("email") }}:</strong>
               {{ doctorToDelete.email }}
             </p>
             <p class="text-gray-900 dark:text-gray-100">
-              <strong class="text-gray-700 dark:text-gray-300">{{ $t('speciality') }}:</strong>
+              <strong class="text-gray-700 dark:text-gray-300">{{ $t("speciality") }}:</strong>
               {{ doctorToDelete.speciality }}
             </p>
           </div>
+          <div class="reason-input">
+            <label for="delete-reason" class="reason-label">{{ $t("reasonForDeletion") }}</label>
+            <textarea
+              id="delete-reason"
+              v-model="reason"
+              placeholder="Enter the reason for deletion..."
+              class="reason-textarea"
+              rows="3"
+            ></textarea>
+          </div>
           <p class="delete-warning text-gray-700 dark:text-gray-300">
-            {{ $t('deleteWarningDoc') }}
+            {{ $t("deleteWarningDoc") }}
           </p>
         </div>
         <template #footer>
           <div class="delete-modal-footer">
-            <button @click="cancelDelete" class="cancel-btn">{{ $t('cancel') }}</button>
-            <button @click="confirmDelete" class="delete-btn">{{ $t('yesDelete') }}</button>
+            <button @click="cancelDelete" class="cancel-btn">{{ $t("cancel") }}</button>
+            <button @click="confirmDelete" class="delete-btn" :disabled="!reason.trim()">
+              {{ $t("yesDelete") }}
+            </button>
           </div>
         </template>
       </UiModal>
@@ -393,7 +433,7 @@
             </p>
           </div>
           <div v-if="bookings.length === 0" class="no-bookings">
-            <p class="text-gray-500 dark:text-gray-400">{{ $t('noBookings') }}</p>
+            <p class="text-gray-500 dark:text-gray-400">{{ $t("noBookings") }}</p>
           </div>
           <div v-else class="bookings-list">
             <div
@@ -411,16 +451,16 @@
               </div>
               <div class="booking-details">
                 <p class="text-gray-900 dark:text-gray-100">
-                  <strong class="text-gray-700 dark:text-gray-300">{{ $t('patient') }}:</strong>
+                  <strong class="text-gray-700 dark:text-gray-300">{{ $t("patient") }}:</strong>
                   {{ booking.patientName }}
                 </p>
                 <p class="text-gray-900 dark:text-gray-100">
-                  <strong class="text-gray-700 dark:text-gray-300">{{ $t('status') }}:</strong>
+                  <strong class="text-gray-700 dark:text-gray-300">{{ $t("status") }}:</strong>
                   <span :class="getStatusClass(booking.status)">{{ booking.status }}</span>
                 </p>
                 <p class="text-gray-900 dark:text-gray-100">
-                  <strong class="text-gray-700 dark:text-gray-300">{{ $t('notes') }}:</strong>
-                  {{ booking.notes || $t('na')  }}
+                  <strong class="text-gray-700 dark:text-gray-300">{{ $t("notes") }}:</strong>
+                  {{ booking.notes || $t("na") }}
                 </p>
               </div>
             </div>
@@ -432,10 +472,24 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, deleteDoc, getDoc, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  getDoc,
+  query,
+  where,
+  addDoc,
+  updateDoc,
+  setDoc,
+} from "firebase/firestore";
 import { db } from "@/firebase";
+
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
+import emailjs from "emailjs-com";
+import axios from "axios";
 
 export default {
   name: "AllDoctorsPage",
@@ -451,12 +505,14 @@ export default {
       selectedDoctor: null,
       showDeleteModal: false,
       doctorToDelete: null,
+      reason: "",
       showBookingsModal: false,
       bookings: [],
       selectedDoctorForBookings: null,
       searchQuery: "",
       statusFilter: "",
       specialtyFilter: "",
+      deleting: false,
     };
   },
   async mounted() {
@@ -464,8 +520,12 @@ export default {
   },
   computed: {
     uniqueSpecialties() {
-      const specialties = this.doctors.map(doctor => doctor.speciality).filter(Boolean);
+      const specialties = this.doctors.map((doctor) => doctor.speciality).filter(Boolean);
       return [...new Set(specialties)].sort();
+    },
+    uniqueStatuses() {
+      const statuses = this.doctors.map((doctor) => doctor.status || "pending").filter(Boolean);
+      return [...new Set(statuses)].sort();
     },
     filteredDoctors() {
       let filtered = this.doctors;
@@ -522,7 +582,6 @@ export default {
                 doctorData.availableDays = availabilityData
                   .filter((day) => day.available)
                   .map((day) => day.name);
-                console.log(doctorData);
               } else {
                 doctorData.availableDays = [];
               }
@@ -568,18 +627,214 @@ export default {
     cancelDelete() {
       this.showDeleteModal = false;
       this.doctorToDelete = null;
+      this.reason = "";
     },
     async confirmDelete() {
-      if (!this.doctorToDelete) return;
+      if (!this.doctorToDelete || !this.reason.trim() || this.deleting) return;
+      this.deleting = true;
       try {
+        console.log(`🗑️ Starting deletion process for doctor: ${this.doctorToDelete.id}`);
+
+        // 1. Query ALL bookings for the doctor (not just confirmed)
+        const now = new Date();
+        // Normalize current date to start of day for accurate comparison
+        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+        const allBookingsQuery = query(
+          collection(db, "bookings"),
+          where("doctorId", "==", this.doctorToDelete.id)
+        );
+        const querySnapshot = await getDocs(allBookingsQuery);
+
+        console.log(`📋 Total bookings found: ${querySnapshot.docs.length}`);
+        console.log(`📅 Today's date (normalized): ${today.toISOString().split("T")[0]}`);
+
+        // Filter for upcoming confirmed bookings
+        const upcomingBookings = querySnapshot.docs.filter((doc) => {
+          const data = doc.data();
+          // Parse the booking date and normalize to start of day
+          const bookingDate = new Date(data.date);
+          const normalizedBookingDate = new Date(
+            bookingDate.getFullYear(),
+            bookingDate.getMonth(),
+            bookingDate.getDate()
+          );
+
+          // Compare dates without time component
+          const isUpcoming = normalizedBookingDate >= today;
+          const isConfirmed = data.status === "confirmed";
+
+          console.log(
+            `Booking ${doc.id}: date=${data.date}, normalizedDate=${
+              normalizedBookingDate.toISOString().split("T")[0]
+            }, status=${data.status}, isUpcoming=${isUpcoming}, isConfirmed=${isConfirmed}`
+          );
+          return isUpcoming && isConfirmed;
+        });
+
+        console.log(`📅 Upcoming confirmed bookings to process: ${upcomingBookings.length}`);
+
+        let notificationsSent = 0;
+        let emailsSent = 0;
+        let emailsFailed = 0;
+
+        // 2. For each upcoming booking, cancel, notify, and refund the patient.
+        for (const bookingDoc of upcomingBookings) {
+          const bookingData = bookingDoc.data();
+          const bookingId = bookingDoc.id;
+
+          // 2a. Update booking status to "cancelled"
+          await updateDoc(doc(db, "bookings", bookingId), { status: "cancelled" });
+
+          // 2b. Add a notification for the patient
+          try {
+            await addDoc(collection(db, "notifications"), {
+              userId: bookingData.patientId,
+              message: `Your appointment with Dr. ${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName} on ${bookingData.date} at ${bookingData.time} has been cancelled due to doctor removal.`,
+              type: "appointment_cancelled",
+              read: false,
+              createdAt: new Date(),
+            });
+            notificationsSent++;
+            console.log(`✅ Notification sent to patient ${bookingData.patientId}`);
+          } catch (notifError) {
+            console.error(`❌ Failed to send notification for booking ${bookingId}:`, notifError);
+          }
+
+          // 2c. Refund the full amount to the patient's wallet
+          const patientRef = doc(db, "patients", bookingData.patientId);
+          const patientSnap = await getDoc(patientRef);
+
+          // Convert price to number to ensure proper addition
+          const refundAmount = parseFloat(bookingData.price) || 0;
+
+          console.log(`Processing refund for patient ${bookingData.patientId}: $${refundAmount}`);
+
+          if (patientSnap.exists()) {
+            const currentBalance = parseFloat(patientSnap.data().wallet) || 0;
+            const newBalance = currentBalance + refundAmount;
+
+            console.log(`Current balance: $${currentBalance}, New balance: $${newBalance}`);
+
+            await updateDoc(patientRef, { wallet: newBalance });
+          } else {
+            // If patient doc doesn't exist, create it with the refunded amount
+            console.log(`Creating new patient wallet with $${refundAmount}`);
+            await setDoc(patientRef, { wallet: refundAmount }, { merge: true });
+          }
+
+          // 2d. Add a transaction record for the refund
+          await addDoc(collection(db, "patients", bookingData.patientId, "transactions"), {
+            type: "refund",
+            amount: refundAmount,
+            description: `Refund for cancelled appointment with Dr. ${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName}`,
+            date: new Date(),
+          });
+
+          console.log(`✅ Refund processed successfully for booking ${bookingId}`);
+
+          // 2e. Send a cancellation email to the patient
+          try {
+            await axios.post("http://localhost:4242/send-doctor-deletion-cancellation-email", {
+              patientId: bookingData.patientId,
+              patientName: bookingData.patientName,
+              doctorName: `${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName}`,
+              date: bookingData.date,
+              time: bookingData.time,
+              refundAmount: bookingData.price,
+            });
+            emailsSent++;
+            console.log(`✅ Email sent to patient ${bookingData.patientId}`);
+          } catch (emailError) {
+            emailsFailed++;
+            console.error(`❌ Failed to send email for booking ${bookingId}:`, emailError);
+            // Show warning but continue with deletion
+            if (emailError.code === "ERR_NETWORK" || emailError.message.includes("ECONNREFUSED")) {
+              console.warn(
+                "⚠️ Email server not running on port 4242. Notifications sent via Firestore only."
+              );
+            }
+          }
+        }
+
+        // Log summary
+        console.log(`\n📊 Deletion Summary:`);
+        console.log(`   - Total bookings found: ${querySnapshot.docs.length}`);
+        console.log(`   - Upcoming bookings cancelled: ${upcomingBookings.length}`);
+        console.log(`   - Notifications sent: ${notificationsSent}`);
+        console.log(`   - Emails sent: ${emailsSent}`);
+        console.log(`   - Emails failed: ${emailsFailed}`);
+
+        // 3. Update all other (past) bookings to "cancelled" status to maintain historical integrity
+        const pastBookingsQuery = query(
+          collection(db, "bookings"),
+          where("doctorId", "==", this.doctorToDelete.id)
+        );
+        const allBookingsSnapshot = await getDocs(pastBookingsQuery);
+        const updatePromises = allBookingsSnapshot.docs
+          .filter((doc) => doc.data().status !== "cancelled")
+          .map((bookingDoc) =>
+            updateDoc(doc(db, "bookings", bookingDoc.id), { status: "cancelled" })
+          );
+        await Promise.all(updatePromises);
+
+        // 4. Clean up other related doctor data
+
+        // Delete related payments (if any)
+        const paymentsQuery = query(
+          collection(db, "payments"),
+          where("doctorId", "==", this.doctorToDelete.id)
+        );
+        const paymentsSnapshot = await getDocs(paymentsQuery);
+        await Promise.all(paymentsSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
+
+        // Delete related notifications for the doctor
+        const notificationsQuery = query(
+          collection(db, "notifications"),
+          where("userId", "==", this.doctorToDelete.id)
+        );
+        const notificationsSnapshot = await getDocs(notificationsQuery);
+        await Promise.all(notificationsSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
+
+        // Delete the doctor's services subcollection
+        const servicesRef = collection(db, "doctors", this.doctorToDelete.id, "services");
+        const servicesSnapshot = await getDocs(servicesRef);
+        await Promise.all(servicesSnapshot.docs.map((doc) => deleteDoc(doc.ref)));
+
+        // Delete the doctor's availability document
+        const availabilityDocRef = doc(db, "doctorAvailability", this.doctorToDelete.id);
+        if ((await getDoc(availabilityDocRef)).exists()) {
+          await deleteDoc(availabilityDocRef);
+        }
+
+        // 5. Finally, delete the doctor document itself
         await deleteDoc(doc(db, "doctors", this.doctorToDelete.id));
-        this.doctors = this.doctors.filter((doctor) => doctor.id !== this.doctorToDelete.id);
+
+        // 6. Send a deletion confirmation email to the doctor
+        await this.sendDeletionEmail(this.doctorToDelete, this.reason);
+
+        // Show success message with summary
+        const summaryMessage =
+          upcomingBookings.length > 0
+            ? `Doctor deleted successfully!\n\n📊 Summary:\n- ${
+                upcomingBookings.length
+              } upcoming appointment(s) cancelled\n- ${notificationsSent} notification(s) sent\n- ${emailsSent} email(s) sent${
+                emailsFailed > 0 ? `\n- ${emailsFailed} email(s) failed (check server)` : ""
+              }`
+            : `Doctor deleted successfully!\n\nNo upcoming appointments were found.`;
+
+        console.log(summaryMessage)
+
+        // Close modal and refresh list
         this.showDeleteModal = false;
         this.doctorToDelete = null;
-        this.$toast.success("Doctor deleted successfully");
+        this.reason = "";
+        await this.fetchDoctors();
       } catch (error) {
-        console.error("Error deleting doctor:", error);
-        this.$toast.error("Failed to delete doctor");
+        console.error("❌ Error deleting doctor:", error);
+        alert(`Failed to delete doctor: ${error.message}\n\nPlease check the console for details.`);
+      } finally {
+        this.deleting = false;
       }
     },
     deleteFromDetails() {
@@ -738,6 +993,24 @@ export default {
           return "";
       }
     },
+    async sendDeletionEmail(doctor, reason) {
+      try {
+        await emailjs.send(
+          "service_g5dy675",
+          "template_z52cr9c",
+          {
+            user_name: `${doctor.firstName} ${doctor.lastName}`,
+            user_email: doctor.email,
+            delete_reason: reason,
+          },
+          "5QhAD69rcdQqCGhSK"
+        );
+        console.log("✅ Email sent successfully!");
+      } catch (error) {
+        console.error("❌ Error sending email:", error);
+        throw error;
+      }
+    },
   },
 };
 </script>
@@ -780,7 +1053,7 @@ export default {
 }
 
 .doctor-details-modal {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  // background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
   border: 2px solid #0ea5e9;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   animation: modalSlideIn 0.4s ease-out;
@@ -963,7 +1236,7 @@ export default {
 }
 
 .delete-modal {
-  background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
+  
   border: 2px solid #fecaca;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
@@ -1029,6 +1302,59 @@ export default {
         .dark & {
           color: #d1d5db;
         }
+      }
+    }
+  }
+
+  .reason-input {
+    margin: 16px 0;
+  }
+
+  .reason-label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+
+    .dark & {
+      color: #d1d5db;
+    }
+  }
+
+  .reason-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 80px;
+    transition: border-color 0.3s ease;
+    background: white;
+    color: #1f2937;
+
+    .dark & {
+      background: #374151;
+      color: #f9fafb;
+      border-color: #6b7280;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: #0ea5e9;
+      box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+
+      .dark & {
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+      }
+    }
+
+    &::placeholder {
+      color: #9ca3af;
+
+      .dark & {
+        color: #6b7280;
       }
     }
   }
@@ -1127,6 +1453,17 @@ export default {
     position: relative;
     overflow: hidden;
 
+    &:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: 0 2px 4px rgba(156, 163, 175, 0.3);
+
+      .dark & {
+        background: #6b7280;
+      }
+    }
+
     &::before {
       content: "";
       position: absolute;
@@ -1138,7 +1475,7 @@ export default {
       transition: left 0.5s;
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
       background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
       transform: translateY(-2px);
       box-shadow: 0 8px 12px rgba(239, 68, 68, 0.4);
@@ -1148,7 +1485,7 @@ export default {
       }
     }
 
-    &:active {
+    &:active:not(:disabled) {
       transform: translateY(0);
       box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
     }

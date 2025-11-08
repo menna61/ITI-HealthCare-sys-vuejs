@@ -76,7 +76,12 @@
         <!-- 🔔 Notifications & User Section -->
         <div class="right flex flex-row flex-wrap gap-3 sm:gap-4 items-center">
           <div
-            v-if="!isAuthPages"
+            v-if="
+              !isAuthPages &&
+              (this.$route.path.startsWith('/dashboard') ||
+                this.$route.path.startsWith('/patient') ||
+                this.$route.path.startsWith('/admin'))
+            "
             class="w-12 h-12 rounded-full flex items-center justify-center border border-gray-200 dark:border-gray-600 relative cursor-pointer"
             @click="toggleNotifications"
           >
@@ -84,7 +89,6 @@
               class="w-6 h-6 fill-gray-500 dark:fill-gray-400 cursor-pointer"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 640 640"
-              @click="testNotification"
             >
               <path
                 d="M320 64C302.3 64 288 78.3 288 96L288 99.2C215 114 160 178.6 160 256L160 277.7C160 325.8 143.6 372.5 113.6 410.1L103.8 422.3C98.7 428.6 96 436.4 96 444.5C96 464.1 111.9 480 131.5 480L508.4 480C528 480 543.9 464.1 543.9 436.4 541.2 428.6 536.1 422.3L526.3 410.1C496.4 372.5 480 325.8 480 277.7L480 256C480 178.6 425 114 352 99.2L352 96C352 78.3 337.7 64 320 64zM258 528C265.1 555.6 290.2 576 320 576C349.8 576 374.9 555.6 382 528L258 528z"
@@ -204,7 +208,7 @@
 import LangDrop from "../LangDrop.vue";
 import DarkModeToggle from "../DarkModeToggle.vue";
 import { db, auth } from "/src/authHandler.js";
-import { collection, getDocs, doc, getDoc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, doc, getDoc, updateDoc } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
 
 export default {
@@ -224,8 +228,9 @@ export default {
   },
   mounted() {
     this.fetchDoctors();
-    this.getCurrentUser();
-    this.fetchNotifications();
+    this.getCurrentUser().then(() => {
+      this.fetchNotifications();
+    });
     onAuthStateChanged(auth, (user) => {
       if (user) {
         this.currentUser = { id: user.uid };
@@ -290,30 +295,40 @@ export default {
         console.error("Error getting current user:", error);
       }
     },
-    async testNotification() {
-      const user = auth.currentUser;
-      if (user) {
-        await addDoc(collection(db, "notifications"), {
-          userId: user.uid,
-          message:
-            "Your union membership card has been approved! You can now create services and start accepting appointments.",
-          read: false,
-          createdAt: new Date(),
-        });
-      }
-    },
     async fetchNotifications() {
       const user = auth.currentUser;
-      if (!user || this.currentUserRole !== "doctor") {
+      if (!user) {
         this.notifications = [];
         this.unreadCount = 0;
         return;
       }
       const querySnapshot = await getDocs(collection(db, "notifications"));
-      const notifs = querySnapshot.docs
-        .map((doc) => ({ id: doc.id, ...doc.data() }))
-        .filter((n) => n.userId === user.uid)
-        .sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+      let notifs = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+
+      if (this.currentUserRole === "doctor" || this.currentUserRole === "patient") {
+        notifs = notifs
+          .filter((n) => n.userId === user.uid)
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      } else if (this.currentUserRole === "admin") {
+        notifs = notifs
+          .filter((n) => n.recipientRole === "admin")
+          .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+      } else {
+        this.notifications = [];
+        this.unreadCount = 0;
+        return;
+      }
+      // For doctors: hide any approval/test notifications until actually approved
+      if (this.currentUserRole === "doctor") {
+        const isApproved = this.currentUser?.approved === true;
+        notifs = notifs.filter((n) => {
+          // Ignore any notification without a defined type (e.g., old test entries)
+          if (!n.type) return false;
+          // Only show approval notifications after approval is true
+          if (n.type === "approval" && !isApproved) return false;
+          return true;
+        });
+      }
       const uniqueNotifs = notifs.filter(
         (notif, index, self) => index === self.findIndex((n) => n.message === notif.message)
       );
@@ -324,11 +339,17 @@ export default {
       const user = auth.currentUser;
       if (!user) return;
       const querySnapshot = await getDocs(collection(db, "notifications"));
-      const unread = querySnapshot.docs.filter(
-        (n) => n.data().userId === user.uid && !n.data().read
-      );
+      let toMark = [];
+      if (this.currentUserRole === "doctor" || this.currentUserRole === "patient") {
+        toMark = querySnapshot.docs.filter((n) => n.data().userId === user.uid && !n.data().read);
+      } else if (this.currentUserRole === "admin") {
+        toMark = querySnapshot.docs.filter(
+          (n) => n.data().recipientRole === "admin" && !n.data().read
+        );
+      }
+      if (toMark.length === 0) return;
       await Promise.all(
-        unread.map((docSnap) => updateDoc(doc(db, "notifications", docSnap.id), { read: true }))
+        toMark.map((docSnap) => updateDoc(doc(db, "notifications", docSnap.id), { read: true }))
       );
     },
     updateDropdownRect() {

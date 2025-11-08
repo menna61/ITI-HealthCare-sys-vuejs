@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh ml-[302px]">
+  <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
     <div class="pl-8 pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
@@ -81,7 +81,9 @@
               </div>
               <div class="flex flex-row justify-between">
                 <span class="time">{{ appointment.time }} , {{ appointment.date }}</span>
-                <span class="linkVido"></span>
+                <span class="linkVido">{{
+                  appointment.medicalDetails ? "Details Added" : ""
+                }}</span>
               </div>
             </div>
           </div>
@@ -154,12 +156,14 @@ import {
   doc,
   getDoc,
   addDoc,
+  writeBatch,
   updateDoc,
   onSnapshot,
   getDocs,
 } from "firebase/firestore";
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
+import { calculateRefund } from "@/utils/refundUtils.js";
 
 export default {
   name: "PatientAppointments",
@@ -274,6 +278,22 @@ export default {
         }
         const appointment = appointmentSnap.data();
 
+        // Check if already cancelled to prevent duplicate refunds
+        if (appointment.status === "cancelled") {
+          this.closeCancelModal();
+          return;
+        }
+
+        // Check if refund transaction already exists
+        const transactionsRef = collection(db, "patients", user.uid, "transactions");
+        const q = query(transactionsRef, where("bookingId", "==", appointmentSnap.id));
+        const existingTransactions = await getDocs(q);
+        if (!existingTransactions.empty) {
+          // Refund already processed
+          this.closeCancelModal();
+          return;
+        }
+
         // Update the status to 'cancelled'
         await updateDoc(appointmentRef, {
           status: "cancelled",
@@ -282,8 +302,9 @@ export default {
           cancelledByRole: "patient",
         });
 
-        // Refund half the price to patient's wallet
-        const refundAmount = appointment.price / 2;
+        // Calculate refund based on terms and conditions
+        const { refundAmount, refundType } = calculateRefund(appointment, "patient");
+
         const patientRef = doc(db, "patients", user.uid);
         const patientSnap = await getDoc(patientRef);
         if (patientSnap.exists()) {
@@ -291,13 +312,14 @@ export default {
           const newWallet = currentWallet + refundAmount;
           await updateDoc(patientRef, { wallet: newWallet });
 
-          // Add transaction record
+          // Add transaction record with bookingId to prevent duplicates
           await addDoc(collection(db, "patients", user.uid, "transactions"), {
-            description: `Refund for cancelled appointment with ${
+            description: `${refundType} for cancelled appointment with ${
               appointment.doctorName || "Doctor"
             }`,
             amount: refundAmount,
             date: new Date(),
+            bookingId: appointmentSnap.id,
           });
         }
 
@@ -356,6 +378,7 @@ export default {
         // Use onSnapshot for real-time updates
         this.unsubscribe = onSnapshot(q, async (querySnapshot) => {
           const storage = getStorage(firebaseApp);
+          const batch = writeBatch(db);
           const appointmentsData = await Promise.all(
             querySnapshot.docs.map(async (docSnap) => {
               const booking = { id: docSnap.id, ...docSnap.data() };
@@ -363,6 +386,19 @@ export default {
               // حاول نجيب اسم الدكتور من collection doctors لو موجود doctorId
               let doctorName = booking.doctorName || "Unknown Doctor";
               let doctorImage = "/images/imgProfile.jpg";
+
+              // Check for overdue appointments (wait 15 minutes after appointment time)
+              if (booking.status && booking.status.toLowerCase() === "confirmed") {
+                const appointmentDateTime = new Date(`${booking.date} ${booking.time}`);
+                const now = new Date();
+                const fifteenMinutesAgo = new Date(now.getTime() - 15 * 60 * 1000);
+                if (appointmentDateTime < fifteenMinutesAgo) {
+                  const appointmentRef = doc(db, "bookings", booking.id);
+                  batch.update(appointmentRef, { status: "Overdue" });
+                  booking.status = "Overdue"; // Optimistically update for immediate UI change
+                }
+              }
+
               try {
                 if (booking.doctorId) {
                   const doctorRef = doc(db, "doctors", booking.doctorId);
@@ -420,6 +456,16 @@ export default {
                 // Non-fatal: keep existing empty link if any error occurs
               }
 
+              // Check if medical details exist for this booking
+              let hasMedicalDetails = false;
+              try {
+                const detailsRef = collection(db, "bookings", booking.id, "medicalDetails");
+                const detailsSnapshot = await getDocs(detailsRef);
+                hasMedicalDetails = !detailsSnapshot.empty;
+              } catch (error) {
+                console.error(`Error checking medical details for booking ${booking.id}:`, error);
+              }
+
               return {
                 id: booking.id,
                 doctorName,
@@ -434,6 +480,7 @@ export default {
                 patientName: booking.patientName || "",
                 dayName: booking.dayName || "",
                 doctorId: booking.doctorId || "",
+                medicalDetails: hasMedicalDetails,
               };
             })
           );
@@ -450,6 +497,9 @@ export default {
           deduped.sort((a, b) => new Date(b.date) - new Date(a.date));
           this.appointments = deduped;
           this.loading = false;
+
+          // Commit any status updates for overdue appointments
+          await batch.commit();
         });
       } catch (error) {
         console.error("Error listening to appointments:", error);
@@ -464,6 +514,8 @@ export default {
         return "Pending";
       } else if (lowerStatus === "cancelled") {
         return "Canceled";
+      } else if (lowerStatus === "overdue") {
+        return "Overdue";
       } else {
         return "done";
       }
@@ -518,6 +570,7 @@ export default {
 
 .Confirmed,
 .Pending,
+.Overdue,
 .Canceled {
   padding: 3px 10px;
   color: #05603a;
@@ -547,6 +600,12 @@ export default {
   color: #667085;
   background: #f0f1f3;
   font-size: 12px;
+}
+.Overdue {
+  color: #b42318;
+  background: #fef3f2;
+  font-size: 12px;
+  margin: 0px 5px;
 }
 
 .imgDoc {
