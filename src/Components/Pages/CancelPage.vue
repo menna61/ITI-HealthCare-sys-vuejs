@@ -14,20 +14,15 @@
 </template>
 
 <script>
-import { db } from "../../authHandler.js";
-import { doc, deleteDoc } from "firebase/firestore";
-
 export default {
   name: "CancelPage",
-  async mounted() {
-    const bookingId = localStorage.getItem("pendingBookingId");
-    if (bookingId) {
-      try {
-        await deleteDoc(doc(db, "bookings", bookingId));
-        localStorage.removeItem("pendingBookingId");
-      } catch (error) {
-        console.error("Error deleting pending booking:", error);
-      }
+  mounted() {
+    // Simply clear the pending booking data from localStorage
+    // No need to delete from database since booking was never created
+    const bookingDataStr = localStorage.getItem("pendingBookingData");
+    if (bookingDataStr) {
+      localStorage.removeItem("pendingBookingData");
+      console.log("Pending booking data cleared after payment cancellation");
     }
   },
 };

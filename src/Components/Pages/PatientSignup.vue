@@ -167,9 +167,9 @@
     </div>
 
     <!-- Terms and Conditions Modal -->
-    <Modal v-model="showTermsModal" :title="$t('Terms_and_Conditions')">
+    <Modal v-model="showTermsModal" title="Terms and conditions">
       <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-300">
-        <p class="font-semibold text-gray-900 dark:text-white">{{ $t("Terms_and_Conditions") }}</p>
+        <!-- <p class="font-semibold text-gray-900 dark:text-white">{{ $t("Terms_and_Conditions") }}</p> -->
         <ul class="flex flex-col gap-3 list-disc list-inside">
           <li>{{ $t("terms_cancel_12h") }}</li>
           <li>{{ $t("terms_cancel_6h") }}</li>

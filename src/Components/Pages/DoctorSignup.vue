@@ -85,7 +85,7 @@
       <!--Upload image-->
       <div class="left w-fit">
         <div
-          class="cam w-36 h-36 rounded-full bg-gray-50 flex items-center justify-center relative"
+          class="cam w-36 h-36 rounded-full bg-gray-50 dark:bg-gray-700 flex items-center justify-center relative"
         >
           <img
             v-if="!profileImage"
@@ -116,30 +116,30 @@
           <form class="flex flex-col gap-6" action="">
             <google-card />
             <div class="or flex gap-2 items-center justify-center">
-              <div class="w-full h-0.5 bg-gray-100"></div>
-              <p>or</p>
-              <div class="w-full h-0.5 bg-gray-100"></div>
+              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
+              <p class="text-gray-600 dark:text-gray-300">or</p>
+              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
             </div>
 
             <div class="flex flex-col gap-8 items-end">
               <div
                 v-if="errorMsg"
-                class="text-red-700 bg-red-50 border border-red-100 p-3 rounded w-full"
+                class="text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-100 dark:border-red-800 p-3 rounded w-full"
               >
                 {{ errorMsg }}
               </div>
               <div
                 v-if="successMsg"
-                class="text-green-700 bg-green-50 border border-green-100 p-3 rounded w-full"
+                class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900 border border-green-100 dark:border-green-800 p-3 rounded w-full"
               >
                 {{ successMsg }}
               </div>
               <div class="inputs w-full flex flex-col gap-4">
                 <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
                   <div class="fname flex flex-col gap-2 w-full">
-                    <label for="">First name</label>
+                    <label class="text-gray-900 dark:text-white">First name</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -155,14 +155,14 @@
                         v-model="firstName"
                         type="text"
                         placeholder="Enter first name"
-                        class="w-full h-12"
+                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
                   <div class="sname flex flex-col gap-2 w-full">
-                    <label for="">Last name</label>
+                    <label class="text-gray-900 dark:text-white">Last name</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -178,16 +178,16 @@
                         v-model="lastName"
                         type="text"
                         placeholder="Enter last name"
-                        class="w-full h-12"
+                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
                 </div>
                 <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
                   <div class="email flex flex-col gap-2 w-full">
-                    <label for="">Email</label>
+                    <label class="text-gray-900 dark:text-white">Email</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -203,14 +203,14 @@
                         v-model="email"
                         type="text"
                         placeholder="Enter email"
-                        class="w-full h-12"
+                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
                   <div class="sname flex flex-col gap-2 w-full">
-                    <label for="">Phone number</label>
+                    <label class="text-gray-900 dark:text-white">Phone number</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -226,16 +226,16 @@
                         v-model="phoneNumber"
                         type="text"
                         placeholder="+20 1234 223 43"
-                        class="w-full h-12"
+                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
                 </div>
                 <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
                   <div class="pass flex flex-col gap-2 w-full">
-                    <label for="">Password</label>
+                    <label class="text-gray-900 dark:text-white">Password</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -251,7 +251,7 @@
                         v-model="password"
                         type="password"
                         placeholder="Enter your password"
-                        class="w-full h-12"
+                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -280,64 +280,73 @@
             <div class="inputs w-full flex flex-col gap-4">
               <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
                 <div class="fname flex flex-col gap-2 w-full">
-                  <label for="">Years of experience</label>
-                  <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center">
+                  <label class="text-gray-900 dark:text-white">Years of experience</label>
+                  <div
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                  >
                     <input
                       v-model="yearsOfExperience"
                       type="text"
                       placeholder="Enter years of experience"
-                      class="w-full h-12"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
                 <div class="sname flex flex-col gap-2 w-full">
-                  <label for="">Medical license number</label>
-                  <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center">
+                  <label class="text-gray-900 dark:text-white">Medical license number</label>
+                  <div
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                  >
                     <input
                       v-model="medicalLicenseNumber"
                       type="text"
                       placeholder="Enter license number"
-                      class="w-full h-12"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
               </div>
               <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
                 <div class="email flex flex-col gap-2 w-full">
-                  <label for="">Clinic name</label>
-                  <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center">
+                  <label class="text-gray-900 dark:text-white">Clinic name</label>
+                  <div
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                  >
                     <input
                       v-model="clinicName"
                       type="text"
                       placeholder="Enter clinic name"
-                      class="w-full h-12"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
                 <div class="sname flex flex-col gap-2 w-full">
-                  <label for="">Clinic address</label>
-                  <div class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center">
+                  <label class="text-gray-900 dark:text-white">Clinic address</label>
+                  <div
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                  >
                     <input
                       v-model="clinicAddress"
                       type="text"
                       placeholder="Enter clinic address"
-                      class="w-full h-12"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
               </div>
-              <div class="pass flex xl:flex-row gap-4 items-center w-full">
+              <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
                 <div class="pass flex flex-col gap-2 w-full relative">
-                  <label for="">Degree</label>
+                  <label class="text-gray-900 dark:text-white">Degree</label>
                   <div
-                    class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700 cursor-pointer"
                     @click="showDegrees"
                   >
                     <input
                       v-model="selectedDegree"
                       type="text"
                       placeholder="Select your scientific degree"
-                      class="w-full h-12"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
+                      readonly
                     />
                     <svg
                       class="w-6 h-6 fill-gray-400"
@@ -351,67 +360,66 @@
                     </svg>
                   </div>
                   <div
-                    class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white"
+                    class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white dark:bg-gray-700 z-10"
                     v-show="isShow === true"
                   >
                     <p
                       @click="selectDegree(degree)"
                       v-for="degree in degrees"
                       :key="degree"
-                      class="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg"
+                      class="py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded-lg text-gray-900 dark:text-white"
                     >
                       {{ degree }}
                     </p>
                   </div>
                 </div>
 
-                <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
-                  <div class="pass flex flex-col gap-2 w-full relative">
-                    <label for="">Speciality</label>
-                    <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 rounded-lg items-center"
-                      @click="showSpeciality"
+                <div class="pass flex flex-col gap-2 w-full relative">
+                  <label class="text-gray-900 dark:text-white">Speciality</label>
+                  <div
+                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700 cursor-pointer"
+                    @click="showSpeciality"
+                  >
+                    <svg
+                      class="w-6 h-6 fill-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 640 640"
                     >
-                      <svg
-                        class="w-6 h-6 fill-gray-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 640 640"
-                      >
-                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                        <path
-                          d="M64 112C64 85.5 85.5 64 112 64L160 64C177.7 64 192 78.3 192 96C192 113.7 177.7 128 160 128L128 128L128 256C128 309 171 352 224 352C277 352 320 309 320 256L320 128L288 128C270.3 128 256 113.7 256 96C256 78.3 270.3 64 288 64L336 64C362.5 64 384 85.5 384 112L384 256C384 333.4 329 398 256 412.8L256 432C256 493.9 306.1 544 368 544C429.9 544 480 493.9 480 432L480 346.5C442.7 333.3 416 297.8 416 256C416 203 459 160 512 160C565 160 608 203 608 256C608 297.8 581.3 333.4 544 346.5L544 432C544 529.2 465.2 608 368 608C270.8 608 192 529.2 192 432L192 412.8C119 398 64 333.4 64 256L64 112zM512 288C529.7 288 544 273.7 544 256C544 238.3 529.7 224 512 224C494.3 224 480 238.3 480 256C480 273.7 494.3 288 512 288z"
-                        />
-                      </svg>
-                      <input
-                        v-model="selectedSpeciality"
-                        type="text"
-                        placeholder="Select your speciality"
-                        class="w-full h-12"
+                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                      <path
+                        d="M64 112C64 85.5 85.5 64 112 64L160 64C177.7 64 192 78.3 192 96C192 113.7 177.7 128 160 128L128 128L128 256C128 309 171 352 224 352C277 352 320 309 320 256L320 128L288 128C270.3 128 256 113.7 256 96C256 78.3 270.3 64 288 64L336 64C362.5 64 384 85.5 384 112L384 256C384 333.4 329 398 256 412.8L256 432C256 493.9 306.1 544 368 544C429.9 544 480 493.9 480 432L480 346.5C442.7 333.3 416 297.8 416 256C416 203 459 160 512 160C565 160 608 203 608 256C608 297.8 581.3 333.4 544 346.5L544 432C544 529.2 465.2 608 368 608C270.8 608 192 529.2 192 432L192 412.8C119 398 64 333.4 64 256L64 112zM512 288C529.7 288 544 273.7 544 256C544 238.3 529.7 224 512 224C494.3 224 480 238.3 480 256C480 273.7 494.3 288 512 288z"
                       />
-                      <svg
-                        class="w-6 h-6 fill-gray-400"
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 640 640"
-                      >
-                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                        <path
-                          d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"
-                        />
-                      </svg>
-                    </div>
-                    <div
-                      class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white"
-                      v-show="showSpec === true"
+                    </svg>
+                    <input
+                      v-model="selectedSpeciality"
+                      type="text"
+                      placeholder="Select your speciality"
+                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
+                      readonly
+                    />
+                    <svg
+                      class="w-6 h-6 fill-gray-400"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 640 640"
                     >
-                      <p
-                        @click="selectSpec(speciality)"
-                        v-for="speciality in specialities"
-                        :key="speciality"
-                        class="py-2 px-3 hover:bg-gray-100 cursor-pointer rounded-lg"
-                      >
-                        {{ speciality }}
-                      </p>
-                    </div>
+                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                      <path
+                        d="M297.4 470.6C309.9 483.1 330.2 483.1 342.7 470.6L534.7 278.6C547.2 266.1 547.2 245.8 534.7 233.3C522.2 220.8 501.9 220.8 489.4 233.3L320 402.7L150.6 233.4C138.1 220.9 117.8 220.9 105.3 233.4C92.8 245.9 92.8 266.2 105.3 278.7L297.3 470.7z"
+                      />
+                    </svg>
+                  </div>
+                  <div
+                    class="degrees w-full p-4 shadow-xl rounded-lg absolute top-20 flex flex-col gap-4 bg-white dark:bg-gray-700 z-10"
+                    v-show="showSpec === true"
+                  >
+                    <p
+                      @click="selectSpec(speciality)"
+                      v-for="speciality in specialities"
+                      :key="speciality"
+                      class="py-2 px-3 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer rounded-lg text-gray-900 dark:text-white"
+                    >
+                      {{ speciality }}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -425,12 +433,14 @@
       <div class="form w-full">
         <form class="flex flex-col gap-6" action="">
           <div class="inputs w-full flex flex-col gap-4">
-            <label for="">Bio</label>
-            <div class="flex gap-2 h-44 border border-gray-200 rounded-lg">
+            <label class="text-gray-900 dark:text-white">Bio</label>
+            <div
+              class="flex gap-2 h-44 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700"
+            >
               <textarea
                 v-model="bio"
                 placeholder="Enter your bio"
-                class="w-full h-full p-4 resize-none outline-none"
+                class="w-full h-full p-4 resize-none outline-none bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
               ></textarea>
             </div>
           </div>
@@ -441,13 +451,13 @@
     <div class="btn w-full flex flex-col gap-4">
       <div
         v-if="errorMsg && currentStep === 3"
-        class="text-red-700 bg-red-50 border border-red-100 p-3 rounded w-full"
+        class="text-red-700 dark:text-red-400 bg-red-50 dark:bg-red-900 border border-red-100 dark:border-red-800 p-3 rounded w-full"
       >
         {{ errorMsg }}
       </div>
       <div
         v-if="successMsg && currentStep === 3"
-        class="text-green-700 bg-green-50 border border-green-100 p-3 rounded w-full"
+        class="text-green-700 dark:text-green-400 bg-green-50 dark:bg-green-900 border border-green-100 dark:border-green-800 p-3 rounded w-full"
       >
         {{ successMsg }}
       </div>
@@ -455,7 +465,7 @@
         <button
           v-show="currentStep > 1"
           @click="prevStep"
-          class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] text-[#5271FF] w-fit px-10 cursor-pointer"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] dark:border-blue-400 text-[#5271FF] dark:text-blue-400 w-fit px-10 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg
             class="w-6 h-6 fill-[#5271FF]"
@@ -473,7 +483,7 @@
         <button
           @click="nextStep"
           :disabled="loading || uploading"
-          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] dark:bg-blue-600 text-white w-fit px-10 cursor-pointer disabled:opacity-60 hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
         >
           <svg
             v-if="loading || uploading"

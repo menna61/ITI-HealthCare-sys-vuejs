@@ -332,7 +332,18 @@ import interactionPlugin from "@fullcalendar/interaction";
 import MainNav from "../Layouts/MainNav.vue";
 import Modal from "../UI/Modal.vue";
 import { db, auth } from "../../authHandler.js";
-import { collection, getDocs, doc, getDoc, updateDoc, addDoc, setDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+  setDoc,
+  query,
+  where,
+  onSnapshot,
+} from "firebase/firestore";
 
 export default {
   name: "CalenDar",
@@ -369,8 +380,12 @@ export default {
     await this.checkServices();
     await this.checkUnionCard();
     await this.checkApprovalStatus();
-    await this.fetchAppointments();
-    this.updateCalendarEvents();
+    this.listenToAppointments();
+  },
+  beforeUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   computed: {
     filteredAppointments() {
@@ -548,21 +563,38 @@ export default {
         console.error("Error saving union card URL:", error);
       }
     },
-    async fetchAppointments() {
+    listenToAppointments() {
       try {
         const user = auth.currentUser;
-        if (!user) return;
+        if (!user) {
+          console.error("❌ No user logged in");
+          return;
+        }
 
-        const appointmentsRef = collection(db, "bookings");
-        const querySnapshot = await getDocs(appointmentsRef);
+        console.log("👤 Calendar: Current doctor ID:", user.uid);
 
-        const appointments = await Promise.all(
-          querySnapshot.docs
-            .map((doc) => ({ id: doc.id, ...doc.data() }))
-            .filter((appointment) => appointment.doctorId === user.uid)
-            .filter((appointment) => (appointment.status || "").toLowerCase() === "confirmed")
-            .map(async (appointment) => {
+        const bookingsRef = collection(db, "bookings");
+        const q = query(
+          bookingsRef,
+          where("doctorId", "==", user.uid),
+          where("status", "==", "confirmed")
+        );
+
+        console.log("🔍 Calendar: Listening to bookings for doctor:", user.uid);
+
+        // Use onSnapshot for real-time updates
+        this.unsubscribe = onSnapshot(q, async (querySnapshot) => {
+          console.log(
+            "📡 Calendar: Received snapshot with",
+            querySnapshot.docs.length,
+            "documents"
+          );
+
+          const appointments = await Promise.all(
+            querySnapshot.docs.map(async (docSnap) => {
+              const appointment = { id: docSnap.id, ...docSnap.data() };
               let patientName = appointment.patientName || "Patient";
+
               // Fetch patient name if it's "Patient" or empty
               if (patientName === "Patient" || !patientName) {
                 try {
@@ -578,6 +610,7 @@ export default {
                   console.error("Error fetching patient name:", err);
                 }
               }
+
               // Determine actions based on appointment time
               const now = new Date();
               const appointmentDateTime = this.parseAppointmentTime(
@@ -588,7 +621,7 @@ export default {
 
               return {
                 id: appointment.id,
-                date: appointment.date, // Assume date is in YYYY-MM-DD
+                date: appointment.date,
                 name: patientName,
                 time: appointment.time,
                 type: appointment.type,
@@ -598,23 +631,27 @@ export default {
                 actions: actions,
               };
             })
-        );
+          );
 
-        // Ensure unique appointments by composite key to prevent duplicates
-        const seen = new Set();
-        const uniqueAppointments = appointments.filter((app) => {
-          const key = `${app.date}-${app.time}-${app.patientId}`;
-          if (seen.has(key)) {
-            return false;
-          }
-          seen.add(key);
-          return true;
+          // Ensure unique appointments by composite key to prevent duplicates
+          const seen = new Set();
+          const uniqueAppointments = appointments.filter((app) => {
+            const key = `${app.date}-${app.time}-${app.patientId}`;
+            if (seen.has(key)) {
+              return false;
+            }
+            seen.add(key);
+            return true;
+          });
+
+          this.allAppointments = uniqueAppointments;
+          console.log("📋 Calendar: Total appointments:", this.allAppointments.length);
+          console.log("📋 Calendar: Appointments:", this.allAppointments);
+
+          this.updateCalendarEvents();
         });
-
-        this.allAppointments = uniqueAppointments;
-        this.updateCalendarEvents();
       } catch (error) {
-        console.error("Error fetching appointments:", error);
+        console.error("❌ Error listening to appointments:", error);
         this.allAppointments = [];
       }
     },
