@@ -108,7 +108,17 @@
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import UiModal from "@/Components/UI/Modal.vue";
 import { db } from "@/firebase";
-import { collection, getDocs, query, where, updateDoc, doc, addDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  query,
+  where,
+  updateDoc,
+  doc,
+  addDoc,
+  getDoc,
+} from "firebase/firestore";
+import emailjs from "@emailjs/browser";
 
 export default {
   name: "DocumentApproval",
@@ -168,7 +178,11 @@ export default {
     async approveItem(itemId, type) {
       try {
         if (type === "doctor") {
+          // Fetch doctor data first to get email
           const doctorRef = doc(db, "doctors", itemId);
+          const doctorSnap = await getDoc(doctorRef);
+          const doctorData = doctorSnap.data();
+
           await updateDoc(doctorRef, { approved: true, status: "approved" });
           // إضافة إشعار للطبيب
           await addDoc(collection(db, "notifications"), {
@@ -178,6 +192,26 @@ export default {
             read: false,
             createdAt: new Date(),
           });
+          // Send approval email using EmailJS
+          try {
+            await emailjs.send(
+              "service_8290zsm", // Service ID
+              "template_dkr71y8", // Template ID
+              {
+                to_email: doctorData.email,
+                doctor_name: `Dr. ${doctorData.firstName} ${doctorData.lastName}`,
+                name: "MedLink Team",
+                email: doctorData.email,
+                message:
+                  "Your documents have been successfully reviewed and approved by the admin team.",
+              },
+              "OJO_25HZ7jRJ0ePiC" // Public Key
+            );
+            console.log("Approval email sent successfully via EmailJS");
+          } catch (emailError) {
+            console.error("Error sending approval email:", emailError);
+            // Continue even if email fails - the approval is still saved
+          }
         } else if (type === "patient") {
           const userRef = doc(db, "users", itemId);
           await updateDoc(userRef, { unionCardApproved: true });
