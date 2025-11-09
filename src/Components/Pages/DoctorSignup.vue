@@ -249,12 +249,28 @@
                       </svg>
                       <input
                         v-model="password"
-                        type="password"
+                        :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your password"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
+                      <!-- Eye icon when password is hidden -->
                       <svg
-                        class="w-6 h-6 fill-gray-400"
+                        v-if="!showPassword"
+                        @click="togglePasswordVisibility"
+                        class="w-6 h-6 fill-gray-400 cursor-pointer hover:fill-gray-600 dark:hover:fill-gray-300 transition-colors"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                        <path
+                          d="M320 96C178.6 96 64 208 64 320s114.6 224 256 224 256-112 256-224S461.4 96 320 96zm0 384c-88.4 0-160-71.6-160-160s71.6-160 160-160 160 71.6 160 160-71.6 160-160 160zm0-256c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96z"
+                        />
+                      </svg>
+                      <!-- Eye-slash icon when password is visible -->
+                      <svg
+                        v-else
+                        @click="togglePasswordVisibility"
+                        class="w-6 h-6 fill-gray-400 cursor-pointer hover:fill-gray-600 dark:hover:fill-gray-300 transition-colors"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 640 640"
                       >
@@ -562,6 +578,7 @@ export default {
       email: "",
       phoneNumber: "",
       password: "",
+      showPassword: false,
       yearsOfExperience: "",
       medicalLicenseNumber: "",
       clinicName: "",
@@ -638,6 +655,9 @@ export default {
     selectSpec(speciality) {
       this.selectedSpeciality = speciality;
       this.showSpec = false;
+    },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
     },
     triggerFileInput() {
       this.$refs.fileInput.click();
