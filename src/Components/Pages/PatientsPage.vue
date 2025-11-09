@@ -173,14 +173,32 @@
         <div
           v-for="booking in patientBookings"
           :key="booking.id"
-          class="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+          class="border border-gray-200 dark:border-gray-600 rounded-lg p-4 hover:shadow-md transition-shadow"
         >
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-sm font-medium text-gray-900 dark:text-white">
-                {{ formatDate(booking.date) }} at {{ booking.time }}
+          <div class="flex justify-between items-start">
+            <div class="flex-1">
+              <div class="flex items-center gap-2 mb-2">
+                <p class="text-sm font-medium text-gray-900 dark:text-white">
+                  {{ formatDate(booking.date) }} at {{ booking.time }}
+                </p>
+                <span
+                  class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                  :class="{
+                    'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200':
+                      booking.status === 'completed',
+                    'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200':
+                      booking.status === 'confirmed',
+                  }"
+                >
+                  {{ booking.status }}
+                </span>
+              </div>
+              <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
+                <span class="font-medium">Doctor:</span> {{ booking.doctorName }}
               </p>
-              <p class="text-sm text-gray-500 dark:text-gray-400">Status: {{ booking.status }}</p>
+              <p class="text-sm text-gray-600 dark:text-gray-400">
+                <span class="font-medium">Speciality:</span> {{ booking.speciality }}
+              </p>
             </div>
             <button
               v-if="booking.hasDetails"
@@ -212,6 +230,36 @@
           (selectedBooking ? selectedBooking.time : '')
         "
       >
+        <!-- Doctor Info Header -->
+        <div
+          v-if="selectedMedicalDetails.doctorName"
+          class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+        >
+          <div class="flex items-center gap-2">
+            <svg
+              class="w-5 h-5 text-blue-600 dark:text-blue-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              ></path>
+            </svg>
+            <div>
+              <p class="text-sm font-medium text-gray-900 dark:text-white">
+                {{ selectedMedicalDetails.doctorName }}
+              </p>
+              <p class="text-xs text-gray-600 dark:text-gray-400">
+                {{ selectedMedicalDetails.speciality }}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="mb-6">
           <div class="flex border-b border-gray-200 dark:border-gray-700">
@@ -615,7 +663,7 @@ export default {
     },
     async fetchPatientMedicalDetails(patientId) {
       try {
-        // First, find all bookings for this patient
+        // Find ALL bookings for this patient (regardless of doctor)
         const bookingsRef = collection(db, "bookings");
         const q = query(bookingsRef, where("patientId", "==", patientId));
         const bookingsSnapshot = await getDocs(q);
@@ -630,6 +678,26 @@ export default {
         for (const bookingDoc of bookingsSnapshot.docs) {
           const bookingId = bookingDoc.id;
           const bookingData = bookingDoc.data();
+
+          // Get doctor information for this booking
+          let doctorName = "Unknown Doctor";
+          let speciality = "General";
+
+          try {
+            if (bookingData.doctorId) {
+              const doctorRef = doc(db, "doctors", bookingData.doctorId);
+              const doctorSnap = await getDoc(doctorRef);
+              if (doctorSnap.exists()) {
+                const doctorData = doctorSnap.data();
+                doctorName =
+                  `Dr. ${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() ||
+                  "Unknown Doctor";
+                speciality = doctorData.speciality || "General";
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching doctor info:", error);
+          }
 
           // Check if this booking has medical details
           const detailsRef = collection(db, "bookings", bookingId, "medicalDetails");
@@ -648,6 +716,8 @@ export default {
               allergies: data.allergies || "",
               prescriptions: data.prescriptions || [],
               medicalRequirements: data.medicalRequirements || [],
+              doctorName: doctorName,
+              speciality: speciality,
             };
             this.patientMedicalDetails.set(bookingId, medicalDetails);
 
@@ -659,14 +729,16 @@ export default {
             }
           }
 
-          // Add booking to list only if completed
-          if (bookingData.status === "completed") {
+          // Add ALL bookings (completed and confirmed) to show full history
+          if (bookingData.status === "completed" || bookingData.status === "confirmed") {
             this.patientBookings.push({
               id: bookingId,
               date: bookingData.date,
               time: bookingData.time,
               status: bookingData.status,
               hasDetails: hasDetails,
+              doctorName: doctorName,
+              speciality: speciality,
             });
           }
         }

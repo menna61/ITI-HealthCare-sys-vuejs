@@ -110,7 +110,7 @@
           />
         </div>
       </div>
-      oo
+      
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
