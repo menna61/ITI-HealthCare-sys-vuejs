@@ -173,6 +173,17 @@
             >
               Prescription
             </button>
+            <button
+              @click="activeTab = 'requirements'"
+              :class="[
+                'py-2 px-4 text-sm font-medium transition-colors',
+                activeTab === 'requirements'
+                  ? 'border-b-2 border-blue-500 text-blue-600 dark:text-blue-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
+              ]"
+            >
+              {{ $t("medicalRequirements") }}
+            </button>
           </div>
         </div>
 
@@ -296,6 +307,90 @@
           </div>
         </div>
 
+        <!-- Medical Requirements Tab -->
+        <div v-if="activeTab === 'requirements'" class="space-y-4">
+          <div
+            v-for="(requirement, index) in medicalDetails.medicalRequirements"
+            :key="index"
+            class="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+          >
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ $t("requirementType") }}
+                </label>
+                <select
+                  v-model="requirement.type"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                >
+                  <option value="">{{ $t("selectRequirementType") }}</option>
+                  <option value="lab">{{ $t("labTest") }}</option>
+                  <option value="radiology">{{ $t("radiology") }}</option>
+                  <option value="other">{{ $t("otherRequirement") }}</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ $t("priority") }}
+                </label>
+                <select
+                  v-model="requirement.priority"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                >
+                  <option value="">{{ $t("selectPriority") }}</option>
+                  <option value="urgent">{{ $t("urgent") }}</option>
+                  <option value="normal">{{ $t("normal") }}</option>
+                  <option value="optional">{{ $t("optional") }}</option>
+                </select>
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ $t("requirementName") }}
+                </label>
+                <input
+                  v-model="requirement.name"
+                  type="text"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  :placeholder="$t('enterRequirementName')"
+                />
+              </div>
+              <div class="md:col-span-2">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  {{ $t("requirementNotes") }}
+                </label>
+                <textarea
+                  v-model="requirement.notes"
+                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  rows="2"
+                  :placeholder="$t('enterRequirementNotes')"
+                ></textarea>
+              </div>
+            </div>
+            <div class="mt-4 flex justify-end">
+              <button
+                @click="removeRequirement(index)"
+                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
+              >
+                {{ $t("removeRequirement") }}
+              </button>
+            </div>
+          </div>
+          <div
+            v-if="medicalDetails.medicalRequirements.length === 0"
+            class="text-center py-8 text-gray-500 dark:text-gray-400"
+          >
+            {{ $t("noRequirementsAdded") }}
+          </div>
+          <div class="flex justify-center">
+            <button
+              @click="addRequirement"
+              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            >
+              {{ $t("addRequirement") }}
+            </button>
+          </div>
+        </div>
+
         <template #footer>
           <button
             @click="showAddDetailsModal = false"
@@ -331,7 +426,7 @@ import {
   deleteDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/firebase";
-import { calculateRefund } from "@/utils/refundUtils.js";
+//import { calculateRefund } from "@/utils/refundUtils.js";
 
 export default {
   name: "DoctorAppointments",
@@ -351,6 +446,7 @@ export default {
         instructions: "",
         allergies: "",
         prescriptions: [],
+        medicalRequirements: [],
       },
       pendingReminders: [],
       notificationInterval: null,
@@ -563,6 +659,7 @@ export default {
             instructions: data.instructions || "",
             allergies: data.allergies || "",
             prescriptions: data.prescriptions || [],
+            medicalRequirements: data.medicalRequirements || [],
           };
         } else {
           this.medicalDetails = {
@@ -571,6 +668,7 @@ export default {
             instructions: "",
             allergies: "",
             prescriptions: [],
+            medicalRequirements: [],
           };
         }
       } catch (error) {
@@ -581,6 +679,7 @@ export default {
           instructions: "",
           allergies: "",
           prescriptions: [],
+          medicalRequirements: [],
         };
       }
     },
@@ -608,6 +707,7 @@ export default {
                 instructions: this.medicalDetails.instructions,
                 allergies: this.medicalDetails.allergies,
                 prescriptions: this.medicalDetails.prescriptions,
+                medicalRequirements: this.medicalDetails.medicalRequirements,
                 updatedAt: new Date(),
               }
             );
@@ -619,9 +719,13 @@ export default {
               instructions: this.medicalDetails.instructions,
               allergies: this.medicalDetails.allergies,
               prescriptions: this.medicalDetails.prescriptions,
+              medicalRequirements: this.medicalDetails.medicalRequirements,
               createdAt: new Date(),
             });
           }
+
+          // Send notification to patient
+          await this.sendNotificationToPatient(this.selectedAppointment.id);
 
           this.showAddDetailsModal = false;
           this.selectedAppointment = null;
@@ -631,6 +735,7 @@ export default {
             instructions: "",
             allergies: "",
             prescriptions: [],
+            medicalRequirements: [],
           };
           // Remove from pending reminders
           this.pendingReminders = this.pendingReminders.filter(
@@ -670,6 +775,17 @@ export default {
     removeMedication(index) {
       this.medicalDetails.prescriptions.splice(index, 1);
     },
+    addRequirement() {
+      this.medicalDetails.medicalRequirements.push({
+        type: "",
+        name: "",
+        notes: "",
+        priority: "",
+      });
+    },
+    removeRequirement(index) {
+      this.medicalDetails.medicalRequirements.splice(index, 1);
+    },
     loadPendingReminders() {
       const stored = localStorage.getItem("pendingReminders");
       if (stored) {
@@ -704,6 +820,54 @@ export default {
             }
           });
         }
+      }
+    },
+    async sendNotificationToPatient(appointmentId) {
+      try {
+        // Get appointment details to find patient ID
+        const appointmentRef = doc(db, "bookings", appointmentId);
+        const appointmentSnap = await getDoc(appointmentRef);
+
+        if (appointmentSnap.exists()) {
+          const appointmentData = appointmentSnap.data();
+
+          if (appointmentData.patientId) {
+            // Get doctor name
+            const user = auth.currentUser;
+            let doctorName = "Doctor";
+            if (user) {
+              const doctorRef = doc(db, "doctors", user.uid);
+              const doctorSnap = await getDoc(doctorRef);
+              if (doctorSnap.exists()) {
+                const doctorData = doctorSnap.data();
+                doctorName =
+                  `Dr. ${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() ||
+                  "Doctor";
+              }
+            }
+
+            // Create notification for patient
+            const hasRequirements =
+              this.medicalDetails.medicalRequirements &&
+              this.medicalDetails.medicalRequirements.length > 0;
+            const message = hasRequirements
+              ? `${doctorName} has added medical details and requested ${this.medicalDetails.medicalRequirements.length} medical requirement(s) for your appointment on ${appointmentData.date}`
+              : `${doctorName} has added medical details for your appointment on ${appointmentData.date}`;
+
+            await addDoc(collection(db, "notifications"), {
+              userId: appointmentData.patientId,
+              message: message,
+              read: false,
+              createdAt: new Date(),
+              type: "medical_details_added",
+              bookingId: appointmentId,
+              doctorName: doctorName,
+              hasRequirements: hasRequirements,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error sending notification to patient:", error);
       }
     },
     hasMedicalDetails(appointmentId) {

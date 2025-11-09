@@ -546,12 +546,44 @@ export default {
             })
           );
           // Keep all appointments and deduplicate by doctor/date/time
+          // Priority: confirmed > pending > cancelled/completed
           const dedupedMap = new Map();
           for (const app of appointmentsData) {
             const key = `${app.doctorId || ""}-${app.date}-${app.time}`;
-            // Prefer keeping the first encountered; adjust if priority rules change
-            if (!dedupedMap.has(key)) {
+            const existing = dedupedMap.get(key);
+
+            if (!existing) {
+              // No existing appointment with this key, add it
               dedupedMap.set(key, app);
+            } else {
+              // There's an existing appointment, decide which one to keep
+              const existingStatus = (existing.status || "").toLowerCase();
+              const currentStatus = (app.status || "").toLowerCase();
+
+              // Priority order: confirmed > pending > other statuses
+              const statusPriority = {
+                confirmed: 3,
+                pending: 2,
+                completed: 1,
+                cancelled: 0,
+                overdue: 0,
+              };
+
+              const existingPriority = statusPriority[existingStatus] || 0;
+              const currentPriority = statusPriority[currentStatus] || 0;
+
+              // Keep the appointment with higher priority
+              // If same priority, keep the newer one (by createdAt)
+              if (currentPriority > existingPriority) {
+                dedupedMap.set(key, app);
+              } else if (currentPriority === existingPriority) {
+                // If same priority, prefer the one with more recent createdAt
+                const existingDate = existing.createdAt?.toDate?.() || new Date(0);
+                const currentDate = app.createdAt?.toDate?.() || new Date(0);
+                if (currentDate > existingDate) {
+                  dedupedMap.set(key, app);
+                }
+              }
             }
           }
           const deduped = Array.from(dedupedMap.values());

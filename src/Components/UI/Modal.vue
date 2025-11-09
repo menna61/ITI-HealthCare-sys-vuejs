@@ -3,7 +3,7 @@
     <div v-if="modelValue" class="fixed inset-0 z-[99999] flex items-center justify-center">
       <div class="fixed inset-0 bg-black/50 z-[99998]" @click="close"></div>
       <div
-        class="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-xl w-full mx-4 p-6 z-[99999]"
+        class="relative bg-white dark:bg-gray-800 rounded-lg shadow-lg max-w-xl w-full mx-4 p-6 z-[99999] max-h-[85vh] overflow-y-auto"
         :class="$attrs.class"
       >
         <header class="mb-2">
