@@ -555,6 +555,7 @@
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
 import { sendOTP } from "../../services/emailVerification.js";
+import { checkEmailExists, checkEmailInDB } from "../../authHandler.js";
 
 export default {
   components: { GoogleCard, BackBtn },
@@ -640,6 +641,19 @@ export default {
           this.errorMsg = "Please upload a profile image before finishing.";
           return;
         }
+
+        // Check if email already exists in Auth or DB
+        this.loading = true;
+        const authExists = await checkEmailExists(this.email);
+        const dbExists = await checkEmailInDB(this.email);
+        this.loading = false;
+
+        if (authExists || dbExists) {
+          this.errorMsg =
+            "This email is already registered. Please use a different email or try logging in.";
+          return;
+        }
+
         await this.registerDoctor();
       }
     },

@@ -244,6 +244,7 @@ import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
 import Modal from "../UI/Modal.vue";
 import { sendOTP } from "../../services/emailVerification.js";
+import { checkEmailExists, checkEmailInDB } from "../../authHandler.js";
 
 export default {
   components: { GoogleCard, BackBtn, Modal },
@@ -273,6 +274,18 @@ export default {
       // Check if form is valid
       const form = this.$el.querySelector("form");
       if (form && form.checkValidity()) {
+        // Check if email already exists in Auth or DB
+        this.loading = true;
+        const authExists = await checkEmailExists(this.email);
+        const dbExists = await checkEmailInDB(this.email);
+        this.loading = false;
+
+        if (authExists || dbExists) {
+          this.errorMsg =
+            "This email is already registered. Please use a different email or try logging in.";
+          return;
+        }
+
         this.showTermsModal = true;
       } else {
         // Trigger HTML5 validation
