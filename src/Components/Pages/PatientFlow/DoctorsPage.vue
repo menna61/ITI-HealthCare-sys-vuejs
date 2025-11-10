@@ -152,7 +152,7 @@
 
     <!-- Doctor Details Modal -->
     <Modal v-model="showModal" title="Doctor Details" @close="closeModal">
-      <div v-if="selectedDoctor" class="max-h-[600px] overflow-y-auto">
+      <div v-if="selectedDoctor" class="max-h-[600px] ">
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-4">
             <img

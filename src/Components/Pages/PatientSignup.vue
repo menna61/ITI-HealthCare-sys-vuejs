@@ -85,7 +85,6 @@
                       required
                       type="text"
                       :placeholder="$t('Enter_phone_number')"
-                      @blur="checkPhoneNumber"
                       class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                       :class="
                         phoneNumberError
@@ -314,7 +313,10 @@ export default {
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
-    handleCreateAccountClick() {
+    async handleCreateAccountClick() {
+      // Check phone number in Firebase
+      await this.checkPhoneNumber();
+
       // Check if phone number is duplicate before proceeding
       if (this.phoneNumberError) {
         this.errorMsg = this.$t("phone_number_exists");

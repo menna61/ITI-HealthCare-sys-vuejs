@@ -640,10 +640,13 @@ export default {
     },
     async nextStep() {
       if (this.currentStep < 3) {
-        // Check for phone number error on step 1 before proceeding
-        if (this.currentStep === 1 && this.phoneNumberError) {
-          this.errorMsg = this.$t("phone_number_exists");
-          return;
+        // Check phone number in Firebase on step 1 before proceeding
+        if (this.currentStep === 1) {
+          await this.checkPhoneNumber();
+          if (this.phoneNumberError) {
+            this.errorMsg = this.$t("phone_number_exists");
+            return;
+          }
         }
         this.currentStep++;
       } else {
