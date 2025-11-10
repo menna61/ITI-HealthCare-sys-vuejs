@@ -246,8 +246,7 @@
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
 import Modal from "../UI/Modal.vue";
-import { registerWithEmail, db } from "../../authHandler.js";
-import { doc, setDoc } from "firebase/firestore";
+import { sendOTP } from "../../services/emailVerification.js";
 
 export default {
   components: { GoogleCard, BackBtn, Modal },
@@ -297,26 +296,35 @@ export default {
       try {
         this.loading = true;
         this.errorMsg = "";
-        const cred = await registerWithEmail(this.email, this.password);
-        const uid = cred.user.uid;
-        const age = this.calculateAge(this.birthdate);
 
-        await setDoc(doc(db, "patients", uid), {
-          firstName: this.firstName,
-          lastName: this.lastName,
+        // Send OTP to email
+        const name = `${this.firstName} ${this.lastName}`;
+        const result = await sendOTP(this.email, name, "patient");
+
+        if (!result.success) {
+          this.errorMsg = result.error || "Failed to send verification code. Please try again.";
+          this.loading = false;
+          return;
+        }
+
+        // Store user data in sessionStorage
+        sessionStorage.setItem('verificationData', JSON.stringify({
           email: this.email,
-          phone: this.phoneNumber,
-          gender: this.selectedGender,
-          birthdate: this.birthdate,
-          age: age,
-          role: "patient",
-        });
-        this.successMsg = "Account created successfully. Redirecting...";
-        setTimeout(() => {
-          this.$router.push("/login");
-        }, 1000);
+          userData: {
+            firstName: this.firstName,
+            lastName: this.lastName,
+            password: this.password,
+            phoneNumber: this.phoneNumber,
+            selectedGender: this.selectedGender,
+            birthdate: this.birthdate,
+          },
+          userType: 'patient'
+        }));
+        
+        // Navigate to verification page
+        this.$router.push('/verify-email');
       } catch (error) {
-        console.error("Error signing up:", error);
+        console.error("Error during signup:", error);
         this.errorMsg = error?.message || "Something went wrong. Please try again.";
       } finally {
         this.loading = false;

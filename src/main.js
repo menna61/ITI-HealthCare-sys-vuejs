@@ -59,9 +59,10 @@ import PatientProfile from "./Components/Pages/PatientFlow/PatientProfile.vue";
 
 // import { h } from 'vue'
 import { createI18n } from "vue-i18n";
-import en from "../locales/en.json"
+import en from "../locales/en.json";
 import ar from "../locales/ar.json";
 import MedicalHistory from "./Components/Pages/PatientFlow/MedicalHistory.vue";
+import EmailVerification from "./Components/Pages/EmailVerification.vue";
 // import Vue3Toastify from 'vue3-toastify';
 // import 'vue3-toastify/dist/index.css';
 
@@ -112,6 +113,11 @@ const routes = [
       { path: "/login", component: LogIn },
       { path: "/forgot-password", component: ForgotPassword },
     ],
+  },
+  {
+    path: "/verify-email",
+    name: "EmailVerification",
+    component: EmailVerification,
   },
 
   // {
@@ -203,7 +209,7 @@ const routes = [
       { path: "appointments", component: PatientAppointments },
       { path: "wallet", component: PatientWallet },
       { path: "profile", component: PatientProfile },
-      { path: "medical-history", component: MedicalHistory}
+      { path: "medical-history", component: MedicalHistory },
     ],
   },
 

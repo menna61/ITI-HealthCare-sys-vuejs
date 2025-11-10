@@ -110,7 +110,7 @@
           />
         </div>
       </div>
-      
+
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
@@ -549,8 +549,7 @@
 <script>
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
-import { registerWithEmail, db } from "../../authHandler.js";
-import { doc, setDoc } from "firebase/firestore";
+import { sendOTP } from "../../services/emailVerification.js";
 export default {
   components: { GoogleCard, BackBtn },
   name: "DoctorSignup",
@@ -703,87 +702,50 @@ export default {
         this.profileImageUrl = ""; // Reset on failure
       }
     },
-    async initializeDefaultAvailability(doctorId) {
-      try {
-        // Generate next 7 days with default availability (all unavailable initially)
-        const days = [];
-        const today = new Date();
-        const dayNames = [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ];
-
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(today);
-          date.setDate(today.getDate() + i);
-          days.push({
-            date: date.toISOString().split("T")[0], // Store as YYYY-MM-DD string
-            name: dayNames[date.getDay()],
-            available: false, // Default to unavailable
-            start: "", // Empty time slots
-            end: "",
-          });
-        }
-
-        // Create the availability document in Firebase
-        await setDoc(doc(db, "doctorAvailability", doctorId), {
-          availability: days,
-        });
-
-        console.log("Default availability initialized for doctor:", doctorId);
-      } catch (error) {
-        console.error("Error initializing default availability:", error);
-        // Don't throw error - availability can be set later
-      }
-    },
     async registerDoctor() {
       try {
         this.errorMsg = "";
         this.successMsg = "";
         this.loading = true;
 
-        const cred = await registerWithEmail(this.email, this.password);
-        const uid = cred.user.uid;
+        // Send OTP to email
+        const name = `${this.firstName} ${this.lastName}`;
+        const result = await sendOTP(this.email, name, "doctor");
 
-        // Create doctor document
-        await setDoc(doc(db, "doctors", uid), {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          email: this.email,
-          phone: this.phoneNumber,
-          yearsOfExperience: this.yearsOfExperience,
-          medicalLicenseNumber: this.medicalLicenseNumber,
-          clinicName: this.clinicName,
-          clinicAddress: this.clinicAddress,
-          degree: this.selectedDegree,
-          speciality: this.selectedSpeciality,
-          bio: this.bio,
-          profileImageUrl: this.profileImageUrl,
-          unionMembershipCardUrl: "",
-          role: "doctor",
-          approved: false,
-        });
-
-        // Initialize default availability for the new doctor
-        await this.initializeDefaultAvailability(uid);
-
-        this.successMsg = "Account created successfully.";
-        this.loading = false;
-        setTimeout(() => {
-          this.$router.push("/success");
-        }, 2000);
-      } catch (error) {
-        console.error("Error signing up:", error);
-        if (error.code === "auth/email-already-in-use") {
-          this.errorMsg = "Email already registered. Please login.";
-        } else {
-          this.errorMsg = error?.message || "Something went wrong. Please try again.";
+        if (!result.success) {
+          this.errorMsg = result.error || "Failed to send verification code. Please try again.";
+          this.loading = false;
+          return;
         }
+
+        // Store doctor data in sessionStorage
+        sessionStorage.setItem(
+          "verificationData",
+          JSON.stringify({
+            email: this.email,
+            userData: {
+              firstName: this.firstName,
+              lastName: this.lastName,
+              password: this.password,
+              phoneNumber: this.phoneNumber,
+              yearsOfExperience: this.yearsOfExperience,
+              medicalLicenseNumber: this.medicalLicenseNumber,
+              clinicName: this.clinicName,
+              clinicAddress: this.clinicAddress,
+              selectedDegree: this.selectedDegree,
+              selectedSpeciality: this.selectedSpeciality,
+              bio: this.bio,
+              profileImageUrl: this.profileImageUrl,
+            },
+            userType: "doctor",
+          })
+        );
+
+        // Navigate to verification page
+        this.$router.push("/verify-email");
+      } catch (error) {
+        console.error("Error during signup:", error);
+        this.errorMsg = error?.message || "Something went wrong. Please try again.";
       } finally {
         this.loading = false;
       }

@@ -283,6 +283,7 @@ export default {
         }
 
         // Remove from local list
+        this.patients = this.patients.filter((patient) => patient.id !== this.patientToDelete.id);
 
         try {
           await this.sendDeletionEmail(this.patientToDelete, this.reason);
