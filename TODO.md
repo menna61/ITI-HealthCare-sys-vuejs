@@ -1,9 +1,20 @@
-# TODO: Add Edit Functionality to PatientProfile.vue
+# TODO: Remove Phone Number Verification from Patient and Doctor Signup
 
 ## Steps to Complete
 
-- [x] Replace read-only display with editable form inputs for all fields except email (readonly)
-- [x] Add profile image upload with click-to-change functionality
-- [x] Add save button with loading, error, and success messages
-- [x] Update script to bind data, handle file upload to Cloudinary, and save to Firestore 'patients' collection
-- [x] Test the edit and save functionality after changes
+- [x] Remove phone number verification logic from PatientSignup.vue
+
+  - Remove checkPhoneNumber method
+  - Remove phoneNumberError and checkingPhone data properties
+  - Remove checkPhoneNumber call in handleCreateAccountClick
+  - Remove UI elements for checking and error messages related to phone verification
+
+- [x] Remove phone number verification logic from DoctorSignup.vue
+
+  - Remove checkPhoneNumber method
+  - Remove phoneNumberError and checkingPhone data properties
+  - Remove @blur="checkPhoneNumber" from phone input
+  - Remove checkPhoneNumber call in nextStep
+  - Remove UI elements for checking and error messages related to phone verification
+
+- [ ] Test the signup forms to ensure phone number input still works without verification

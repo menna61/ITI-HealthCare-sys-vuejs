@@ -85,19 +85,8 @@
                       required
                       type="text"
                       :placeholder="$t('Enter_phone_number')"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                      :class="
-                        phoneNumberError
-                          ? 'border-red-500 dark:border-red-400'
-                          : 'border-gray-300 dark:border-gray-600'
-                      "
+                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
-                    <p v-if="checkingPhone" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                      {{ $t("checking_phone") }}
-                    </p>
-                    <p v-if="phoneNumberError" class="text-sm text-red-600 dark:text-red-400 mt-1">
-                      {{ $t("phone_number_exists") }}
-                    </p>
                   </div>
                 </div>
 
@@ -255,8 +244,6 @@ import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
 import Modal from "../UI/Modal.vue";
 import { sendOTP } from "../../services/emailVerification.js";
-import { db } from "../../firebase.js";
-import { collection, query, where, getDocs } from "firebase/firestore";
 
 export default {
   components: { GoogleCard, BackBtn, Modal },
@@ -275,54 +262,14 @@ export default {
       errorMsg: "",
       successMsg: "",
       showTermsModal: false,
-      phoneNumberError: false,
-      checkingPhone: false,
     };
   },
 
   methods: {
-    async checkPhoneNumber() {
-      if (!this.phoneNumber || this.phoneNumber.trim() === "") {
-        this.phoneNumberError = false;
-        return;
-      }
-
-      this.checkingPhone = true;
-      this.phoneNumberError = false;
-
-      try {
-        // Check in patients collection
-        const patientsRef = collection(db, "patients");
-        const patientsQuery = query(patientsRef, where("phoneNumber", "==", this.phoneNumber));
-        const patientsSnapshot = await getDocs(patientsQuery);
-
-        // Check in doctors collection
-        const doctorsRef = collection(db, "doctors");
-        const doctorsQuery = query(doctorsRef, where("phoneNumber", "==", this.phoneNumber));
-        const doctorsSnapshot = await getDocs(doctorsQuery);
-
-        if (!patientsSnapshot.empty || !doctorsSnapshot.empty) {
-          this.phoneNumberError = true;
-        }
-      } catch (error) {
-        console.error("Error checking phone number:", error);
-      } finally {
-        this.checkingPhone = false;
-      }
-    },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
     async handleCreateAccountClick() {
-      // Check phone number in Firebase
-      await this.checkPhoneNumber();
-
-      // Check if phone number is duplicate before proceeding
-      if (this.phoneNumberError) {
-        this.errorMsg = this.$t("phone_number_exists");
-        return;
-      }
-
       // Check if form is valid
       const form = this.$el.querySelector("form");
       if (form && form.checkValidity()) {
