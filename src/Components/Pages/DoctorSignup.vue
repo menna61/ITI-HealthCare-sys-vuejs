@@ -210,7 +210,12 @@
                   <div class="sname flex flex-col gap-2 w-full">
                     <label class="text-gray-900 dark:text-white">Phone number</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                      class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                      :class="
+                        phoneNumberError
+                          ? 'border-red-500 dark:border-red-400'
+                          : 'border-gray-200 dark:border-gray-600'
+                      "
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -226,9 +231,16 @@
                         v-model="phoneNumber"
                         type="text"
                         placeholder="+20 1234 223 43"
+                        @blur="checkPhoneNumber"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
+                    <p v-if="checkingPhone" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {{ $t("checking_phone") }}
+                    </p>
+                    <p v-if="phoneNumberError" class="text-sm text-red-600 dark:text-red-400 mt-1">
+                      {{ $t("phone_number_exists") }}
+                    </p>
                   </div>
                 </div>
                 <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
@@ -550,6 +562,9 @@
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
 import { sendOTP } from "../../services/emailVerification.js";
+import { db } from "../../firebase.js";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 export default {
   components: { GoogleCard, BackBtn },
   name: "DoctorSignup",
@@ -582,7 +597,6 @@ export default {
       medicalLicenseNumber: "",
       clinicName: "",
       clinicAddress: "",
-
       bio: "",
       profileImage: null,
       profileImageUrl: "",
@@ -590,11 +604,47 @@ export default {
       loading: false,
       errorMsg: "",
       successMsg: "",
+      phoneNumberError: false,
+      checkingPhone: false,
     };
   },
   methods: {
+    async checkPhoneNumber() {
+      if (!this.phoneNumber || this.phoneNumber.trim() === "") {
+        this.phoneNumberError = false;
+        return;
+      }
+
+      this.checkingPhone = true;
+      this.phoneNumberError = false;
+
+      try {
+        // Check in patients collection
+        const patientsRef = collection(db, "patients");
+        const patientsQuery = query(patientsRef, where("phoneNumber", "==", this.phoneNumber));
+        const patientsSnapshot = await getDocs(patientsQuery);
+
+        // Check in doctors collection
+        const doctorsRef = collection(db, "doctors");
+        const doctorsQuery = query(doctorsRef, where("phoneNumber", "==", this.phoneNumber));
+        const doctorsSnapshot = await getDocs(doctorsQuery);
+
+        if (!patientsSnapshot.empty || !doctorsSnapshot.empty) {
+          this.phoneNumberError = true;
+        }
+      } catch (error) {
+        console.error("Error checking phone number:", error);
+      } finally {
+        this.checkingPhone = false;
+      }
+    },
     async nextStep() {
       if (this.currentStep < 3) {
+        // Check for phone number error on step 1 before proceeding
+        if (this.currentStep === 1 && this.phoneNumberError) {
+          this.errorMsg = this.$t("phone_number_exists");
+          return;
+        }
         this.currentStep++;
       } else {
         // Validate all fields before registering

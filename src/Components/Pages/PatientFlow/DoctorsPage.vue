@@ -89,7 +89,7 @@
                 </svg>
               </div>
               <div
-                class="exp p-2 px-4 bg-[var(--sec-color-25)] rounded-full w-fit absolute top-4 right-4"
+                class="exp p-2 px-4 bg-[var(--sec-color-25)] rounded-full w-fit absolute top-1 right-1"
               >
                 <p class="text-[var(--sec-color-500)] font-medium">
                   {{ doctor.yearsOfExperience }} years experience

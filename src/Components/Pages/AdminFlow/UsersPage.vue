@@ -54,7 +54,7 @@
                   {{ patient.email }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                  {{ patient.phone || "01156388768" }}
+                  {{ patient.phone  || '-'}} 
                 </td>
                 <td
                   class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-center gap-2"

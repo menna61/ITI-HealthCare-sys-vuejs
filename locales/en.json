@@ -248,5 +248,7 @@
   "otp_resent": "Verification code resent successfully",
   "otp_expired": "Verification code has expired",
   "Decline": "Decline",
-  "Accept": "Accept"
+  "Accept": "Accept",
+  "phone_number_exists": "Phone number already exists",
+  "checking_phone": "Checking phone number..."
 }

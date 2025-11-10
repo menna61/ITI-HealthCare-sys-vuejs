@@ -50,7 +50,7 @@
                     class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
                     :style="{ animationDelay: `${index * 0.1 + 0.2}s` }"
                   >
-                    {{ appointment.patientPhone }}
+                    {{ appointment.patientPhone || '-'}}
                   </td>
                   <td
                     class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"

@@ -107,6 +107,7 @@
             <div
               v-if="showNotifications"
               class="fixed top-20 right-[284px] w-64 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-[100000] dark:text-white"
+              :class="this.$route.path === '/admin' ? 'top-[50px] right-[223px]' : ''"
             >
               <div
                 v-if="notifications.length === 0"

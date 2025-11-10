@@ -13,7 +13,7 @@
           <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
         </div>
         <div class="flex flex-col justify-around items-start pl-6 py-4">
-          <p v-if="currentPatient != null" class="text-gray-50 text-xl">
+          <p v-if="currentPatient != null" class="text-gray-100 text-xl">
             Hi. {{ currentPatient.firstName }}
           </p>
           <h1 class="h1 text-white md:w-3/4 text-3xl">
