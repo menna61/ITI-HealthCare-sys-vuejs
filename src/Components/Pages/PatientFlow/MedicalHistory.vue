@@ -141,9 +141,40 @@
               v-if="record.details.prescriptions && record.details.prescriptions.length > 0"
               class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4"
             >
-              <h4 class="text-sm font-semibold text-green-900 dark:text-green-100 mb-3">
-                Prescriptions
-              </h4>
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-semibold text-green-900 dark:text-green-100">
+                  Prescriptions
+                </h4>
+                <!-- <button
+                  @click="downloadAsPDF(record)"
+                  class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                >
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  Download PDF
+                </button> -->
+
+                <button
+                  @click="generateMedicalHistoryPDF()"
+                  class="px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:cursor-pointer hover:bg-red-600 dark:hover:bg-red-700 transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  {{ $t("exportPDF") }}
+                </button>
+              </div>
               <div class="space-y-3">
                 <div
                   v-for="(medication, index) in record.details.prescriptions"
@@ -521,6 +552,9 @@ import {
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
 
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 // eslint-disable-next-line no-unused-vars
 const unused = doc; // Prevent ESLint error for unused import
 
@@ -801,6 +835,243 @@ export default {
     },
     viewImage(imageUrl) {
       window.open(imageUrl, "_blank");
+    },
+    // downloadAsPDF(record) {
+    //   const doc = new jsPDF();
+
+    //   // Set up document
+    //   doc.setFontSize(20);
+    //   doc.text("Prescriptions & Medical Requirements", 20, 30);
+
+    //   // Patient and Doctor info
+    //   doc.setFontSize(12);
+    //   doc.text(`Doctor: Dr. ${record.doctorName}`, 20, 50);
+    //   doc.text(`Speciality: ${record.speciality}`, 20, 60);
+    //   doc.text(`Date: ${this.formatDate(record.date)}`, 20, 70);
+    //   doc.text(`Time: ${record.time}`, 20, 80);
+
+    //   let yPosition = 100;
+
+    //   // Prescriptions
+    //   if (record.details.prescriptions && record.details.prescriptions.length > 0) {
+    //     doc.setFontSize(16);
+    //     doc.text("Prescriptions", 20, yPosition);
+    //     yPosition += 15;
+
+    //     const prescriptionData = record.details.prescriptions.map((med) => [
+    //       med.name || "",
+    //       med.dosage || "",
+    //       med.frequency || "",
+    //       med.duration || "",
+    //     ]);
+
+    //     doc.autoTable({
+    //       startY: yPosition,
+    //       head: [["Medication", "Dosage", "Frequency", "Duration"]],
+    //       body: prescriptionData,
+    //       theme: "grid",
+    //       styles: { fontSize: 9 },
+    //       headStyles: { fillColor: [41, 128, 185] },
+    //       margin: { left: 20 },
+    //     });
+
+    //     yPosition = doc.lastAutoTable.finalY + 20;
+    //   }
+
+    //   // Medical Requirements
+    //   if (record.details.medicalRequirements && record.details.medicalRequirements.length > 0) {
+    //     doc.setFontSize(16);
+    //     doc.text("Medical Requirements", 20, yPosition);
+    //     yPosition += 15;
+
+    //     const requirementData = record.details.medicalRequirements.map((req) => [
+    //       req.name || "",
+    //       req.type || "",
+    //       req.priority || "",
+    //       req.notes || "",
+    //     ]);
+
+    //     doc.autoTable({
+    //       startY: yPosition,
+    //       head: [["Requirement", "Type", "Priority", "Notes"]],
+    //       body: requirementData,
+    //       theme: "grid",
+    //       styles: { fontSize: 9 },
+    //       headStyles: { fillColor: [142, 68, 173] },
+    //       margin: { left: 20 },
+    //     });
+    //   }
+
+    //   // Save the PDF
+    //   const fileName = `Prescriptions_Requirements_${record.doctorName.replace(
+    //     /\s+/g,
+    //     "_"
+    //   )}_${this.formatDate(record.date).replace(/\s+/g, "_")}.pdf`;
+    //   doc.save(fileName);
+    // },
+
+    generateMedicalHistoryPDF() {
+      const doc = new jsPDF("landscape"); // PDF أفقي
+
+      // عنوان PDF
+      doc.setFontSize(16);
+      doc.text("Medical History & Prescriptions Report", 14, 15);
+
+      let yPosition = 25;
+
+      // Prescriptions Section
+      if (
+        this.medicalHistory.some(
+          (record) => record.details.prescriptions && record.details.prescriptions.length > 0
+        )
+      ) {
+        doc.setFontSize(14);
+        doc.text("Prescriptions", 14, yPosition);
+        yPosition += 10;
+
+        const prescriptionColumns = [
+          "Medication",
+          "Dosage",
+          "Frequency",
+          "Duration",
+          "Doctor",
+          "Date",
+        ];
+
+        const prescriptionRows = [];
+
+        this.medicalHistory.forEach((record) => {
+          if (record.details.prescriptions && record.details.prescriptions.length > 0) {
+            record.details.prescriptions.forEach((medication) => {
+              prescriptionRows.push([
+                medication.name || "",
+                medication.dosage || "",
+                medication.frequency || "",
+                medication.duration || "",
+                `Dr. ${record.doctorName}`,
+                this.formatDate(record.date),
+              ]);
+            });
+          }
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const marginLeft = 15;
+        const marginRight = 15;
+        const availableWidth = pageWidth - marginLeft - marginRight;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [prescriptionColumns],
+          body: prescriptionRows,
+          theme: "grid",
+          headStyles: {
+            fillColor: [40, 40, 40],
+            textColor: [255, 255, 255],
+            halign: "center",
+            fontStyle: "bold",
+          },
+          bodyStyles: {
+            fillColor: [55, 55, 55],
+            textColor: [230, 230, 230],
+            halign: "left",
+            fontSize: 9,
+            cellPadding: 3,
+          },
+          alternateRowStyles: {
+            fillColor: [45, 45, 45],
+          },
+          tableWidth: availableWidth,
+          styles: {
+            overflow: "linebreak",
+            cellWidth: "wrap",
+          },
+          margin: { top: 20, left: marginLeft, right: marginRight },
+        });
+
+        yPosition = doc.lastAutoTable.finalY + 20;
+      }
+
+      // Medical Requirements Section
+      if (
+        this.medicalHistory.some(
+          (record) =>
+            record.details.medicalRequirements && record.details.medicalRequirements.length > 0
+        )
+      ) {
+        doc.setFontSize(14);
+        doc.text("Medical Requirements", 14, yPosition);
+        yPosition += 10;
+
+        const requirementColumns = ["Requirement", "Type", "Priority", "Notes", "Doctor", "Date"];
+
+        const requirementRows = [];
+
+        this.medicalHistory.forEach((record) => {
+          if (record.details.medicalRequirements && record.details.medicalRequirements.length > 0) {
+            record.details.medicalRequirements.forEach((requirement) => {
+              requirementRows.push([
+                requirement.name || "",
+                requirement.type || "",
+                requirement.priority || "",
+                requirement.notes || "",
+                `Dr. ${record.doctorName}`,
+                this.formatDate(record.date),
+              ]);
+            });
+          }
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const marginLeft = 15;
+        const marginRight = 15;
+        const availableWidth = pageWidth - marginLeft - marginRight;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [requirementColumns],
+          body: requirementRows,
+          theme: "grid",
+          headStyles: {
+            fillColor: [40, 40, 40],
+            textColor: [255, 255, 255],
+            halign: "center",
+            fontStyle: "bold",
+          },
+          bodyStyles: {
+            fillColor: [55, 55, 55],
+            textColor: [230, 230, 230],
+            halign: "left",
+            fontSize: 9,
+            cellPadding: 3,
+          },
+          alternateRowStyles: {
+            fillColor: [45, 45, 45],
+          },
+          tableWidth: availableWidth,
+          styles: {
+            overflow: "linebreak",
+            cellWidth: "wrap",
+          },
+          margin: { top: 20, left: marginLeft, right: marginRight },
+        });
+      }
+
+      // footer
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.setTextColor(180);
+        doc.text(
+          `Page ${i} of ${pageCount}`,
+          doc.internal.pageSize.getWidth() - 20,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "right" }
+        );
+      }
+
+      doc.save("medical_history.pdf");
     },
   },
 };
