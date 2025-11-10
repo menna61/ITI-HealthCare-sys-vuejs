@@ -141,9 +141,40 @@
               v-if="record.details.prescriptions && record.details.prescriptions.length > 0"
               class="bg-green-50 dark:bg-green-900/20 rounded-lg p-4"
             >
-              <h4 class="text-sm font-semibold text-green-900 dark:text-green-100 mb-3">
-                Prescriptions
-              </h4>
+              <div class="flex justify-between items-center mb-3">
+                <h4 class="text-sm font-semibold text-green-900 dark:text-green-100">
+                  Prescriptions
+                </h4>
+                <!-- <button
+                  @click="downloadAsPDF(record)"
+                  class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                >
+                  <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    ></path>
+                  </svg>
+                  Download PDF
+                </button> -->
+
+                <button
+                  @click="generateMedicalHistoryPDF()"
+                  class="px-3 sm:px-4 py-2 bg-red-500 text-white rounded-lg hover:cursor-pointer hover:bg-red-600 dark:hover:bg-red-700 transition-colors duration-200 flex items-center justify-center gap-2 text-sm sm:text-base"
+                >
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                    />
+                  </svg>
+                  {{ $t("exportPDF") }}
+                </button>
+              </div>
               <div class="space-y-3">
                 <div
                   v-for="(medication, index) in record.details.prescriptions"
@@ -191,6 +222,255 @@
                 </div>
               </div>
             </div>
+
+            <!-- Medical Requirements -->
+            <div
+              v-if="
+                record.details.medicalRequirements && record.details.medicalRequirements.length > 0
+              "
+              class="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-4"
+            >
+              <h4 class="text-sm font-semibold text-purple-900 dark:text-purple-100 mb-3">
+                {{ $t("medicalRequirements") }}
+              </h4>
+              <div class="space-y-3">
+                <div
+                  v-for="(requirement, index) in record.details.medicalRequirements"
+                  :key="index"
+                  class="bg-white dark:bg-gray-800 rounded-lg p-3 border border-purple-200 dark:border-purple-700"
+                >
+                  <div class="flex items-start gap-3">
+                    <!-- Icon based on type -->
+                    <div class="flex-shrink-0 mt-1">
+                      <div
+                        class="w-8 h-8 rounded-full flex items-center justify-center"
+                        :class="{
+                          'bg-blue-100 dark:bg-blue-900': requirement.type === 'lab',
+                          'bg-green-100 dark:bg-green-900': requirement.type === 'radiology',
+                          'bg-gray-100 dark:bg-gray-700': requirement.type === 'other',
+                        }"
+                      >
+                        <svg
+                          v-if="requirement.type === 'lab'"
+                          class="w-4 h-4 text-blue-600 dark:text-blue-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                          ></path>
+                        </svg>
+                        <svg
+                          v-else-if="requirement.type === 'radiology'"
+                          class="w-4 h-4 text-green-600 dark:text-green-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                          ></path>
+                        </svg>
+                        <svg
+                          v-else
+                          class="w-4 h-4 text-gray-600 dark:text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                          ></path>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex-1">
+                      <div class="flex items-center gap-2 mb-2">
+                        <span
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                          :class="{
+                            'bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200':
+                              requirement.type === 'lab',
+                            'bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200':
+                              requirement.type === 'radiology',
+                            'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200':
+                              requirement.type === 'other',
+                          }"
+                        >
+                          {{
+                            requirement.type === "lab"
+                              ? $t("labTest")
+                              : requirement.type === "radiology"
+                              ? $t("radiology")
+                              : $t("otherRequirement")
+                          }}
+                        </span>
+                        <span
+                          v-if="requirement.priority"
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+                          :class="{
+                            'bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-200':
+                              requirement.priority === 'urgent',
+                            'bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200':
+                              requirement.priority === 'normal',
+                            'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200':
+                              requirement.priority === 'optional',
+                          }"
+                        >
+                          {{
+                            requirement.priority === "urgent"
+                              ? $t("urgent")
+                              : requirement.priority === "normal"
+                              ? $t("normal")
+                              : $t("optional")
+                          }}
+                        </span>
+                        <span
+                          v-if="requirement.imageUrl"
+                          class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
+                        >
+                          ✓ {{ $t("resultsUploaded") }}
+                        </span>
+                      </div>
+                      <p class="text-sm font-medium text-gray-900 dark:text-white mb-1">
+                        {{ requirement.name }}
+                      </p>
+                      <p
+                        v-if="requirement.notes"
+                        class="text-sm text-gray-600 dark:text-gray-400 mb-2"
+                      >
+                        {{ requirement.notes }}
+                      </p>
+
+                      <!-- Upload Section -->
+                      <div class="mt-3 space-y-2">
+                        <!-- Show uploaded image -->
+                        <div v-if="requirement.imageUrl" class="flex items-center gap-2">
+                          <button
+                            @click="viewImage(requirement.imageUrl)"
+                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                          >
+                            <svg
+                              class="w-4 h-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                              ></path>
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                              ></path>
+                            </svg>
+                            {{ $t("viewImage") }}
+                          </button>
+                          <button
+                            @click="deleteImage(record.id, index)"
+                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+                          >
+                            <svg
+                              class="w-4 h-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                              ></path>
+                            </svg>
+                            {{ $t("deleteImage") }}
+                          </button>
+                        </div>
+
+                        <!-- Upload button -->
+                        <div class="relative">
+                          <input
+                            type="file"
+                            :id="`file-${record.id}-${index}`"
+                            accept="image/*"
+                            @change="handleImageUpload($event, record.id, index)"
+                            class="hidden"
+                          />
+                          <label
+                            :for="`file-${record.id}-${index}`"
+                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium cursor-pointer rounded-lg transition-colors"
+                            :class="
+                              uploadingStates[`${record.id}-${index}`]
+                                ? 'text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
+                                : 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50'
+                            "
+                          >
+                            <svg
+                              v-if="!uploadingStates[`${record.id}-${index}`]"
+                              class="w-4 h-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                              ></path>
+                            </svg>
+                            <svg
+                              v-else
+                              class="animate-spin w-4 h-4 mr-1.5"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                class="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                stroke-width="4"
+                              ></circle>
+                              <path
+                                class="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                            {{
+                              uploadingStates[`${record.id}-${index}`]
+                                ? $t("uploading")
+                                : requirement.imageUrl
+                                ? $t("uploadImage")
+                                : $t("clickToUpload")
+                            }}
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -220,15 +500,60 @@
         </p>
       </div>
     </div>
+
+    <!-- Confirmation Modal -->
+    <UiModal v-model="showConfirmModal" :title="confirmModalTitle">
+      <p class="text-gray-700 dark:text-gray-300">{{ confirmModalMessage }}</p>
+      <template #footer>
+        <button
+          @click="showConfirmModal = false"
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+        >
+          {{ $t("cancelAction") }}
+        </button>
+        <button
+          @click="confirmAction"
+          class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+        >
+          {{ $t("confirmAction") }}
+        </button>
+      </template>
+    </UiModal>
+
+    <!-- Success/Error Modal -->
+    <UiModal v-model="showMessageModal" :title="messageModalTitle">
+      <p class="text-gray-700 dark:text-gray-300">{{ messageModalContent }}</p>
+      <template #footer>
+        <button
+          @click="showMessageModal = false"
+          class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+        >
+          {{ $t("close") }}
+        </button>
+      </template>
+    </UiModal>
   </div>
 </template>
 
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
+import UiModal from "@/Components/UI/Modal.vue";
 import { db, auth } from "@/authHandler.js";
-import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  addDoc,
+} from "firebase/firestore";
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
+
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 // eslint-disable-next-line no-unused-vars
 const unused = doc; // Prevent ESLint error for unused import
@@ -237,12 +562,21 @@ export default {
   name: "MedicalHistory",
   components: {
     MainNav,
+    UiModal,
   },
   data() {
     return {
       medicalHistory: [],
       loading: true,
       expandedVisits: new Set(), // Track which visits are expanded
+      uploadingStates: {}, // Track uploading state for each requirement
+      showConfirmModal: false,
+      confirmModalTitle: "",
+      confirmModalMessage: "",
+      confirmCallback: null,
+      showMessageModal: false,
+      messageModalTitle: "",
+      messageModalContent: "",
     };
   },
   async mounted() {
@@ -353,6 +687,7 @@ export default {
                 instructions: data.instructions || "",
                 allergies: data.allergies || "",
                 prescriptions: data.prescriptions || [],
+                medicalRequirements: data.medicalRequirements || [],
               },
             });
           }
@@ -367,6 +702,376 @@ export default {
       } finally {
         this.loading = false;
       }
+    },
+    async handleImageUpload(event, bookingId, requirementIndex) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const key = `${bookingId}-${requirementIndex}`;
+      this.uploadingStates[key] = true;
+
+      try {
+        // Upload to Cloudinary
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "ml_default"); // Replace with your upload preset
+        formData.append("cloud_name", "dtaqbcmmg");
+
+        const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
+          method: "POST",
+          body: formData,
+        });
+
+        const data = await response.json();
+
+        if (data.secure_url) {
+          // Update Firebase with the image URL
+          await this.updateRequirementImage(bookingId, requirementIndex, data.secure_url);
+
+          // Update local state
+          const record = this.medicalHistory.find((r) => r.id === bookingId);
+          if (record && record.details.medicalRequirements[requirementIndex]) {
+            record.details.medicalRequirements[requirementIndex].imageUrl = data.secure_url;
+          }
+
+          // Send notification to doctor
+          await this.sendNotificationToDoctor(bookingId, requirementIndex);
+
+          this.showMessage(this.$t("success"), this.$t("imageUploaded"));
+        }
+      } catch (error) {
+        console.error("Error uploading image:", error);
+        this.showMessage(this.$t("error"), this.$t("uploadFailed"));
+      } finally {
+        this.uploadingStates[key] = false;
+      }
+    },
+    async updateRequirementImage(bookingId, requirementIndex, imageUrl) {
+      try {
+        const detailsRef = collection(db, "bookings", bookingId, "medicalDetails");
+        const detailsSnapshot = await getDocs(detailsRef);
+
+        if (!detailsSnapshot.empty) {
+          const docRef = detailsSnapshot.docs[0].ref;
+          const docData = detailsSnapshot.docs[0].data();
+
+          // Update the specific requirement with the image URL
+          const updatedRequirements = [...(docData.medicalRequirements || [])];
+          if (updatedRequirements[requirementIndex]) {
+            updatedRequirements[requirementIndex].imageUrl = imageUrl;
+
+            await updateDoc(docRef, {
+              medicalRequirements: updatedRequirements,
+              updatedAt: new Date(),
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error updating requirement image:", error);
+        throw error;
+      }
+    },
+    deleteImage(bookingId, requirementIndex) {
+      this.confirmModalTitle = this.$t("deleteImage");
+      this.confirmModalMessage = this.$t("confirmDeleteImage");
+      this.confirmCallback = async () => {
+        try {
+          // Update Firebase to remove the image URL
+          await this.updateRequirementImage(bookingId, requirementIndex, null);
+
+          // Update local state
+          const record = this.medicalHistory.find((r) => r.id === bookingId);
+          if (record && record.details.medicalRequirements[requirementIndex]) {
+            record.details.medicalRequirements[requirementIndex].imageUrl = null;
+          }
+
+          this.showConfirmModal = false;
+          this.showMessage(this.$t("success"), this.$t("imageDeleted"));
+        } catch (error) {
+          console.error("Error deleting image:", error);
+          this.showConfirmModal = false;
+          this.showMessage(this.$t("error"), this.$t("deleteFailed"));
+        }
+      };
+      this.showConfirmModal = true;
+    },
+    confirmAction() {
+      if (this.confirmCallback) {
+        this.confirmCallback();
+      }
+    },
+    showMessage(title, message) {
+      this.messageModalTitle = title;
+      this.messageModalContent = message;
+      this.showMessageModal = true;
+    },
+    async sendNotificationToDoctor(bookingId, requirementIndex) {
+      try {
+        // Get booking details to find doctor ID
+        const bookingRef = doc(db, "bookings", bookingId);
+        const bookingSnap = await getDoc(bookingRef);
+
+        if (bookingSnap.exists()) {
+          const bookingData = bookingSnap.data();
+          const record = this.medicalHistory.find((r) => r.id === bookingId);
+          const requirement = record?.details.medicalRequirements[requirementIndex];
+
+          if (bookingData.doctorId && requirement) {
+            // Create notification for doctor
+            await addDoc(collection(db, "notifications"), {
+              userId: bookingData.doctorId,
+              message: `Patient has uploaded results for ${requirement.name} (${bookingData.date} at ${bookingData.time})`,
+              read: false,
+              createdAt: new Date(),
+              type: "medical_results_uploaded",
+              bookingId: bookingId,
+              patientName: `${auth.currentUser.displayName || "Patient"}`,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error sending notification to doctor:", error);
+      }
+    },
+    viewImage(imageUrl) {
+      window.open(imageUrl, "_blank");
+    },
+    // downloadAsPDF(record) {
+    //   const doc = new jsPDF();
+
+    //   // Set up document
+    //   doc.setFontSize(20);
+    //   doc.text("Prescriptions & Medical Requirements", 20, 30);
+
+    //   // Patient and Doctor info
+    //   doc.setFontSize(12);
+    //   doc.text(`Doctor: Dr. ${record.doctorName}`, 20, 50);
+    //   doc.text(`Speciality: ${record.speciality}`, 20, 60);
+    //   doc.text(`Date: ${this.formatDate(record.date)}`, 20, 70);
+    //   doc.text(`Time: ${record.time}`, 20, 80);
+
+    //   let yPosition = 100;
+
+    //   // Prescriptions
+    //   if (record.details.prescriptions && record.details.prescriptions.length > 0) {
+    //     doc.setFontSize(16);
+    //     doc.text("Prescriptions", 20, yPosition);
+    //     yPosition += 15;
+
+    //     const prescriptionData = record.details.prescriptions.map((med) => [
+    //       med.name || "",
+    //       med.dosage || "",
+    //       med.frequency || "",
+    //       med.duration || "",
+    //     ]);
+
+    //     doc.autoTable({
+    //       startY: yPosition,
+    //       head: [["Medication", "Dosage", "Frequency", "Duration"]],
+    //       body: prescriptionData,
+    //       theme: "grid",
+    //       styles: { fontSize: 9 },
+    //       headStyles: { fillColor: [41, 128, 185] },
+    //       margin: { left: 20 },
+    //     });
+
+    //     yPosition = doc.lastAutoTable.finalY + 20;
+    //   }
+
+    //   // Medical Requirements
+    //   if (record.details.medicalRequirements && record.details.medicalRequirements.length > 0) {
+    //     doc.setFontSize(16);
+    //     doc.text("Medical Requirements", 20, yPosition);
+    //     yPosition += 15;
+
+    //     const requirementData = record.details.medicalRequirements.map((req) => [
+    //       req.name || "",
+    //       req.type || "",
+    //       req.priority || "",
+    //       req.notes || "",
+    //     ]);
+
+    //     doc.autoTable({
+    //       startY: yPosition,
+    //       head: [["Requirement", "Type", "Priority", "Notes"]],
+    //       body: requirementData,
+    //       theme: "grid",
+    //       styles: { fontSize: 9 },
+    //       headStyles: { fillColor: [142, 68, 173] },
+    //       margin: { left: 20 },
+    //     });
+    //   }
+
+    //   // Save the PDF
+    //   const fileName = `Prescriptions_Requirements_${record.doctorName.replace(
+    //     /\s+/g,
+    //     "_"
+    //   )}_${this.formatDate(record.date).replace(/\s+/g, "_")}.pdf`;
+    //   doc.save(fileName);
+    // },
+
+    generateMedicalHistoryPDF() {
+      const doc = new jsPDF("landscape"); // PDF أفقي
+
+      // عنوان PDF
+      doc.setFontSize(16);
+      doc.text("Medical History & Prescriptions Report", 14, 15);
+
+      let yPosition = 25;
+
+      // Prescriptions Section
+      if (
+        this.medicalHistory.some(
+          (record) => record.details.prescriptions && record.details.prescriptions.length > 0
+        )
+      ) {
+        doc.setFontSize(14);
+        doc.text("Prescriptions", 14, yPosition);
+        yPosition += 10;
+
+        const prescriptionColumns = [
+          "Medication",
+          "Dosage",
+          "Frequency",
+          "Duration",
+          "Doctor",
+          "Date",
+        ];
+
+        const prescriptionRows = [];
+
+        this.medicalHistory.forEach((record) => {
+          if (record.details.prescriptions && record.details.prescriptions.length > 0) {
+            record.details.prescriptions.forEach((medication) => {
+              prescriptionRows.push([
+                medication.name || "",
+                medication.dosage || "",
+                medication.frequency || "",
+                medication.duration || "",
+                `Dr. ${record.doctorName}`,
+                this.formatDate(record.date),
+              ]);
+            });
+          }
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const marginLeft = 15;
+        const marginRight = 15;
+        const availableWidth = pageWidth - marginLeft - marginRight;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [prescriptionColumns],
+          body: prescriptionRows,
+          theme: "grid",
+          headStyles: {
+            fillColor: [40, 40, 40],
+            textColor: [255, 255, 255],
+            halign: "center",
+            fontStyle: "bold",
+          },
+          bodyStyles: {
+            fillColor: [55, 55, 55],
+            textColor: [230, 230, 230],
+            halign: "left",
+            fontSize: 9,
+            cellPadding: 3,
+          },
+          alternateRowStyles: {
+            fillColor: [45, 45, 45],
+          },
+          tableWidth: availableWidth,
+          styles: {
+            overflow: "linebreak",
+            cellWidth: "wrap",
+          },
+          margin: { top: 20, left: marginLeft, right: marginRight },
+        });
+
+        yPosition = doc.lastAutoTable.finalY + 20;
+      }
+
+      // Medical Requirements Section
+      if (
+        this.medicalHistory.some(
+          (record) =>
+            record.details.medicalRequirements && record.details.medicalRequirements.length > 0
+        )
+      ) {
+        doc.setFontSize(14);
+        doc.text("Medical Requirements", 14, yPosition);
+        yPosition += 10;
+
+        const requirementColumns = ["Requirement", "Type", "Priority", "Notes", "Doctor", "Date"];
+
+        const requirementRows = [];
+
+        this.medicalHistory.forEach((record) => {
+          if (record.details.medicalRequirements && record.details.medicalRequirements.length > 0) {
+            record.details.medicalRequirements.forEach((requirement) => {
+              requirementRows.push([
+                requirement.name || "",
+                requirement.type || "",
+                requirement.priority || "",
+                requirement.notes || "",
+                `Dr. ${record.doctorName}`,
+                this.formatDate(record.date),
+              ]);
+            });
+          }
+        });
+
+        const pageWidth = doc.internal.pageSize.getWidth();
+        const marginLeft = 15;
+        const marginRight = 15;
+        const availableWidth = pageWidth - marginLeft - marginRight;
+
+        autoTable(doc, {
+          startY: yPosition,
+          head: [requirementColumns],
+          body: requirementRows,
+          theme: "grid",
+          headStyles: {
+            fillColor: [40, 40, 40],
+            textColor: [255, 255, 255],
+            halign: "center",
+            fontStyle: "bold",
+          },
+          bodyStyles: {
+            fillColor: [55, 55, 55],
+            textColor: [230, 230, 230],
+            halign: "left",
+            fontSize: 9,
+            cellPadding: 3,
+          },
+          alternateRowStyles: {
+            fillColor: [45, 45, 45],
+          },
+          tableWidth: availableWidth,
+          styles: {
+            overflow: "linebreak",
+            cellWidth: "wrap",
+          },
+          margin: { top: 20, left: marginLeft, right: marginRight },
+        });
+      }
+
+      // footer
+      const pageCount = doc.getNumberOfPages();
+      for (let i = 1; i <= pageCount; i++) {
+        doc.setPage(i);
+        doc.setFontSize(9);
+        doc.setTextColor(180);
+        doc.text(
+          `Page ${i} of ${pageCount}`,
+          doc.internal.pageSize.getWidth() - 20,
+          doc.internal.pageSize.getHeight() - 10,
+          { align: "right" }
+        );
+      }
+
+      doc.save("medical_history.pdf");
     },
   },
 };

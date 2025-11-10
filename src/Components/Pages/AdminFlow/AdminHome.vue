@@ -9,17 +9,18 @@
       </div>
 
       <!-- Rejection Modal -->
-      <UiModal v-model="showRejectionModal" :title="$t('rejectionReason')">
+      <!-- <UiModal v-model="showRejectionModal" :title="$t('rejectionReason')"> -->
+      <UiModal v-model="showRejectionModal" title="Rejection Reason">
         <form @submit.prevent="submitRejection">
           <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              {{ $t("enterRejectionReason") }}
+              enter rejection reason
             </label>
             <textarea
               v-model="rejectionReason"
               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-red-500 dark:bg-gray-700 dark:text-white"
               rows="4"
-              :placeholder="$t('rejectionReasonPlaceholder')"
+              placeholder="Enter rejection reason"
               required
             ></textarea>
           </div>
@@ -35,7 +36,7 @@
               type="submit"
               class="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
             >
-              {{ $t("submitRejection") }}
+              submit rejection
             </button>
           </div>
         </form>

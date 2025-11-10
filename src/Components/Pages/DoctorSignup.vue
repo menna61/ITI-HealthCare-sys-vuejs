@@ -110,7 +110,7 @@
           />
         </div>
       </div>
-      oo
+
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
@@ -210,7 +210,12 @@
                   <div class="sname flex flex-col gap-2 w-full">
                     <label class="text-gray-900 dark:text-white">Phone number</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                      class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                      :class="
+                        phoneNumberError
+                          ? 'border-red-500 dark:border-red-400'
+                          : 'border-gray-200 dark:border-gray-600'
+                      "
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -226,9 +231,16 @@
                         v-model="phoneNumber"
                         type="text"
                         placeholder="+20 1234 223 43"
+                        @blur="checkPhoneNumber"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
+                    <p v-if="checkingPhone" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      {{ $t("checking_phone") }}
+                    </p>
+                    <p v-if="phoneNumberError" class="text-sm text-red-600 dark:text-red-400 mt-1">
+                      {{ $t("phone_number_exists") }}
+                    </p>
                   </div>
                 </div>
                 <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
@@ -249,12 +261,28 @@
                       </svg>
                       <input
                         v-model="password"
-                        type="password"
+                        :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your password"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
+                      <!-- Eye icon when password is hidden -->
                       <svg
-                        class="w-6 h-6 fill-gray-400"
+                        v-if="!showPassword"
+                        @click="togglePasswordVisibility"
+                        class="w-6 h-6 fill-gray-400 cursor-pointer hover:fill-gray-600 dark:hover:fill-gray-300 transition-colors"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 640 640"
+                      >
+                        <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                        <path
+                          d="M320 96C178.6 96 64 208 64 320s114.6 224 256 224 256-112 256-224S461.4 96 320 96zm0 384c-88.4 0-160-71.6-160-160s71.6-160 160-160 160 71.6 160 160-71.6 160-160 160zm0-256c-53 0-96 43-96 96s43 96 96 96 96-43 96-96-43-96-96-96z"
+                        />
+                      </svg>
+                      <!-- Eye-slash icon when password is visible -->
+                      <svg
+                        v-else
+                        @click="togglePasswordVisibility"
+                        class="w-6 h-6 fill-gray-400 cursor-pointer hover:fill-gray-600 dark:hover:fill-gray-300 transition-colors"
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 640 640"
                       >
@@ -533,8 +561,10 @@
 <script>
 import BackBtn from "../BackBtn.vue";
 import GoogleCard from "../GoogleCard.vue";
-import { registerWithEmail, db } from "../../authHandler.js";
-import { doc, setDoc } from "firebase/firestore";
+import { sendOTP } from "../../services/emailVerification.js";
+import { db } from "../../firebase.js";
+import { collection, query, where, getDocs } from "firebase/firestore";
+
 export default {
   components: { GoogleCard, BackBtn },
   name: "DoctorSignup",
@@ -562,11 +592,11 @@ export default {
       email: "",
       phoneNumber: "",
       password: "",
+      showPassword: false,
       yearsOfExperience: "",
       medicalLicenseNumber: "",
       clinicName: "",
       clinicAddress: "",
-
       bio: "",
       profileImage: null,
       profileImageUrl: "",
@@ -574,11 +604,50 @@ export default {
       loading: false,
       errorMsg: "",
       successMsg: "",
+      phoneNumberError: false,
+      checkingPhone: false,
     };
   },
   methods: {
+    async checkPhoneNumber() {
+      if (!this.phoneNumber || this.phoneNumber.trim() === "") {
+        this.phoneNumberError = false;
+        return;
+      }
+
+      this.checkingPhone = true;
+      this.phoneNumberError = false;
+
+      try {
+        // Check in patients collection
+        const patientsRef = collection(db, "patients");
+        const patientsQuery = query(patientsRef, where("phoneNumber", "==", this.phoneNumber));
+        const patientsSnapshot = await getDocs(patientsQuery);
+
+        // Check in doctors collection
+        const doctorsRef = collection(db, "doctors");
+        const doctorsQuery = query(doctorsRef, where("phoneNumber", "==", this.phoneNumber));
+        const doctorsSnapshot = await getDocs(doctorsQuery);
+
+        if (!patientsSnapshot.empty || !doctorsSnapshot.empty) {
+          this.phoneNumberError = true;
+        }
+      } catch (error) {
+        console.error("Error checking phone number:", error);
+      } finally {
+        this.checkingPhone = false;
+      }
+    },
     async nextStep() {
       if (this.currentStep < 3) {
+        // Check phone number in Firebase on step 1 before proceeding
+        if (this.currentStep === 1) {
+          await this.checkPhoneNumber();
+          if (this.phoneNumberError) {
+            this.errorMsg = this.$t("phone_number_exists");
+            return;
+          }
+        }
         this.currentStep++;
       } else {
         // Validate all fields before registering
@@ -639,6 +708,9 @@ export default {
       this.selectedSpeciality = speciality;
       this.showSpec = false;
     },
+    togglePasswordVisibility() {
+      this.showPassword = !this.showPassword;
+    },
     triggerFileInput() {
       this.$refs.fileInput.click();
     },
@@ -683,87 +755,50 @@ export default {
         this.profileImageUrl = ""; // Reset on failure
       }
     },
-    async initializeDefaultAvailability(doctorId) {
-      try {
-        // Generate next 7 days with default availability (all unavailable initially)
-        const days = [];
-        const today = new Date();
-        const dayNames = [
-          "Sunday",
-          "Monday",
-          "Tuesday",
-          "Wednesday",
-          "Thursday",
-          "Friday",
-          "Saturday",
-        ];
-
-        for (let i = 0; i < 7; i++) {
-          const date = new Date(today);
-          date.setDate(today.getDate() + i);
-          days.push({
-            date: date.toISOString().split("T")[0], // Store as YYYY-MM-DD string
-            name: dayNames[date.getDay()],
-            available: false, // Default to unavailable
-            start: "", // Empty time slots
-            end: "",
-          });
-        }
-
-        // Create the availability document in Firebase
-        await setDoc(doc(db, "doctorAvailability", doctorId), {
-          availability: days,
-        });
-
-        console.log("Default availability initialized for doctor:", doctorId);
-      } catch (error) {
-        console.error("Error initializing default availability:", error);
-        // Don't throw error - availability can be set later
-      }
-    },
     async registerDoctor() {
       try {
         this.errorMsg = "";
         this.successMsg = "";
         this.loading = true;
 
-        const cred = await registerWithEmail(this.email, this.password);
-        const uid = cred.user.uid;
+        // Send OTP to email
+        const name = `${this.firstName} ${this.lastName}`;
+        const result = await sendOTP(this.email, name, "doctor");
 
-        // Create doctor document
-        await setDoc(doc(db, "doctors", uid), {
-          firstName: this.firstName,
-          lastName: this.lastName,
-          email: this.email,
-          phone: this.phoneNumber,
-          yearsOfExperience: this.yearsOfExperience,
-          medicalLicenseNumber: this.medicalLicenseNumber,
-          clinicName: this.clinicName,
-          clinicAddress: this.clinicAddress,
-          degree: this.selectedDegree,
-          speciality: this.selectedSpeciality,
-          bio: this.bio,
-          profileImageUrl: this.profileImageUrl,
-          unionMembershipCardUrl: "",
-          role: "doctor",
-          approved: false,
-        });
-
-        // Initialize default availability for the new doctor
-        await this.initializeDefaultAvailability(uid);
-
-        this.successMsg = "Account created successfully.";
-        this.loading = false;
-        setTimeout(() => {
-          this.$router.push("/success");
-        }, 2000);
-      } catch (error) {
-        console.error("Error signing up:", error);
-        if (error.code === "auth/email-already-in-use") {
-          this.errorMsg = "Email already registered. Please login.";
-        } else {
-          this.errorMsg = error?.message || "Something went wrong. Please try again.";
+        if (!result.success) {
+          this.errorMsg = result.error || "Failed to send verification code. Please try again.";
+          this.loading = false;
+          return;
         }
+
+        // Store doctor data in sessionStorage
+        sessionStorage.setItem(
+          "verificationData",
+          JSON.stringify({
+            email: this.email,
+            userData: {
+              firstName: this.firstName,
+              lastName: this.lastName,
+              password: this.password,
+              phoneNumber: this.phoneNumber,
+              yearsOfExperience: this.yearsOfExperience,
+              medicalLicenseNumber: this.medicalLicenseNumber,
+              clinicName: this.clinicName,
+              clinicAddress: this.clinicAddress,
+              selectedDegree: this.selectedDegree,
+              selectedSpeciality: this.selectedSpeciality,
+              bio: this.bio,
+              profileImageUrl: this.profileImageUrl,
+            },
+            userType: "doctor",
+          })
+        );
+
+        // Navigate to verification page
+        this.$router.push("/verify-email");
+      } catch (error) {
+        console.error("Error during signup:", error);
+        this.errorMsg = error?.message || "Something went wrong. Please try again.";
       } finally {
         this.loading = false;
       }
