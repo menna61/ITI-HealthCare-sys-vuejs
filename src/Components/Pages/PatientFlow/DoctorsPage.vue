@@ -99,7 +99,9 @@
             <div class="bottom flex flex-col gap-4">
               <div class="name flex flex-col gap-2">
                 <div class="flex justify-between">
-                  <h1 class="text-xl font-medium dark:text-white">{{ doctor.firstName }} {{ doctor.lastName }}</h1>
+                  <h1 class="text-xl font-medium dark:text-white">
+                    {{ doctor.firstName }} {{ doctor.lastName }}
+                  </h1>
                   <p class="text-lg text-gray-500 dark:text-gray-300">{{ doctor.speciality }}</p>
                 </div>
               </div>
@@ -152,7 +154,7 @@
 
     <!-- Doctor Details Modal -->
     <Modal v-model="showModal" title="Doctor Details" @close="closeModal">
-      <div v-if="selectedDoctor" class="max-h-[600px] ">
+      <div v-if="selectedDoctor" class="max-h-[600px]">
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-4">
             <img
@@ -218,8 +220,8 @@
                   </svg>
                 </div>
                 <div class="txts flex flex-col gap-2">
-                  <h1 class="text-lg font-medium dark:text-white">Telemedicine</h1>
-                  <p class="text-gray-500 font-medium">online consultation from anywhere</p>
+                  <h1 class="text-lg font-medium dark:text-white">{{ service.name }}</h1>
+                  <p class="text-gray-500 font-medium">{{ service.description }}</p>
                 </div>
               </div>
               <div class="left text-xl font-bold text-[var(--main-color-500)]">
@@ -251,10 +253,8 @@
                   </svg>
                 </div>
                 <div class="txts flex flex-col gap-2">
-                  <h1 class="text-lg font-medium">Regular consultation</h1>
-                  <p class="text-gray-500 font-medium">
-                    Visit clinic and meet your doctor face to face
-                  </p>
+                  <h1 class="text-lg font-medium">{{ service.name }}</h1>
+                  <p class="text-gray-500 font-medium">{{ service.description }}</p>
                 </div>
               </div>
               <div class="left text-xl font-bold text-[var(--sec-color-500)]">

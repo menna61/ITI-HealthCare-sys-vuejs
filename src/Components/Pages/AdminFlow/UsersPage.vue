@@ -200,7 +200,7 @@ import { db } from "@/firebase";
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import emailjs from "emailjs-com";
-import { toast } from "vue3-toastify";
+// import { toast } from "vue3-toastify";
 
 export default {
   name: "UsersPage",
@@ -297,10 +297,10 @@ export default {
         this.reason = "";
 
         // Show success toast
-        toast.success("User deleted successfully");
+        // toast.success("User deleted successfully");
       } catch (error) {
         console.error("Error deleting patient:", error);
-        toast.error("Failed to delete user");
+        // toast.error("Failed to delete user");
       }
     },
     async sendDeletionEmail(patient, reason) {

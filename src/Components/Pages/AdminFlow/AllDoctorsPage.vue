@@ -488,7 +488,7 @@ import { db } from "@/firebase";
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import emailjs from "emailjs-com";
-import { toast } from "vue3-toastify";
+// import { toast } from "vue3-toastify";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 
@@ -720,10 +720,10 @@ export default {
         this.reason = "";
 
         // Show success toast
-        toast.success("Doctor deleted successfully");
+        // toast.success("Doctor deleted successfully");
       } catch (error) {
         console.error("Error deleting doctor:", error);
-        toast.error("Failed to delete Doctor");
+        // toast.error("Failed to delete Doctor");
       }
     },
 
