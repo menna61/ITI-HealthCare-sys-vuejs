@@ -232,7 +232,7 @@ import DonghutChart from "../DonghutChart.vue";
 import MainNav from "../Layouts/MainNav.vue";
 import LineChart from "../LineChart.vue";
 import { db, auth } from "@/firebase";
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore";
 
 export default {
   name: "FinancialPage",
@@ -251,10 +251,17 @@ export default {
       pendingAppointments: 0,
       cancelledAppointments: 0,
       monthlyRevenue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      unsubscribe: null,
     };
   },
   async mounted() {
     await this.fetchFinancialData();
+    this.setupRealtimeUpdates();
+  },
+  beforeUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   methods: {
     async fetchFinancialData() {
@@ -300,8 +307,8 @@ export default {
 
           const price = parseFloat(booking.price) || 0;
 
-          // Use confirmed and completed bookings for totals and breakdown, matching top cards
-          if (booking.status === "confirmed" || booking.status === "completed") {
+          // Count only completed bookings for earnings and breakdown (as per task: update on mark as complete)
+          if (booking.status === "completed") {
             totalEarnings += price;
             totalAppointments += 1;
             uniquePatients.add(booking.patientId);
@@ -313,7 +320,17 @@ export default {
             ) {
               telemedicineEarnings += price;
               telemedicineCount += 1;
+            } else if (
+              (booking.service &&
+                typeof booking.service === "string" &&
+                booking.service.toLowerCase().includes("general")) ||
+              booking.service.toLowerCase().includes("regular") ||
+              booking.service.toLowerCase().includes("consultation")
+            ) {
+              regularEarnings += price;
+              regularCount += 1;
             } else {
+              // Default to regular for other services
               regularEarnings += price;
               regularCount += 1;
             }
@@ -327,7 +344,7 @@ export default {
             }
           }
 
-          // Count by status for charts
+          // Count by status for charts (keep as is)
           if (booking.status === "completed") {
             completedAppointments += 1;
           } else if (booking.status === "pending") {
@@ -356,6 +373,18 @@ export default {
       } catch (error) {
         console.error("Error calculating from bookings:", error);
       }
+    },
+    setupRealtimeUpdates() {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const bookingsRef = collection(db, "bookings");
+      const q = query(bookingsRef, where("doctorId", "==", user.uid));
+
+      this.unsubscribe = onSnapshot(q, () => {
+        console.log("Realtime update triggered for financial data");
+        this.calculateFromBookings(user.uid);
+      });
     },
   },
 };
