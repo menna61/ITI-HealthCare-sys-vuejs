@@ -149,79 +149,10 @@
         </div>
 
         <!--Earnings breakdown-->
-        <div class="charts flex flex-col gap-6">
-          <div class="booking p-4 bg-white dark:bg-gray-800 rounded-xl w-full flex flex-col gap-4">
-            <div class="text flex justify-between">
-              <h1 class="text-xl font-bold text-gray-900 dark:text-white">Earnings breakdown</h1>
-            </div>
-            <div class="breakdown flex flex-col gap-4">
-              <div
-                class="telemedicine bg-[var(--main-color-25)] dark:bg-gray-700 rounded-xl p-4 flex justify-between items-center"
-              >
-                <div class="left flex gap-4 items-center">
-                  <div
-                    class="icon w-16 h-16 bg-[var(--main-color-25)] dark:bg-gray-600 rounded-full flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-12 h-12 fill-[var(--main-color-500)]"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
-                    >
-                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M128 128C92.7 128 64 156.7 64 192L64 448C64 483.3 92.7 512 128 512L384 512C419.3 512 448 483.3 448 448L448 192C448 156.7 419.3 128 384 128L128 128zM496 400L569.5 458.8C573.7 462.2 578.9 464 584.3 464C597.4 464 608 453.4 608 440.3L608 199.7C608 186.6 597.4 176 584.3 176C578.9 176 573.7 177.8 569.5 181.2L496 240L496 400z"
-                      />
-                    </svg>
-                  </div>
-                  <div class="texts">
-                    <p class="text-lg font-medium text-gray-900 dark:text-white">Telemedicine</p>
-                    <p class="text-gray-600 dark:text-gray-300">
-                      {{ telemedicineConsultations }} consultations
-                    </p>
-                  </div>
-                </div>
-                <div class="right">
-                  <p class="text-[var(--main-color-500)] text-xl font-bold">
-                    ${{ telemedicineEarnings.toLocaleString() }}
-                  </p>
-                </div>
-              </div>
-              <div
-                class="telemedicine bg-[var(--sec-color-25)] dark:bg-gray-700 rounded-xl p-4 flex justify-between items-center"
-              >
-                <div class="left flex gap-4 items-center">
-                  <div
-                    class="icon w-16 h-16 bg-[var(--sec-color-25)] dark:bg-gray-600 rounded-full flex items-center justify-center"
-                  >
-                    <svg
-                      class="w-12 h-12 fill-[var(--sec-color-500)]"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 640 640"
-                    >
-                      <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                      <path
-                        d="M64 112C64 85.5 85.5 64 112 64L160 64C177.7 64 192 78.3 192 96C192 113.7 177.7 128 160 128L128 128L128 256C128 309 171 352 224 352C277 352 320 309 320 256L320 128L288 128C270.3 128 256 113.7 256 96C256 78.3 270.3 64 288 64L336 64C362.5 64 384 85.5 384 112L384 256C384 333.4 329 398 256 412.8L256 432C256 493.9 306.1 544 368 544C429.9 544 480 493.9 480 432L480 346.5C442.7 333.3 416 297.8 416 256C416 203 459 160 512 160C565 160 608 203 608 256C608 297.8 581.3 333.4 544 346.5L544 432C544 529.2 465.2 608 368 608C270.8 608 192 529.2 192 432L192 412.8C119 398 64 333.4 64 256L64 112zM512 288C529.7 288 544 273.7 544 256C544 238.3 529.7 224 512 224C494.3 224 480 238.3 480 256C480 273.7 494.3 288 512 288z"
-                      />
-                    </svg>
-                  </div>
-                  <div class="texts">
-                    <p class="text-lg font-medium text-gray-900 dark:text-white">
-                      Regular consultation
-                    </p>
-                    <p class="text-gray-600 dark:text-gray-300">
-                      {{ regularConsultations }} consultations
-                    </p>
-                  </div>
-                </div>
-                <div class="right">
-                  <p class="text-[var(--sec-color-500)] text-xl font-bold">
-                    ${{ regularConsultationEarnings.toLocaleString() }}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
+
+
+
       </div>
     </div>
   </div>

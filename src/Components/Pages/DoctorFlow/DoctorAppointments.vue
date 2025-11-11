@@ -4,8 +4,8 @@
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Doctor Dashboard</h1>
-        <p class="text-gray-500">Manage your appointments and patients</p>
+        <h1 class="text-2xl font-bold dark:text-white">Appointments</h1>
+        <p class="text-gray-500">Manage your appointments</p>
       </div>
 
       <!-- Appointments Tab -->
