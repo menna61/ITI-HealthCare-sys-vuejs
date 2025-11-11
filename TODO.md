@@ -1,9 +1,6 @@
-# Localization for Calendar Page
+# TODO: Show Cancelled Appointments in DoctorAppointments Page
 
-## Tasks
-
-- [ ] Add new translation keys to locales/en.json for calendar page strings
-- [ ] Add new translation keys to locales/ar.json for calendar page strings
-- [ ] Update CalenDar.vue template to use $t() for hardcoded strings
-- [ ] Update CalenDar.vue script to translate dynamic action strings
-- [ ] Test localization by switching languages
+- [x] Remove the conditional check in fetchAppointments method that skips cancelled appointments
+- [x] Update the comment to reflect that cancelled appointments are now included
+- [x] Test the changes by running the application and verifying cancelled appointments appear in the list
+- [x] Remove "Add Details" button from cancelled appointments

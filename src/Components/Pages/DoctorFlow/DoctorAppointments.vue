@@ -120,6 +120,7 @@
                         Mark Completed
                       </button>
                       <button
+                        v-if="appointment.status.toLowerCase() !== 'cancelled'"
                         @click="addDetails(appointment.id)"
                         class="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
                       >
@@ -480,10 +481,6 @@ export default {
 
         for (const docSnap of querySnapshot.docs) {
           const appointment = { id: docSnap.id, ...docSnap.data() };
-          const status = (appointment.status || "").toLowerCase();
-
-          // We want to show all statuses except for cancelled ones which are handled elsewhere
-          if (status === "cancelled") continue;
 
           // Check if past and pending, set to late
           const today = new Date().toISOString().split("T")[0];
