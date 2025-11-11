@@ -617,8 +617,8 @@ export default {
     justify-content: flex-end;
     gap: 16px;
     padding-top: 24px;
-    border-top: 2px solid #fecaca;
-    background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
+    // border-top: 2px solid #fecaca;
+    // background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
     margin: 0 -24px -24px;
     padding: 24px;
     border-radius: 0 0 12px 12px;

@@ -336,7 +336,7 @@
         v-model="showDeleteModal"
         :title="$t('confirmDelete')"
         @close="cancelDelete"
-        class="delete-modal w-full sm:w-[400px]"
+        class="fixed inset-0 bg-black/25 flex flex-col items-center justify-center z-50 delete-modal"
       >
         <div v-if="doctorToDelete" class="space-y-4">
           <!-- أيقونة التحذير -->
@@ -698,6 +698,25 @@ export default {
             type: "appointment_cancelled",
             bookingId: booking.id,
           });
+
+          // Send email to patient
+          try {
+            await emailjs.send(
+              "service_7jd6hf9",
+              "template_u4nyr74",
+              {
+                patient_name: booking.patientName,
+                doctor_name: `${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName}`,
+                appointment_date: booking.date,
+                appointment_time: booking.time,
+                refund_amount: refundAmount,
+              },
+              "yXN5soDjbM2S3Nkb1"
+            );
+            console.log("✅ Email sent to patient successfully!");
+          } catch (emailError) {
+            console.error("❌ Error sending email to patient:", emailError);
+          }
         });
 
         // Wait for all cancellations to complete
@@ -1132,7 +1151,7 @@ export default {
 }
 
 .delete-modal {
-  background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
+  // background: linear-gradient(135deg, #fef7f7 0%, #fdf2f2 100%);
   border: 2px solid #fecaca;
   box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 
