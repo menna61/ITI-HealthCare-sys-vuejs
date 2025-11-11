@@ -1,4 +1,3 @@
-// ...existing code...
 <template>
   <div class="flex gap-24 items-center">
     <canvas ref="bookingChart" width="200" height="200"></canvas>
@@ -7,7 +6,7 @@
         <span class="w-3 h-3 bg-green-500 rounded-full"></span> Completed: {{ completed }}
       </div>
       <div class="flex items-center gap-2">
-        <span class="w-3 h-3 bg-orange-400 rounded-full"></span> Waiting approval: {{ pending }}
+        <span class="w-3 h-3 bg-orange-400 rounded-full"></span> Confirmed: {{ confirmed }}
       </div>
       <div class="flex items-center gap-2">
         <span class="w-3 h-3 bg-red-500 rounded-full"></span> Cancelled: {{ cancelled }}
@@ -24,7 +23,7 @@ export default {
   name: "DonghutChart",
   props: {
     completed: { type: Number, default: 0 },
-    pending: { type: Number, default: 0 },
+    confirmed: { type: Number, default: 0 },
     cancelled: { type: Number, default: 0 },
   },
   data() {
@@ -39,7 +38,7 @@ export default {
     completed() {
       this.updateChart();
     },
-    pending() {
+    confirmed() {
       this.updateChart();
     },
     cancelled() {
@@ -49,13 +48,35 @@ export default {
   methods: {
     createChart() {
       const ctx = this.$refs.bookingChart;
+
+      // Plugin for center text when no data
+      const centerTextPlugin = {
+        id: "centerText",
+        afterDatasetsDraw(chart) {
+          const { ctx, data } = chart;
+          const total = data.datasets[0].data.reduce((a, b) => a + b, 0);
+          if (total === 0) {
+            ctx.save();
+            ctx.font = "bold 16px Arial";
+            ctx.fillStyle = "#6B7280"; // gray color
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            const centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+            const centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+            ctx.fillText("No data", centerX, centerY);
+            ctx.restore();
+          }
+        },
+      };
+
       this.chartInstance = new Chart(ctx, {
+        plugins: [centerTextPlugin],
         type: "doughnut",
         data: {
-          labels: ["Completed", "Waiting approval", "Cancelled"],
+          labels: ["Completed", "Confirmed", "Cancelled"],
           datasets: [
             {
-              data: [this.completed || 70, this.pending || 10, this.cancelled || 20],
+              data: [this.completed, this.confirmed, this.cancelled],
               backgroundColor: ["#22C55E", "#F59E0B", "#EF4444"],
               borderWidth: 0,
               cutout: "70%",
@@ -76,17 +97,17 @@ export default {
               },
             },
           },
+          animation: {
+            animateRotate: true,
+            animateScale: true,
+          },
         },
       });
     },
     updateChart() {
       if (this.chartInstance) {
-        this.chartInstance.data.datasets[0].data = [
-          this.completed || 70,
-          this.pending || 10,
-          this.cancelled || 20,
-        ];
-        this.chartInstance.update();
+        this.chartInstance.data.datasets[0].data = [this.completed, this.confirmed, this.cancelled];
+        this.chartInstance.update("none");
       }
     },
   },
@@ -100,6 +121,8 @@ export default {
 </script>
 
 <style scoped>
-/* optional: force CSS sizing if you prefer CSS over width/height attrs */
-/* canvas { width:200px !important; height:200px !important; } */
+canvas {
+  max-width: 200px;
+  max-height: 200px;
+}
 </style>

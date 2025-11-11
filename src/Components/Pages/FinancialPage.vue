@@ -91,68 +91,81 @@
           </div>
         </div>
 
+        <!--Filters section-->
+        <div class="filters flex gap-4 mb-6">
+          <select
+            v-model="selectedPeriod"
+            class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
+          >
+            <option value="Monthly">Monthly</option>
+            <option value="Weekly">Weekly</option>
+          </select>
+          <select
+            v-model="selectedYear"
+            class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
+          >
+            <option value="2023">2023</option>
+            <option value="2024">2024</option>
+            <option value="2025">2025</option>
+          </select>
+        </div>
+
         <!--Charts section-->
         <div class="charts flex flex-col lg:flex-row gap-6">
           <div class="booking p-4 bg-white dark:bg-gray-800 rounded-xl w-full flex flex-col gap-4">
-            <div class="text flex justify-between">
+            <div class="text">
               <h1 class="text-xl font-bold text-gray-900 dark:text-white">Booking status</h1>
-              <div class="filter flex gap-4">
-                <select
-                  name=""
-                  id=""
-                  class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
-                >
-                  <option value="">Monthly</option>
-                </select>
-                <select
-                  name=""
-                  id=""
-                  class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
-                >
-                  <option value="">2024</option>
-                </select>
-              </div>
             </div>
             <div class="chart">
               <donghut-chart
+                :key="completedAppointments + confirmedAppointments + cancelledAppointments"
                 :completed="completedAppointments"
-                :pending="pendingAppointments"
+                :confirmed="confirmedAppointments"
                 :cancelled="cancelledAppointments"
               />
             </div>
           </div>
 
           <div class="revenu p-4 bg-white dark:bg-gray-800 rounded-xl w-full">
-            <div class="text flex justify-between">
+            <div class="text">
               <h1 class="text-xl font-bold text-gray-900 dark:text-white">Revenue</h1>
-              <div class="filter flex gap-4">
-                <select
-                  name=""
-                  id=""
-                  class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
-                >
-                  <option value="">Monthly</option>
-                </select>
-                <select
-                  name=""
-                  id=""
-                  class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
-                >
-                  <option value="">2024</option>
-                </select>
-              </div>
             </div>
             <div class="chart">
-              <line-chart :revenue-data="monthlyRevenue" />
+              <line-chart :revenue-data="monthlyRevenue" :labels="revenueLabels" />
             </div>
           </div>
         </div>
 
         <!--Earnings breakdown-->
-        
-
-
-
+        <div class="earnings-breakdown p-4 bg-white dark:bg-gray-800 rounded-xl w-full">
+          <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Earnings Breakdown</h1>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead
+                class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
+              >
+                <tr>
+                  <th scope="col" class="px-6 py-3">Service</th>
+                  <th scope="col" class="px-6 py-3">Bookings</th>
+                  <th scope="col" class="px-6 py-3">Earnings</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(item, index) in earningsBreakdown"
+                  :key="index"
+                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                >
+                  <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    {{ item.service }}
+                  </td>
+                  <td class="px-6 py-4">{{ item.bookings }}</td>
+                  <td class="px-6 py-4">${{ item.earnings.toLocaleString() }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -179,15 +192,49 @@ export default {
       regularConsultations: 0,
       loading: true,
       completedAppointments: 0,
-      pendingAppointments: 0,
+      confirmedAppointments: 0,
       cancelledAppointments: 0,
       monthlyRevenue: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+      earningsBreakdown: [],
       unsubscribe: null,
+      selectedPeriod: "Monthly",
+      selectedYear: new Date().getFullYear().toString(),
+      revenueLabels: [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ],
     };
   },
   async mounted() {
-    await this.fetchFinancialData();
+    this.loading = true;
+    const user = auth.currentUser;
+    if (user) {
+      const bookingsRef = collection(db, "bookings");
+      const q = query(bookingsRef, where("doctorId", "==", user.uid));
+      const querySnapshot = await getDocs(q);
+      this.calculateFromBookings(querySnapshot);
+    } else {
+      this.loading = false;
+    }
     this.setupRealtimeUpdates();
+  },
+  watch: {
+    selectedPeriod() {
+      this.recalculateData();
+    },
+    selectedYear() {
+      this.recalculateData();
+    },
   },
   beforeUnmount() {
     if (this.unsubscribe) {
@@ -195,126 +242,168 @@ export default {
     }
   },
   methods: {
-    async fetchFinancialData() {
-      this.loading = true;
+    calculateFromBookings(querySnapshot) {
+      console.log(`Found ${querySnapshot.size} bookings`);
+
+      let totalEarnings = 0;
+      let totalAppointments = 0;
+      let telemedicineEarnings = 0;
+      let regularEarnings = 0;
+      let telemedicineCount = 0;
+      let regularCount = 0;
+      let completedAppointments = 0;
+      let confirmedAppointments = 0;
+      let cancelledAppointments = 0;
+      const uniquePatients = new Set();
+      const serviceBreakdown = {};
+
+      // Initialize revenue data based on selected period
+      let revenueData = [];
+      let labels = [];
+      if (this.selectedPeriod === "Monthly") {
+        revenueData = Array(12).fill(0);
+        labels = [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ];
+      } else if (this.selectedPeriod === "Weekly") {
+        revenueData = Array(52).fill(0);
+        labels = Array.from({ length: 52 }, (_, i) => `Week ${i + 1}`);
+      }
+
+      querySnapshot.forEach((doc) => {
+        const booking = doc.data();
+        console.log("Booking data:", booking);
+        console.log("Booking status:", booking.status);
+
+        const price = parseFloat(booking.price) || 0;
+        const bookingDate = booking.date ? new Date(booking.date) : null;
+
+        // Filter by selected year
+        if (bookingDate && bookingDate.getFullYear().toString() !== this.selectedYear) {
+          return; // Skip bookings not in selected year
+        }
+
+        // Count only completed bookings for earnings and breakdown (as per task: update on mark as complete)
+        if (booking.status === "completed") {
+          totalEarnings += price;
+          totalAppointments += 1;
+          uniquePatients.add(booking.patientId);
+
+          // Dynamic service breakdown
+          const serviceName = booking.service || "Other";
+          if (!serviceBreakdown[serviceName]) {
+            serviceBreakdown[serviceName] = { bookings: 0, earnings: 0 };
+          }
+          serviceBreakdown[serviceName].bookings += 1;
+          serviceBreakdown[serviceName].earnings += price;
+
+          if (
+            booking.service &&
+            typeof booking.service === "string" &&
+            booking.service.toLowerCase() === "telemedicine"
+          ) {
+            telemedicineEarnings += price;
+            telemedicineCount += 1;
+          } else if (
+            (booking.service &&
+              typeof booking.service === "string" &&
+              booking.service.toLowerCase().includes("general")) ||
+            booking.service.toLowerCase().includes("regular") ||
+            booking.service.toLowerCase().includes("consultation")
+          ) {
+            regularEarnings += price;
+            regularCount += 1;
+          } else {
+            // Default to regular for other services
+            regularEarnings += price;
+            regularCount += 1;
+          }
+
+          if (bookingDate && !isNaN(bookingDate.getTime())) {
+            if (this.selectedPeriod === "Monthly") {
+              const month = bookingDate.getMonth();
+              revenueData[month] += price;
+            } else if (this.selectedPeriod === "Weekly") {
+              const startOfYear = new Date(parseInt(this.selectedYear), 0, 1);
+              const weekIndex = Math.floor((bookingDate - startOfYear) / (7 * 24 * 60 * 60 * 1000));
+              if (weekIndex >= 0 && weekIndex < 52) {
+                revenueData[weekIndex] += price;
+              }
+            }
+          }
+        }
+
+        // Count by status for charts (keep as is)
+        if (booking.status === "completed") {
+          completedAppointments += 1;
+        } else if (booking.status === "confirmed") {
+          confirmedAppointments += 1;
+        } else if (booking.status === "cancelled") {
+          cancelledAppointments += 1;
+        }
+      });
+
+      console.log(
+        `Calculated: totalAppointments=${totalAppointments}, totalEarnings=${totalEarnings}, totalPatients=${uniquePatients.size}`
+      );
+
+      // Update data from calculated values
+      this.totalEarnings = totalEarnings;
+      this.totalAppointments = totalAppointments;
+      this.totalPatients = uniquePatients.size;
+      this.telemedicineEarnings = telemedicineEarnings;
+      this.regularConsultationEarnings = regularEarnings;
+      this.telemedicineConsultations = telemedicineCount;
+      this.regularConsultations = regularCount;
+      this.completedAppointments = completedAppointments;
+      this.confirmedAppointments = confirmedAppointments;
+      this.cancelledAppointments = cancelledAppointments;
+      this.monthlyRevenue = revenueData;
+      this.revenueLabels = labels;
+      this.earningsBreakdown = Object.keys(serviceBreakdown).map((service) => ({
+        service,
+        bookings: serviceBreakdown[service].bookings,
+        earnings: serviceBreakdown[service].earnings,
+      }));
+      this.loading = false;
+    },
+    setupRealtimeUpdates() {
       const user = auth.currentUser;
       if (!user) {
         this.loading = false;
         return;
       }
 
-      try {
-        // Calculate from bookings collection
-        await this.calculateFromBookings(user.uid);
-      } catch (error) {
-        console.error("Error fetching financial data:", error);
-      } finally {
-        this.loading = false;
-      }
-    },
-    async calculateFromBookings(doctorId) {
-      try {
-        const bookingsRef = collection(db, "bookings");
-        const q = query(bookingsRef, where("doctorId", "==", doctorId));
-        const querySnapshot = await getDocs(q);
-
-        console.log(`Found ${querySnapshot.size} bookings for doctor ${doctorId}`);
-
-        let totalEarnings = 0;
-        let totalAppointments = 0;
-        let telemedicineEarnings = 0;
-        let regularEarnings = 0;
-        let telemedicineCount = 0;
-        let regularCount = 0;
-        let completedAppointments = 0;
-        let pendingAppointments = 0;
-        let cancelledAppointments = 0;
-        const monthlyRevenue = Array(12).fill(0);
-        const uniquePatients = new Set();
-
-        querySnapshot.forEach((doc) => {
-          const booking = doc.data();
-          console.log("Booking data:", booking);
-
-          const price = parseFloat(booking.price) || 0;
-
-          // Count only completed bookings for earnings and breakdown (as per task: update on mark as complete)
-          if (booking.status === "completed") {
-            totalEarnings += price;
-            totalAppointments += 1;
-            uniquePatients.add(booking.patientId);
-
-            if (
-              booking.service &&
-              typeof booking.service === "string" &&
-              booking.service.toLowerCase() === "telemedicine"
-            ) {
-              telemedicineEarnings += price;
-              telemedicineCount += 1;
-            } else if (
-              (booking.service &&
-                typeof booking.service === "string" &&
-                booking.service.toLowerCase().includes("general")) ||
-              booking.service.toLowerCase().includes("regular") ||
-              booking.service.toLowerCase().includes("consultation")
-            ) {
-              regularEarnings += price;
-              regularCount += 1;
-            } else {
-              // Default to regular for other services
-              regularEarnings += price;
-              regularCount += 1;
-            }
-
-            if (booking.date) {
-              const date = new Date(booking.date);
-              if (!isNaN(date.getTime())) {
-                const month = date.getMonth();
-                monthlyRevenue[month] += price;
-              }
-            }
-          }
-
-          // Count by status for charts (keep as is)
-          if (booking.status === "completed") {
-            completedAppointments += 1;
-          } else if (booking.status === "pending") {
-            pendingAppointments += 1;
-          } else if (booking.status === "cancelled") {
-            cancelledAppointments += 1;
-          }
-        });
-
-        console.log(
-          `Calculated: totalAppointments=${totalAppointments}, totalEarnings=${totalEarnings}, totalPatients=${uniquePatients.size}`
-        );
-
-        // Update data from calculated values
-        this.totalEarnings = totalEarnings;
-        this.totalAppointments = totalAppointments;
-        this.totalPatients = uniquePatients.size;
-        this.telemedicineEarnings = telemedicineEarnings;
-        this.regularConsultationEarnings = regularEarnings;
-        this.telemedicineConsultations = telemedicineCount;
-        this.regularConsultations = regularCount;
-        this.completedAppointments = completedAppointments;
-        this.pendingAppointments = pendingAppointments;
-        this.cancelledAppointments = cancelledAppointments;
-        this.monthlyRevenue = monthlyRevenue;
-      } catch (error) {
-        console.error("Error calculating from bookings:", error);
-      }
-    },
-    setupRealtimeUpdates() {
-      const user = auth.currentUser;
-      if (!user) return;
-
       const bookingsRef = collection(db, "bookings");
       const q = query(bookingsRef, where("doctorId", "==", user.uid));
 
-      this.unsubscribe = onSnapshot(q, () => {
+      this.unsubscribe = onSnapshot(q, (snapshot) => {
         console.log("Realtime update triggered for financial data");
-        this.calculateFromBookings(user.uid);
+        this.calculateFromBookings(snapshot);
+      });
+    },
+    recalculateData() {
+      const user = auth.currentUser;
+      if (!user) {
+        this.loading = false;
+        return;
+      }
+
+      const bookingsRef = collection(db, "bookings");
+      const q = query(bookingsRef, where("doctorId", "==", user.uid));
+      getDocs(q).then((querySnapshot) => {
+        this.calculateFromBookings(querySnapshot);
       });
     },
   },
