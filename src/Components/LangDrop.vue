@@ -8,7 +8,8 @@
     </div>
     <div
       class="absolute dark:text-white degrees w-fit p-4 shadow-xl rounded-lg right-[156px] top-20 flex flex-col gap-4 bg-white z-[100000] dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-      :class="[isRTL ? 'left-4' : 'right-4', $route.path === '/' ? 'right-[366px]' : '' , $i18n.locale === 'ar' ? 'left-[344px]' : '']"
+      :class="[  $i18n.locale==='ar' && $route.path==='/dashboard' ? 'left-[10px]':'' , isRTL ? 'left-4' : 'right-4', $route.path === '/' ? 'right-[366px]' : '' , $i18n.locale === 'ar' ? 'left-[344px]' : '']"
+      
       v-show="langShow"
     >
       <!-- Add .stop to prevent event bubbling -->

@@ -4,8 +4,8 @@
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Doctor Dashboard</h1>
-        <p class="text-gray-500">Manage your appointments and patients</p>
+        <h1 class="text-2xl font-bold dark:text-white">Appointments</h1>
+        <p class="text-gray-500">Manage your appointments</p>
       </div>
 
       <!-- Appointments Tab -->
@@ -50,7 +50,7 @@
                     class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
                     :style="{ animationDelay: `${index * 0.1 + 0.2}s` }"
                   >
-                    {{ appointment.patientPhone || '-'}}
+                    {{ appointment.patientPhone || "-" }}
                   </td>
                   <td
                     class="py-4 px-6 text-gray-700 dark:text-gray-300 animate-slide-in-left"
@@ -622,6 +622,8 @@ export default {
             this.startNotificationInterval();
           }
         }
+        // Send notification to patient about completion
+        await this.sendCompletionNotification(appointmentId);
       } catch (error) {
         console.error("Error marking completed:", error);
       }
@@ -885,6 +887,46 @@ export default {
         } catch (error) {
           console.error(`Error checking medical details for appointment ${appointment.id}:`, error);
         }
+      }
+    },
+    async sendCompletionNotification(appointmentId) {
+      try {
+        // Get appointment details
+        const appointmentRef = doc(db, "bookings", appointmentId);
+        const appointmentSnap = await getDoc(appointmentRef);
+
+        if (appointmentSnap.exists()) {
+          const appointmentData = appointmentSnap.data();
+
+          if (appointmentData.patientId) {
+            // Get doctor name
+            const user = auth.currentUser;
+            let doctorName = "Doctor";
+            if (user) {
+              const doctorRef = doc(db, "doctors", user.uid);
+              const doctorSnap = await getDoc(doctorRef);
+              if (doctorSnap.exists()) {
+                const doctorData = doctorSnap.data();
+                doctorName =
+                  `Dr. ${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() ||
+                  "Doctor";
+              }
+            }
+
+            // Create notification for patient
+            await addDoc(collection(db, "notifications"), {
+              userId: appointmentData.patientId,
+              message: `Your appointment on ${appointmentData.date} at ${appointmentData.time} has been marked as completed by ${doctorName}.`,
+              read: false,
+              createdAt: new Date(),
+              type: "appointment_completed",
+              bookingId: appointmentId,
+              doctorName: doctorName,
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error sending completion notification:", error);
       }
     },
   },

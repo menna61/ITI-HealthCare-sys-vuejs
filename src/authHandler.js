@@ -10,8 +10,9 @@ import {
   sendPasswordResetEmail,
   setPersistence,
   browserSessionPersistence,
+  fetchSignInMethodsForEmail,
 } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 
 // Initialize products
 const authApi = getAuth(firebaseApp);
@@ -39,6 +40,54 @@ const resetPassword = async (email) => {
   await sendPasswordResetEmail(authApi, email);
 };
 
+const checkEmailExists = async (email) => {
+  try {
+    console.log(`Checking Auth for email: ${email}`);
+    const signInMethods = await fetchSignInMethodsForEmail(authApi, email);
+    console.log(`Sign-in methods for ${email}:`, signInMethods);
+    const exists = signInMethods.length > 0;
+    console.log(`Auth exists for ${email}: ${exists}`);
+    return exists;
+  } catch (error) {
+    console.error("Error checking email existence:", error);
+    return false;
+  }
+};
+
+const checkEmailInDB = async (email) => {
+  try {
+    console.log(`Checking DB for email: ${email}`);
+    if (!db) {
+      console.log("DB not available");
+      return false;
+    }
+
+    // Check patients collection
+    const patientsQuery = query(collection(db, "patients"), where("email", "==", email));
+    const patientsSnapshot = await getDocs(patientsQuery);
+    console.log(`Patients found for ${email}: ${!patientsSnapshot.empty}`);
+    if (!patientsSnapshot.empty) {
+      console.log(`Email ${email} exists in patients`);
+      return true;
+    }
+
+    // Check doctors collection
+    const doctorsQuery = query(collection(db, "doctors"), where("email", "==", email));
+    const doctorsSnapshot = await getDocs(doctorsQuery);
+    console.log(`Doctors found for ${email}: ${!doctorsSnapshot.empty}`);
+    if (!doctorsSnapshot.empty) {
+      console.log(`Email ${email} exists in doctors`);
+      return true;
+    }
+
+    console.log(`Email ${email} not found in DB`);
+    return false;
+  } catch (error) {
+    console.error("Error checking email in database:", error);
+    return false;
+  }
+};
+
 export {
   signInWithGoogle,
   signOutUser,
@@ -46,5 +95,7 @@ export {
   registerWithEmail,
   loginWithEmail,
   resetPassword,
+  checkEmailExists,
+  checkEmailInDB,
 };
 export { authApi as auth, db };

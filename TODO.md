@@ -1,9 +1,9 @@
-# TODO: Add Edit Functionality to PatientProfile.vue
+# Localization for Calendar Page
 
-## Steps to Complete
+## Tasks
 
-- [x] Replace read-only display with editable form inputs for all fields except email (readonly)
-- [x] Add profile image upload with click-to-change functionality
-- [x] Add save button with loading, error, and success messages
-- [x] Update script to bind data, handle file upload to Cloudinary, and save to Firestore 'patients' collection
-- [x] Test the edit and save functionality after changes
+- [ ] Add new translation keys to locales/en.json for calendar page strings
+- [ ] Add new translation keys to locales/ar.json for calendar page strings
+- [ ] Update CalenDar.vue template to use $t() for hardcoded strings
+- [ ] Update CalenDar.vue script to translate dynamic action strings
+- [ ] Test localization by switching languages

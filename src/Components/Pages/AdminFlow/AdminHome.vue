@@ -45,7 +45,7 @@
       <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6">
         <!-- Total Users -->
         <router-link to="/admin/users">
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg h-[123px]">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("totalUsers") }}</p>
@@ -66,7 +66,7 @@
 
         <!-- Active Doctors -->
         <router-link to="/admin/doctors">
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg h-[123px]">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("activeDoctors") }}</p>
@@ -116,7 +116,7 @@
 
         <!-- Total Appointments -->
         <router-link to="/admin/totalAppointments">
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg h-[123px]">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-gray-500 dark:text-gray-200 text-sm">
@@ -143,7 +143,7 @@
 
         <!-- Doctor Availability -->
         <router-link to="/admin/doctorAvailability">
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg h-[123px]">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-gray-500 dark:text-gray-200 text-sm">

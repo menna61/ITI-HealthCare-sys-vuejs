@@ -1,12 +1,12 @@
 <template>
   <div>
-    <div class="w-dwh lg:ml-[302px] ml-0">
+    <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
       <main-nav />
       <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
         <!--Page titles-->
         <div class="title flex flex-col gap-4">
-          <h1 class="text-2xl font-bold dark:text-white">Calendar & Bookings</h1>
-          <p class="text-gray-500 dark:text-gray-400">Manage your appointments and schedule</p>
+          <h1 class="text-2xl font-bold dark:text-white">{{ $t("calendar_bookings") }}</h1>
+          <p class="text-gray-500 dark:text-gray-400">{{ $t("manage_appointments_schedule") }}</p>
         </div>
 
         <!--Page content-->
@@ -101,7 +101,7 @@
               class="p-4 rounded-xl bg-gray-50 dark:bg-gray-700 w-full lg:w-[378px] text-center"
               v-else
             >
-              <p class="text-gray-500 dark:text-gray-400">No appointments for this day</p>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t("no_appointments_day") }}</p>
             </div>
           </div>
 
@@ -136,10 +136,10 @@
                   </svg>
                   <div>
                     <h4 class="text-yellow-900 dark:text-yellow-200 font-semibold">
-                      Documents Uploaded
+                      {{ $t("documents_uploaded") }}
                     </h4>
                     <p class="text-yellow-700 dark:text-yellow-300 text-sm">
-                      You have uploaded the document and we will notify you once it is reviewed.
+                      {{ $t("documents_uploaded_desc") }}
                     </p>
                   </div>
                 </div>
@@ -158,12 +158,14 @@
                     />
                   </svg>
                   <div>
-                    <h4 class="text-red-800 dark:text-red-200 font-semibold">Document Rejected</h4>
+                    <h4 class="text-red-800 dark:text-red-200 font-semibold">
+                      {{ $t("document_rejected") }}
+                    </h4>
                     <p class="text-red-600 dark:text-red-300 text-sm">
-                      Your previous document was rejected. Please upload a new one.
+                      {{ $t("document_rejected_desc") }}
                     </p>
                     <p class="text-red-500 dark:text-red-400 text-xs mt-1" v-if="rejectionReason">
-                      Reason: {{ rejectionReason }}
+                      {{ $t("reason") }}: {{ rejectionReason }}
                     </p>
                   </div>
                 </div>
@@ -183,10 +185,10 @@
                   </svg>
                   <div>
                     <h4 class="text-red-800 dark:text-red-200 font-semibold">
-                      Upload Union Membership Card
+                      {{ $t("upload_union_card") }}
                     </h4>
                     <p class="text-red-600 dark:text-red-300 text-sm">
-                      Required to access services and appointments
+                      {{ $t("upload_union_card_desc") }}
                     </p>
                   </div>
                 </div>
@@ -236,7 +238,7 @@
                         d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       ></path>
                     </svg>
-                    {{ uploading ? "Uploading..." : "Upload Card" }}
+                    {{ uploading ? $t("uploading") : $t("upload_card") }}
                   </button>
                 </div>
                 <div v-if="uploadError" class="text-red-600 dark:text-red-400 text-sm">
@@ -269,9 +271,11 @@
                   d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
                 ></path>
               </svg>
-              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Create services</h3>
+              <h3 class="text-xl font-semibold text-gray-900 dark:text-white">
+                {{ $t("create_services") }}
+              </h3>
               <p class="text-gray-500 dark:text-gray-400">
-                Create your services to start taking appointments
+                {{ $t("create_services_desc") }}
               </p>
               <button
                 @click="goToServices"
@@ -291,7 +295,7 @@
                     d="M12 4v16m8-8H4"
                   ></path>
                 </svg>
-                Go to services
+                {{ $t("go_to_services") }}
               </button>
             </div>
           </div>
@@ -299,41 +303,45 @@
       </div>
     </div>
     <!-- Cancel Confirmation Modal -->
-    <Modal v-model="showCancelModal" title="Confirm Cancellation" @close="closeCancelModal">
-      <p class="text-gray-900 dark:text-white">Are you sure you want to cancel this appointment?</p>
+    <Modal v-model="showCancelModal" :title="$t('confirm_cancellation')" @close="closeCancelModal">
+      <p class="text-gray-900 dark:text-white">{{ $t("confirm_cancel_message") }}</p>
       <template #footer>
         <button
           @click="closeCancelModal"
           class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
         >
-          No
+          {{ $t("no") }}
         </button>
         <button
           @click="confirmCancel"
           class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
         >
-          Yes, Cancel
+          {{ $t("yes_cancel") }}
         </button>
       </template>
     </Modal>
 
     <!-- Mark as Completed Confirmation Modal -->
-    <Modal v-model="showCompletedModal" title="Confirm Completion" @close="closeCompletedModal">
+    <Modal
+      v-model="showCompletedModal"
+      :title="$t('confirm_completion')"
+      @close="closeCompletedModal"
+    >
       <p class="text-gray-900 dark:text-white">
-        Are you sure you want to mark this appointment as completed?
+        {{ $t("confirm_complete_message") }}
       </p>
       <template #footer>
         <button
           @click="closeCompletedModal"
           class="px-4 py-2 bg-gray-300 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-400 dark:hover:bg-gray-500"
         >
-          No
+          {{ $t("no") }}
         </button>
         <button
           @click="confirmCompleted"
           class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
         >
-          Yes, Mark as Completed
+          {{ $t("yes_mark_completed") }}
         </button>
       </template>
     </Modal>
@@ -493,13 +501,13 @@ export default {
     },
     getActionClass(action) {
       switch (action) {
-        case "Cancel":
+        case "cancel":
           return "text-red-500 font-medium hover:underline";
-        case "Mark as Completed":
+        case "mark as completed":
           return "text-blue-500 font-medium hover:underline";
-        case "Approve":
+        case "approve":
           return "text-green-500 font-medium hover:underline";
-        case "Reject":
+        case "reject":
           return "text-red-500 font-medium hover:underline";
         default:
           return "";
@@ -632,7 +640,7 @@ export default {
                 appointment.date,
                 appointment.time
               );
-              const actions = appointmentDateTime <= now ? ["Mark as Completed"] : ["Cancel"];
+              const actions = appointmentDateTime <= now ? ["mark as completed"] : ["cancel"];
 
               return {
                 id: appointment.id,
@@ -691,10 +699,10 @@ export default {
       this.calendarOptions.events = events;
     },
     async handleAction(action, appointment) {
-      if (action === "Cancel") {
+      if (action === "cancel") {
         this.appointmentToCancel = appointment;
         this.showCancelModal = true;
-      } else if (action === "Mark as Completed") {
+      } else if (action === "mark as completed") {
         this.appointmentToComplete = appointment;
         this.showCompletedModal = true;
       }
