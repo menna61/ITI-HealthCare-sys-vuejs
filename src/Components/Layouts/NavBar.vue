@@ -49,28 +49,26 @@
           </form>
 
           <!-- 🔽 Overlay Dropdown -->
-          <teleport to="body">
-            <div
-              v-if="searchQuery && recommendations.length > 0"
-              ref="dropdown"
-              :style="dropdownStyle"
-              class="absolute bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999] mt-1"
-            >
-              <ul class="divide-y divide-gray-100 dark:divide-gray-600">
-                <li
-                  v-for="rec in recommendations"
-                  :key="rec.path"
-                  class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                  @click="navigateTo(rec.fullPath)"
-                >
-                  <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
-                  <span class="block text-xs text-gray-500 dark:text-gray-400">
-                    {{ rec.fullPath }}
-                  </span>
-                </li>
-              </ul>
-            </div>
-          </teleport>
+          <div
+            v-if="searchQuery && recommendations.length > 0"
+            ref="dropdown"
+            :style="dropdownStyle"
+            class="absolute bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999] mt-1"
+          >
+            <ul class="divide-y divide-gray-100 dark:divide-gray-600">
+              <li
+                v-for="rec in recommendations"
+                :key="rec.path"
+                class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                @click="navigateTo(rec.fullPath)"
+              >
+                <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
+                <span class="block text-xs text-gray-500 dark:text-gray-400">
+                  {{ rec.fullPath }}
+                </span>
+              </li>
+            </ul>
+          </div>
         </div>
 
         <!-- 🔔 Notifications & User Section -->
@@ -356,13 +354,16 @@ export default {
     updateDropdownRect() {
       this.$nextTick(() => {
         const input = this.$refs.searchInput;
-        if (!input) return;
-        const rect = input.getBoundingClientRect();
-        const top = rect.bottom + window.scrollY + 8;
+        const wrapper = this.$refs.searchWrapper;
+        if (!input || !wrapper) return;
+        const wrapperRect = wrapper.getBoundingClientRect();
+        const inputRect = input.getBoundingClientRect();
+        const top = inputRect.bottom - wrapperRect.top + 8;
+        const left = inputRect.left - wrapperRect.left;
         this.dropdownRect = {
-          left: rect.left + window.scrollX,
+          left,
           top,
-          width: rect.width,
+          width: inputRect.width,
         };
       });
     },
@@ -374,7 +375,6 @@ export default {
   computed: {
     dropdownStyle() {
       return {
-        position: "absolute",
         left: `${this.dropdownRect.left}px`,
         top: `${this.dropdownRect.top}px`,
         width: `${this.dropdownRect.width}px`,
