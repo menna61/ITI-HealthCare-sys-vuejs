@@ -1,6 +1,23 @@
-# TODO: Show Cancelled Appointments in DoctorAppointments Page
+# TODO: Fix Doughnut Chart in Financial Page
 
-- [x] Remove the conditional check in fetchAppointments method that skips cancelled appointments
-- [x] Update the comment to reflect that cancelled appointments are now included
-- [x] Test the changes by running the application and verifying cancelled appointments appear in the list
-- [x] Remove "Add Details" button from cancelled appointments
+## Steps Completed
+
+1. **Update FinancialPage.vue**:
+
+   - Modified `calculateFromBookings` method to count "confirmed" instead of "pending" for active bookings.
+   - Updated status counting logic: completed, confirmed, cancelled.
+   - Changed props passed to `<donghut-chart>`: `:completed`, `:confirmed`, `:cancelled`.
+   - Ensured realtime updates trigger recalculation.
+
+2. **Update DonghutChart.vue**:
+
+   - Changed prop from `pending` to `confirmed` (type Number, default 0).
+   - Updated chart labels to ["Completed", "Confirmed", "Cancelled"].
+   - Updated legend text: Changed "Waiting approval: {{ pending }}" to "Confirmed: {{ confirmed }}".
+   - Updated `createChart` and `updateChart` methods: Used `this.confirmed` in data array at index 1.
+   - Removed hardcoded fallbacks (70, 10, 20) to show true 0s if no data.
+
+3. **Test Changes**:
+   - Restart dev server if needed.
+   - Verify chart updates dynamically with sample bookings in Firebase.
+   - Check console logs for booking data and status matching.
