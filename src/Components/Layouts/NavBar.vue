@@ -36,8 +36,9 @@
               </div>
               <input
                 ref="searchInput"
-                @focus="updateDropdownRect"
+                @focus="showDropdown"
                 @input="updateDropdownRect"
+                @blur="hideDropdown"
                 type="search"
                 id="default-search"
                 v-model="searchQuery"
@@ -49,26 +50,7 @@
           </form>
 
           <!-- 🔽 Overlay Dropdown -->
-          <div
-            v-if="searchQuery && recommendations.length > 0"
-            ref="dropdown"
-            :style="dropdownStyle"
-            class="absolute bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999] mt-1"
-          >
-            <ul class="divide-y divide-gray-100 dark:divide-gray-600">
-              <li
-                v-for="rec in recommendations"
-                :key="rec.path"
-                class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                @click="navigateTo(rec.fullPath)"
-              >
-                <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
-                <span class="block text-xs text-gray-500 dark:text-gray-400">
-                  {{ rec.fullPath }}
-                </span>
-              </li>
-            </ul>
-          </div>
+          
         </div>
 
         <!-- 🔔 Notifications & User Section -->
@@ -200,6 +182,26 @@
         </div>
       </div>
     </nav>
+    <div
+            v-if="searchQuery && recommendations.length > 0"
+            ref="dropdown"
+            :style="dropdownStyle"
+            class="absolute left-[350px] mt-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999]"
+          >
+            <ul class="divide-y divide-gray-100 dark:divide-gray-600">
+              <li
+                v-for="rec in recommendations"
+                :key="rec.path"
+                class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+                @click="navigateTo(rec.fullPath)"
+              >
+                <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
+                <span class="block text-xs text-gray-500 dark:text-gray-400">
+                  {{ rec.fullPath }}
+                </span>
+              </li>
+            </ul>
+          </div>
   </div>
 </template>
 
@@ -222,6 +224,7 @@ export default {
       notifications: [],
       unreadCount: 0,
       searchQuery: "",
+      isDropdownVisible: false,
       dropdownRect: { left: 0, top: 0, width: 0 },
     };
   },
@@ -375,7 +378,7 @@ export default {
   computed: {
     dropdownStyle() {
       return {
-        left: `${this.dropdownRect.left}px`,
+       
         top: `${this.dropdownRect.top}px`,
         width: `${this.dropdownRect.width}px`,
       };
