@@ -2,6 +2,7 @@ import express from "express";
 import Stripe from "stripe";
 import cors from "cors";
 import dotenv from "dotenv";
+import admin from "firebase-admin";
 import { sendCancellationEmail } from "./mail.js";
 import { sendDoctorRemovalEmail } from "./mail.js";
 import { sendDeletionEmail } from "./mail.js";
@@ -9,6 +10,25 @@ import { sendDoctorDeletionCancellationEmail } from "./mail.js";
 import { sendApprovalEmail } from "./mail.js";
 
 dotenv.config();
+
+// ✅ Initialize Firebase Admin
+const privateKey = process.env.FIREBASE_PRIVATE_KEY 
+  ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+  : undefined;
+
+if (!process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
+  console.error("❌ Missing Firebase Admin credentials in .env file");
+  console.error("Please add FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY to .env");
+  process.exit(1);
+}
+
+admin.initializeApp({
+  credential: admin.credential.cert({
+    projectId: "health-care-456db",
+    clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+    privateKey: privateKey,
+  }),
+});
 const app = express();
 // const PORT = process.env.PORT || 3001;
 app.use(cors());
@@ -135,6 +155,28 @@ app.post("/send-approval-email", async (req, res) => {
     console.error("❌ Error sending approval email:", err.message);
     console.error("Full error:", err);
     res.status(500).json({ error: err.message || "Failed to send email" });
+  }
+});
+
+// ✅ Delete user from Firebase Authentication
+app.post("/delete-auth-user", async (req, res) => {
+  console.log("🗑️ Received delete auth user request:", req.body);
+  try {
+    const { uid } = req.body;
+
+    if (!uid) {
+      console.error("❌ Error: Missing uid");
+      return res.status(400).json({ error: "uid is required" });
+    }
+
+    console.log("🗑️ Deleting user from Firebase Auth:", uid);
+    await admin.auth().deleteUser(uid);
+    console.log("✅ User deleted successfully from Firebase Auth:", uid);
+    
+    res.status(200).json({ message: "User deleted successfully from Authentication" });
+  } catch (error) {
+    console.error("❌ Error deleting auth user:", error);
+    res.status(500).json({ error: error.message || "Failed to delete user from Authentication" });
   }
 });
 

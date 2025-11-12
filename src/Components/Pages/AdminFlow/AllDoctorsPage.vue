@@ -488,6 +488,7 @@ import { db } from "@/firebase";
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import emailjs from "emailjs-com";
+import axios from "axios";
 // import { toast } from "vue3-toastify";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -722,7 +723,18 @@ export default {
         // Wait for all cancellations to complete
         await Promise.all(cancellationPromises);
 
-        // Delete the doctor
+        // Delete Firebase Authentication user first (using doctor.id which is the same as auth uid)
+        try {
+          await axios.post("http://localhost:4242/delete-auth-user", {
+            uid: this.doctorToDelete.id,
+          });
+          console.log("✅ Doctor deleted from Firebase Authentication");
+        } catch (authError) {
+          console.error("❌ Error deleting auth user:", authError);
+          // Continue with the deletion even if auth deletion fails
+        }
+
+        // Delete the doctor from Firestore
         await deleteDoc(doc(db, "doctors", this.doctorToDelete.id));
         this.doctors = this.doctors.filter((doctor) => doctor.id !== this.doctorToDelete.id);
 

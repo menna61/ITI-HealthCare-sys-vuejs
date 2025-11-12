@@ -114,7 +114,6 @@
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
-            <google-card />
             <div class="or flex gap-2 items-center justify-center">
               <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
               <p class="text-gray-600 dark:text-gray-300">or</p>
@@ -229,11 +228,16 @@
                       </svg>
                       <input
                         v-model="phoneNumber"
+                        @input="validatePhoneOnInput"
                         type="text"
                         placeholder="+20 1234 223 43"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
+                    <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
+                      Please enter a valid phone number (e.g., 01123456789, +20123456789, +20153456789, or
+                      0103456789)
+                    </p>
                   </div>
                 </div>
                 <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
@@ -553,12 +557,11 @@
 
 <script>
 import BackBtn from "../BackBtn.vue";
-import GoogleCard from "../GoogleCard.vue";
 import { sendOTP } from "../../services/emailVerification.js";
 import { checkEmailExists, checkEmailInDB } from "../../authHandler.js";
 
 export default {
-  components: { GoogleCard, BackBtn },
+  components: { BackBtn },
   name: "DoctorSignup",
   data() {
     return {
@@ -583,6 +586,7 @@ export default {
       lastName: "",
       email: "",
       phoneNumber: "",
+      phoneNumberError: false,
       password: "",
       showPassword: false,
       yearsOfExperience: "",
@@ -599,6 +603,20 @@ export default {
     };
   },
   methods: {
+    validatePhoneNumber(phone) {
+      // Egyptian phone number patterns
+      const egyptianRegex = /^(\+20|0)?1[0-2,5]\d{8}$/;
+      // International format (10-15 digits with optional +)
+      const internationalRegex = /^\+?\d{10,15}$/;
+      return egyptianRegex.test(phone) || internationalRegex.test(phone);
+    },
+    validatePhoneOnInput() {
+      if (this.phoneNumber && !this.validatePhoneNumber(this.phoneNumber)) {
+        this.phoneNumberError = true;
+      } else {
+        this.phoneNumberError = false;
+      }
+    },
     async nextStep() {
       if (this.currentStep < 3) {
         this.currentStep++;
@@ -635,6 +653,15 @@ export default {
         ) {
           this.errorMsg = "Please fill all fields in all steps.";
           return;
+        }
+
+        if (!this.validatePhoneNumber(this.phoneNumber)) {
+          this.phoneNumberError = true;
+          this.errorMsg = "Please enter a valid phone number (e.g., +20123456789 or 0123456789).";
+          this.currentStep = 1; // Go back to step 1 if phone is invalid
+          return;
+        } else {
+          this.phoneNumberError = false;
         }
 
         if (!this.profileImageUrl) {
