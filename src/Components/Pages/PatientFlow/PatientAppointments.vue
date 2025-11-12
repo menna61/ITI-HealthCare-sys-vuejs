@@ -404,16 +404,17 @@ export default {
           return;
         }
 
-        // Update the status to 'cancelled'
+        // Calculate refund based on terms and conditions
+        const { refundAmount, refundType, doctorEarnings } = calculateRefund(appointment, "patient");
+
+        // Update the status to 'cancelled' and save doctor earnings
         await updateDoc(appointmentRef, {
           status: "cancelled",
           cancelledAt: new Date(),
           cancelledBy: user.uid,
           cancelledByRole: "patient",
+          doctorEarnings: doctorEarnings, // حفظ مبلغ الدكتور
         });
-
-        // Calculate refund based on terms and conditions
-        const { refundAmount, refundType } = calculateRefund(appointment, "patient");
 
         const patientRef = doc(db, "patients", user.uid);
         const patientSnap = await getDoc(patientRef);

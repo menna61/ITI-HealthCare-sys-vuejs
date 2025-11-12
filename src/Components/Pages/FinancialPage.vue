@@ -344,6 +344,33 @@ export default {
           }
         }
 
+        // إضافة أرباح الدكتور من الحجوزات الملغاة (85% من المبلغ)
+        if (booking.status === "cancelled" && booking.doctorEarnings && booking.doctorEarnings > 0) {
+          const doctorEarning = parseFloat(booking.doctorEarnings) || 0;
+          totalEarnings += doctorEarning;
+          
+          // إضافة للـ breakdown
+          const serviceName = booking.service || "Other";
+          if (!serviceBreakdown[serviceName]) {
+            serviceBreakdown[serviceName] = { bookings: 0, earnings: 0 };
+          }
+          serviceBreakdown[serviceName].earnings += doctorEarning;
+
+          // إضافة للـ revenue chart
+          if (bookingDate && !isNaN(bookingDate.getTime())) {
+            if (this.selectedPeriod === "Monthly") {
+              const month = bookingDate.getMonth();
+              revenueData[month] += doctorEarning;
+            } else if (this.selectedPeriod === "Weekly") {
+              const startOfYear = new Date(parseInt(this.selectedYear), 0, 1);
+              const weekIndex = Math.floor((bookingDate - startOfYear) / (7 * 24 * 60 * 60 * 1000));
+              if (weekIndex >= 0 && weekIndex < 52) {
+                revenueData[weekIndex] += doctorEarning;
+              }
+            }
+          }
+        }
+
         // Count by status for charts (keep as is)
         if (booking.status === "completed") {
           completedAppointments += 1;
