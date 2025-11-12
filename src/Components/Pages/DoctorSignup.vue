@@ -114,7 +114,7 @@
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
-            <google-card />
+            
             <div class="or flex gap-2 items-center justify-center">
               <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
               <p class="text-gray-600 dark:text-gray-300">or</p>
@@ -553,12 +553,11 @@
 
 <script>
 import BackBtn from "../BackBtn.vue";
-import GoogleCard from "../GoogleCard.vue";
 import { sendOTP } from "../../services/emailVerification.js";
 import { checkEmailExists, checkEmailInDB } from "../../authHandler.js";
 
 export default {
-  components: { GoogleCard, BackBtn },
+  components: {BackBtn },
   name: "DoctorSignup",
   data() {
     return {
