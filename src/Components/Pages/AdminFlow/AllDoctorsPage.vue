@@ -492,6 +492,7 @@ import axios from "axios";
 // import { toast } from "vue3-toastify";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import { sendCancellationEmail } from "@/utils/emailService.js";
 
 export default {
   name: "AllDoctorsPage",
@@ -702,19 +703,20 @@ export default {
 
           // Send email to patient
           try {
-            await emailjs.send(
-              "service_7jd6hf9",
-              "template_u4nyr74",
-              {
-                patient_name: booking.patientName,
-                doctor_name: `${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName}`,
-                appointment_date: booking.date,
-                appointment_time: booking.time,
-                refund_amount: refundAmount,
-              },
-              "yXN5soDjbM2S3Nkb1"
-            );
-            console.log("✅ Email sent to patient successfully!");
+            // Get patient email
+            const patientSnap = await getDoc(patientRef);
+            if (patientSnap.exists() && patientSnap.data().email) {
+              await sendCancellationEmail({
+                patientEmail: patientSnap.data().email,
+                patientName: booking.patientName,
+                doctorName: `${this.doctorToDelete.firstName} ${this.doctorToDelete.lastName}`,
+                appointmentDate: booking.date,
+                appointmentTime: booking.time,
+                refundAmount: refundAmount,
+                cancellationReason: `Doctor removed from platform. Reason: ${this.reason}`,
+              });
+              console.log("✅ Cancellation email sent to patient successfully!");
+            }
           } catch (emailError) {
             console.error("❌ Error sending email to patient:", emailError);
           }
