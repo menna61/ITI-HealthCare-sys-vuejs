@@ -294,20 +294,54 @@ export default {
         // Send email to patient if it's a telemedicine appointment
         if (
           bookingData.service &&
-          bookingData.service.toLowerCase() === "telemedicine" &&
-          bookingData.roomLink
+          bookingData.service.toLowerCase() === "telemedicine"
         ) {
           try {
-            console.log("📧 Sending telemedicine email to patient...");
-            await sendTelemedicineEmail({
-              patientEmail: user.email,
-              patientName: bookingData.patientName || user.displayName || "Patient",
-              doctorName: bookingData.doctorName,
-              appointmentDate: bookingData.date,
-              appointmentTime: bookingData.time,
-              sessionLink: bookingData.roomLink,
-            });
-            console.log("✅ Telemedicine email sent successfully");
+            // Get roomLink from booking data or fetch from doctor's service
+            let roomLink = bookingData.roomLink || "";
+            
+            // If roomLink is missing, try to get it from doctor's service
+            if (!roomLink && bookingData.doctorId) {
+              console.log("🔍 RoomLink not found in booking, fetching from doctor's service...");
+              const servicesRef = collection(db, "doctors", bookingData.doctorId, "services");
+              const servicesSnap = await getDocs(servicesRef);
+              const teleService = servicesSnap.docs
+                .map((s) => ({ id: s.id, ...s.data() }))
+                .find(
+                  (s) =>
+                    s &&
+                    s.name &&
+                    typeof s.name === "string" &&
+                    s.name.toLowerCase() === "telemedicine" &&
+                    s.roomLink
+                );
+              if (teleService && typeof teleService.roomLink === "string") {
+                roomLink = teleService.roomLink;
+                console.log("✅ RoomLink found in doctor's service:", roomLink);
+                
+                // Update the booking with the roomLink
+                await updateDoc(doc(db, "bookings", bookingDoc.id), {
+                  roomLink: roomLink
+                });
+                console.log("✅ Booking updated with roomLink");
+              }
+            }
+
+            // Send email only if roomLink is available
+            if (roomLink) {
+              console.log("📧 Sending telemedicine email to patient...");
+              await sendTelemedicineEmail({
+                patientEmail: user.email,
+                patientName: bookingData.patientName || user.displayName || "Patient",
+                doctorName: bookingData.doctorName,
+                appointmentDate: bookingData.date,
+                appointmentTime: bookingData.time,
+                sessionLink: roomLink,
+              });
+              console.log("✅ Telemedicine email sent successfully");
+            } else {
+              console.warn("⚠️ Cannot send email: RoomLink not available for telemedicine appointment");
+            }
           } catch (emailError) {
             console.error("❌ Error sending telemedicine email:", emailError);
             // Don't fail the booking if email fails

@@ -35,6 +35,9 @@ export const sendTelemedicineEmail = async ({
       session_link: sessionLink,
     };
 
+    // Log the parameters being sent for debugging
+    console.log('📧 Email Parameters being sent:', templateParams);
+
     const response = await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
@@ -42,7 +45,7 @@ export const sendTelemedicineEmail = async ({
       EMAILJS_PUBLIC_KEY
     );
 
-    console.log('Email sent successfully:', response);
+    console.log('✅ Email sent successfully:', response);
     return response;
   } catch (error) {
     console.error('Error sending email:', error);
