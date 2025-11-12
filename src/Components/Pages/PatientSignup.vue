@@ -82,11 +82,21 @@
                     <label class="text-gray-900 dark:text-white">{{ $t("Phone_number") }}</label>
                     <input
                       v-model="phoneNumber"
+                      @input="validatePhoneOnInput"
                       required
                       type="text"
                       :placeholder="$t('Enter_phone_number')"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      :class="[
+                        'w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                        phoneNumberError
+                          ? 'border-red-500 dark:border-red-400'
+                          : 'border-gray-300 dark:border-gray-600',
+                      ]"
                     />
+                    <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
+                      Please enter a valid phone number (e.g., 01123456789, +20123456789, +20103456789 or
+                      0103456789)
+                    </p>
                   </div>
                 </div>
 
@@ -257,6 +267,7 @@ export default {
       password: "",
       showPassword: false,
       phoneNumber: "",
+      phoneNumberError: false,
       selectedGender: "",
       birthdate: "",
       loading: false,
@@ -267,6 +278,20 @@ export default {
   },
 
   methods: {
+    validatePhoneNumber(phone) {
+      // Egyptian phone number patterns
+      const egyptianRegex = /^(\+20|0)?1[0-2,5]\d{8}$/;
+      // International format (10-15 digits with optional +)
+      const internationalRegex = /^\+?\d{10,15}$/;
+      return egyptianRegex.test(phone) || internationalRegex.test(phone);
+    },
+    validatePhoneOnInput() {
+      if (this.phoneNumber && !this.validatePhoneNumber(this.phoneNumber)) {
+        this.phoneNumberError = true;
+      } else {
+        this.phoneNumberError = false;
+      }
+    },
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
@@ -274,6 +299,15 @@ export default {
       // Check if form is valid
       const form = this.$el.querySelector("form");
       if (form && form.checkValidity()) {
+        // Validate phone number
+        if (!this.validatePhoneNumber(this.phoneNumber)) {
+          this.phoneNumberError = true;
+          this.errorMsg = "Please enter a valid phone number (e.g., +20123456789 or 0123456789).";
+          return;
+        } else {
+          this.phoneNumberError = false;
+        }
+
         // Check if email already exists in Auth or DB
         this.loading = true;
         const authExists = await checkEmailExists(this.email);
