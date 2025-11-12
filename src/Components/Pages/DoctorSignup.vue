@@ -235,8 +235,8 @@
                       />
                     </div>
                     <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
-                      Please enter a valid phone number (e.g., 01123456789, +20123456789, +20153456789, or
-                      0103456789)
+                      Please enter a valid phone number (e.g., 01123456789, +20123456789,
+                      +20153456789, or 0103456789)
                     </p>
                   </div>
                 </div>
@@ -244,7 +244,12 @@
                   <div class="pass flex flex-col gap-2 w-full">
                     <label class="text-gray-900 dark:text-white">Password</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                      class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                      :class="
+                        passwordError
+                          ? 'border-red-500 dark:border-red-400'
+                          : 'border-gray-200 dark:border-gray-600'
+                      "
                     >
                       <svg
                         class="w-6 h-6 fill-gray-400"
@@ -258,6 +263,7 @@
                       </svg>
                       <input
                         v-model="password"
+                        @input="validatePasswordOnInput"
                         :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your password"
                         class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
@@ -289,6 +295,10 @@
                         />
                       </svg>
                     </div>
+                    <p v-if="passwordError" class="text-red-500 dark:text-red-400 text-sm">
+                      Password must be at least 6 characters long and include at least one uppercase
+                      letter, one lowercase letter, one number, and one special character.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -507,7 +517,7 @@
 
         <button
           @click="nextStep"
-          :disabled="loading || uploading"
+          :disabled="loading || uploading || !isFormValid"
           class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] dark:bg-blue-600 text-white w-fit px-10 cursor-pointer disabled:opacity-60 hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
         >
           <svg
@@ -588,6 +598,7 @@ export default {
       phoneNumber: "",
       phoneNumberError: false,
       password: "",
+      passwordError: false,
       showPassword: false,
       yearsOfExperience: "",
       medicalLicenseNumber: "",
@@ -602,6 +613,22 @@ export default {
       successMsg: "",
     };
   },
+  computed: {
+    isFormValid() {
+      if (this.currentStep === 1) {
+        return (
+          this.firstName &&
+          this.lastName &&
+          this.email &&
+          this.phoneNumber &&
+          this.password &&
+          !this.phoneNumberError &&
+          !this.passwordError
+        );
+      }
+      return true;
+    },
+  },
   methods: {
     validatePhoneNumber(phone) {
       // Egyptian phone number patterns
@@ -615,6 +642,18 @@ export default {
         this.phoneNumberError = true;
       } else {
         this.phoneNumberError = false;
+      }
+    },
+    validatePassword(password) {
+      // At least 6 characters, one uppercase, one lowercase, one number, one special character
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+      return passwordRegex.test(password);
+    },
+    validatePasswordOnInput() {
+      if (this.password && !this.validatePassword(this.password)) {
+        this.passwordError = true;
+      } else {
+        this.passwordError = false;
       }
     },
     async nextStep() {

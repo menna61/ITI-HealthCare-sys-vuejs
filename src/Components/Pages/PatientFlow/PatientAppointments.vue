@@ -173,6 +173,7 @@ import {
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
 import { calculateRefund } from "@/utils/refundUtils.js";
+import { sendTelemedicineEmail, sendCancellationEmail } from "@/utils/emailService.js";
 
 export default {
   name: "PatientAppointments",
@@ -290,6 +291,63 @@ export default {
         });
         console.log("✅ Notification sent to doctor");
 
+        // Send email to patient if it's a telemedicine appointment
+        if (
+          bookingData.service &&
+          bookingData.service.toLowerCase() === "telemedicine"
+        ) {
+          try {
+            // Get roomLink from booking data or fetch from doctor's service
+            let roomLink = bookingData.roomLink || "";
+            
+            // If roomLink is missing, try to get it from doctor's service
+            if (!roomLink && bookingData.doctorId) {
+              console.log("🔍 RoomLink not found in booking, fetching from doctor's service...");
+              const servicesRef = collection(db, "doctors", bookingData.doctorId, "services");
+              const servicesSnap = await getDocs(servicesRef);
+              const teleService = servicesSnap.docs
+                .map((s) => ({ id: s.id, ...s.data() }))
+                .find(
+                  (s) =>
+                    s &&
+                    s.name &&
+                    typeof s.name === "string" &&
+                    s.name.toLowerCase() === "telemedicine" &&
+                    s.roomLink
+                );
+              if (teleService && typeof teleService.roomLink === "string") {
+                roomLink = teleService.roomLink;
+                console.log("✅ RoomLink found in doctor's service:", roomLink);
+                
+                // Update the booking with the roomLink
+                await updateDoc(doc(db, "bookings", bookingDoc.id), {
+                  roomLink: roomLink
+                });
+                console.log("✅ Booking updated with roomLink");
+              }
+            }
+
+            // Send email only if roomLink is available
+            if (roomLink) {
+              console.log("📧 Sending telemedicine email to patient...");
+              await sendTelemedicineEmail({
+                patientEmail: user.email,
+                patientName: bookingData.patientName || user.displayName || "Patient",
+                doctorName: bookingData.doctorName,
+                appointmentDate: bookingData.date,
+                appointmentTime: bookingData.time,
+                sessionLink: roomLink,
+              });
+              console.log("✅ Telemedicine email sent successfully");
+            } else {
+              console.warn("⚠️ Cannot send email: RoomLink not available for telemedicine appointment");
+            }
+          } catch (emailError) {
+            console.error("❌ Error sending telemedicine email:", emailError);
+            // Don't fail the booking if email fails
+          }
+        }
+
         // Clear localStorage
         localStorage.removeItem("pendingBooking");
         console.log("✅ Pending booking processed successfully and cleared from localStorage");
@@ -346,16 +404,17 @@ export default {
           return;
         }
 
-        // Update the status to 'cancelled'
+        // Calculate refund based on terms and conditions
+        const { refundAmount, refundType, doctorEarnings } = calculateRefund(appointment, "patient");
+
+        // Update the status to 'cancelled' and save doctor earnings
         await updateDoc(appointmentRef, {
           status: "cancelled",
           cancelledAt: new Date(),
           cancelledBy: user.uid,
           cancelledByRole: "patient",
+          doctorEarnings: doctorEarnings, // حفظ مبلغ الدكتور
         });
-
-        // Calculate refund based on terms and conditions
-        const { refundAmount, refundType } = calculateRefund(appointment, "patient");
 
         const patientRef = doc(db, "patients", user.uid);
         const patientSnap = await getDoc(patientRef);
@@ -387,6 +446,24 @@ export default {
             type: "appointment_cancelled",
             bookingId: this.appointmentToCancel.id,
           });
+        }
+
+        // Send cancellation email to patient
+        try {
+          console.log("📧 Sending cancellation email to patient...");
+          await sendCancellationEmail({
+            patientEmail: user.email,
+            patientName: appointment.patientName || user.displayName || "Patient",
+            doctorName: appointment.doctorName,
+            appointmentDate: appointment.date,
+            appointmentTime: appointment.time,
+            refundAmount: refundAmount,
+            cancellationReason: "Cancelled by patient",
+          });
+          console.log("✅ Cancellation email sent successfully");
+        } catch (emailError) {
+          console.error("❌ Error sending cancellation email:", emailError);
+          // Don't fail the cancellation if email fails
         }
 
         this.closeCancelModal();

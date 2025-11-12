@@ -94,8 +94,8 @@
                       ]"
                     />
                     <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
-                      Please enter a valid phone number (e.g., 01123456789, +20123456789, +20103456789 or
-                      0103456789)
+                      Please enter a valid phone number (e.g., 01123456789, +20123456789,
+                      +20103456789 or 0103456789)
                     </p>
                   </div>
                 </div>
@@ -129,10 +129,16 @@
                 <div class="pass w-full">
                   <label class="text-gray-900 dark:text-white">{{ $t("Password") }}</label>
                   <div
-                    class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                    class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                    :class="
+                      passwordError
+                        ? 'border-red-500 dark:border-red-400'
+                        : 'border-gray-200 dark:border-gray-600'
+                    "
                   >
                     <input
                       v-model="password"
+                      @input="validatePasswordOnInput"
                       required
                       :type="showPassword ? 'text' : 'password'"
                       :placeholder="$t('Enter_password')"
@@ -163,6 +169,10 @@
                       />
                     </svg>
                   </div>
+                  <p v-if="passwordError" class="text-red-500 dark:text-red-400 text-sm">
+                    Password must be at least 6 characters long and include at least one uppercase
+                    letter, one lowercase letter, one number, and one special character.
+                  </p>
                 </div>
 
                 <!-- Submit Button -->
@@ -170,7 +180,7 @@
                   <button
                     type="button"
                     @click="handleCreateAccountClick"
-                    :disabled="loading"
+                    :disabled="loading || !isFormValid"
                     class="px-6 py-2 bg-blue-600 text-white rounded-lg flex items-center gap-2 disabled:opacity-60"
                   >
                     <svg
@@ -265,6 +275,7 @@ export default {
       lastName: "",
       email: "",
       password: "",
+      passwordError: false,
       showPassword: false,
       phoneNumber: "",
       phoneNumberError: false,
@@ -276,7 +287,21 @@ export default {
       showTermsModal: false,
     };
   },
-
+  computed: {
+    isFormValid() {
+      return (
+        this.firstName &&
+        this.lastName &&
+        this.email &&
+        this.phoneNumber &&
+        this.password &&
+        this.selectedGender &&
+        this.birthdate &&
+        !this.phoneNumberError &&
+        !this.passwordError
+      );
+    },
+  },
   methods: {
     validatePhoneNumber(phone) {
       // Egyptian phone number patterns
@@ -290,6 +315,18 @@ export default {
         this.phoneNumberError = true;
       } else {
         this.phoneNumberError = false;
+      }
+    },
+    validatePassword(password) {
+      // At least 6 characters, one uppercase, one lowercase, one number, one special character
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,}$/;
+      return passwordRegex.test(password);
+    },
+    validatePasswordOnInput() {
+      if (this.password && !this.validatePassword(this.password)) {
+        this.passwordError = true;
+      } else {
+        this.passwordError = false;
       }
     },
     togglePasswordVisibility() {
