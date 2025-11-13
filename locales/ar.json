@@ -275,5 +275,7 @@
   "cancel": "إلغاء",
   "mark_as_completed": "وضع علامة مكتمل",
   "approve": "موافقة",
-  "reject": "رفض"
+  "reject": "رفض",
+  "adminwallettitle":"المحفظة",
+  "adminwalletdesc":"إدارة محفظتك"
 }

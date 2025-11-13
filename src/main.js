@@ -63,6 +63,7 @@ import en from "../locales/en.json";
 import ar from "../locales/ar.json";
 import MedicalHistory from "./Components/Pages/PatientFlow/MedicalHistory.vue";
 import EmailVerification from "./Components/Pages/EmailVerification.vue";
+import AdminWallet from "./Components/Pages/AdminFlow/AdminWallet.vue";
 // import Vue3Toastify from 'vue3-toastify';
 // import 'vue3-toastify/dist/index.css';
 
@@ -224,6 +225,7 @@ const routes = [
       { path: "documents", component: DocumentApproval },
       { path: "totalAppointments", component: TotalAppointments },
       { path: "doctorAvailability", component: DoctorAvailability },
+      { path: "wallet", component: AdminWallet}
     ],
   },
 

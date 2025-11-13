@@ -296,7 +296,9 @@ export default {
 
         // Count only completed bookings for earnings and breakdown (as per task: update on mark as complete)
         if (booking.status === "completed") {
-          totalEarnings += price;
+          // Use doctor earnings (95%) if available, otherwise calculate it
+          const doctorEarning = booking.doctorEarnings ? parseFloat(booking.doctorEarnings) : price * 0.95;
+          totalEarnings += doctorEarning;
           totalAppointments += 1;
           uniquePatients.add(booking.patientId);
 
@@ -306,14 +308,14 @@ export default {
             serviceBreakdown[serviceName] = { bookings: 0, earnings: 0 };
           }
           serviceBreakdown[serviceName].bookings += 1;
-          serviceBreakdown[serviceName].earnings += price;
+          serviceBreakdown[serviceName].earnings += doctorEarning;
 
           if (
             booking.service &&
             typeof booking.service === "string" &&
             booking.service.toLowerCase() === "telemedicine"
           ) {
-            telemedicineEarnings += price;
+            telemedicineEarnings += doctorEarning;
             telemedicineCount += 1;
           } else if (
             (booking.service &&
@@ -322,23 +324,23 @@ export default {
             booking.service.toLowerCase().includes("regular") ||
             booking.service.toLowerCase().includes("consultation")
           ) {
-            regularEarnings += price;
+            regularEarnings += doctorEarning;
             regularCount += 1;
           } else {
             // Default to regular for other services
-            regularEarnings += price;
+            regularEarnings += doctorEarning;
             regularCount += 1;
           }
 
           if (bookingDate && !isNaN(bookingDate.getTime())) {
             if (this.selectedPeriod === "Monthly") {
               const month = bookingDate.getMonth();
-              revenueData[month] += price;
+              revenueData[month] += doctorEarning;
             } else if (this.selectedPeriod === "Weekly") {
               const startOfYear = new Date(parseInt(this.selectedYear), 0, 1);
               const weekIndex = Math.floor((bookingDate - startOfYear) / (7 * 24 * 60 * 60 * 1000));
               if (weekIndex >= 0 && weekIndex < 52) {
-                revenueData[weekIndex] += price;
+                revenueData[weekIndex] += doctorEarning;
               }
             }
           }
