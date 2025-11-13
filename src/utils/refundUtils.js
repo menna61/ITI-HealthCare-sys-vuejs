@@ -4,7 +4,7 @@ import { doc, getDoc, updateDoc, setDoc, addDoc, collection } from "firebase/fir
  * Calculates the refund amount and type based on cancellation rules.
  * @param {Object} appointment - The appointment object containing date, time, and price.
  * @param {string} cancellerRole - The role of the canceller ('patient' or 'doctor').
- * @returns {Object} - { refundAmount, refundType, doctorEarnings }
+ * @returns {Object} - { refundAmount, refundType, doctorEarnings, adminCommission }
  */
 export function calculateRefund(appointment, cancellerRole) {
   const appointmentDateTime = new Date(`${appointment.date} ${appointment.time}`);
@@ -14,25 +14,33 @@ export function calculateRefund(appointment, cancellerRole) {
   let refundAmount;
   let refundType;
   let doctorEarnings = 0;
+  let adminCommission = 0;
 
   if (cancellerRole === "patient") {
     if (timeDiffHours > 12) {
+      // Full refund to patient, nothing to doctor or admin
       refundAmount = appointment.price;
       refundType = "Full refund";
       doctorEarnings = 0;
+      adminCommission = 0;
     } else {
+      // Patient gets 15%, remaining 85% split between doctor and admin
       refundAmount = appointment.price * 0.15;
       refundType = "15% refund";
-      doctorEarnings = appointment.price * 0.85; // الباقي يروح للدكتور
+      
+      const remainingAmount = appointment.price * 0.85;
+      adminCommission = remainingAmount * 0.05; // 5% من الـ 85% = 4.25% من الإجمالي
+      doctorEarnings = remainingAmount * 0.95; // 95% من الـ 85% = 80.75% من الإجمالي
     }
   } else {
-    // doctor or admin
+    // doctor or admin cancels - full refund to patient
     refundAmount = appointment.price;
     refundType = "Full refund";
     doctorEarnings = 0;
+    adminCommission = 0;
   }
 
-  return { refundAmount, refundType, doctorEarnings };
+  return { refundAmount, refundType, doctorEarnings, adminCommission };
 }
 
 /**

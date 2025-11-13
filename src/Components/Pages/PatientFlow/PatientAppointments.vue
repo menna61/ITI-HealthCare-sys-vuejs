@@ -169,6 +169,7 @@ import {
   updateDoc,
   onSnapshot,
   getDocs,
+  setDoc,
 } from "firebase/firestore";
 import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
@@ -405,7 +406,13 @@ export default {
         }
 
         // Calculate refund based on terms and conditions
-        const { refundAmount, refundType, doctorEarnings } = calculateRefund(appointment, "patient");
+        const { refundAmount, refundType, doctorEarnings, adminCommission } = calculateRefund(appointment, "patient");
+
+        console.log("Cancellation refund calculation:");
+        console.log("Total price:", appointment.price);
+        console.log("Patient refund:", refundAmount);
+        console.log("Doctor earnings:", doctorEarnings);
+        console.log("Admin commission:", adminCommission);
 
         // Update the status to 'cancelled' and save doctor earnings
         await updateDoc(appointmentRef, {
@@ -414,7 +421,43 @@ export default {
           cancelledBy: user.uid,
           cancelledByRole: "patient",
           doctorEarnings: doctorEarnings, // حفظ مبلغ الدكتور
+          adminCommission: adminCommission, // حفظ عمولة الأدمن
         });
+
+        // If there's admin commission (late cancellation), add it to admin wallet
+        if (adminCommission > 0) {
+          console.log("Adding admin commission from late cancellation:", adminCommission);
+          
+          const adminWalletRef = doc(db, "admin", "wallet");
+          const adminWalletSnap = await getDoc(adminWalletRef);
+          
+          if (adminWalletSnap.exists()) {
+            const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
+            await updateDoc(adminWalletRef, {
+              balance: currentBalance + adminCommission
+            });
+          } else {
+            await setDoc(adminWalletRef, {
+              balance: adminCommission,
+              createdAt: new Date()
+            });
+          }
+          
+          // Add transaction record for admin
+          await addDoc(collection(db, "admin", "wallet", "transactions"), {
+            amount: adminCommission,
+            type: "cancellation_commission",
+            bookingId: appointmentSnap.id,
+            doctorId: appointment.doctorId,
+            doctorName: appointment.doctorName,
+            patientName: appointment.patientName,
+            service: appointment.service,
+            date: new Date(),
+            description: `5% commission from late cancellation by ${appointment.patientName}`
+          });
+          
+          console.log("Admin commission added successfully");
+        }
 
         const patientRef = doc(db, "patients", user.uid);
         const patientSnap = await getDoc(patientRef);

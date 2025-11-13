@@ -119,6 +119,7 @@ export default {
         { to: "/admin/doctors", label: "All Doctors", icon: "DoctorsIcon" },
         { to: "/admin/totalAppointments", label: "Total Appointments", icon: "AppointmentsIcon" },
         { to: "/admin/doctorAvailability", label: "Doctors Availability", icon: "AvailabilityIcon" },
+        {to: "/admin/wallet", label:"Admin wallet"}
       ],
     };
   },

@@ -194,7 +194,7 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, deleteDoc, query, where } from "firebase/firestore";
+import { collection, getDocs, doc, deleteDoc, query, where, updateDoc } from "firebase/firestore";
 import { db } from "@/firebase";
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
@@ -262,14 +262,34 @@ export default {
       if (!this.patientToDelete || !this.reason.trim()) return;
 
       try {
-        // Delete related bookings
+        // Get related bookings
         const bookingsQuery = query(
           collection(db, "bookings"),
           where("patientId", "==", this.patientToDelete.id)
         );
         const bookingsSnapshot = await getDocs(bookingsQuery);
-        const deleteBookingsPromises = bookingsSnapshot.docs.map((doc) => deleteDoc(doc.ref));
-        await Promise.all(deleteBookingsPromises);
+        
+        // Process each booking - mark as cancelled but DON'T delete
+        // This preserves doctor earnings and admin commission
+        for (const bookingDoc of bookingsSnapshot.docs) {
+          const booking = bookingDoc.data();
+          
+          // Only process confirmed bookings
+          if (booking.status === "confirmed") {
+            // Mark booking as cancelled by admin
+            await updateDoc(bookingDoc.ref, {
+              status: "cancelled",
+              cancelledAt: new Date(),
+              cancelledBy: "admin",
+              cancelledByRole: "admin",
+              cancellationReason: `Patient account deleted by admin: ${this.reason}`,
+              // Keep doctor earnings and admin commission as they were
+              // Doctor keeps their money, admin keeps their commission
+            });
+            
+            console.log(`✅ Booking ${bookingDoc.id} marked as cancelled (doctor earnings preserved)`);
+          }
+        }
 
         // Delete Firebase Authentication user first (using patient.id which is the same as auth uid)
         try {

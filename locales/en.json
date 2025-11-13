@@ -276,5 +276,7 @@
   "cancel": "Cancel",
   "mark_as_completed": "Mark as Completed",
   "approve": "Approve",
-  "reject": "Reject"
+  "reject": "Reject",
+  "adminwallettitle":"Wallet",
+  "adminwalletdesc":"Manage your wallet"
 }

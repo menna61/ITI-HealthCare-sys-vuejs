@@ -603,8 +603,72 @@ export default {
     },
     async markCompleted(appointmentId) {
       try {
-        await updateDoc(doc(db, "bookings", appointmentId), { status: "completed" });
+        // Get appointment details first
+        const appointmentRef = doc(db, "bookings", appointmentId);
+        const appointmentSnap = await getDoc(appointmentRef);
+        
+        if (appointmentSnap.exists()) {
+          const appointmentData = appointmentSnap.data();
+          const totalPrice = parseFloat(appointmentData.price) || 0;
+          
+          // Calculate commission: 5% for admin, 95% for doctor
+          const adminCommission = totalPrice * 0.05;
+          const doctorEarnings = totalPrice * 0.95;
+          
+          console.log("Marking appointment as completed:");
+          console.log("Total price:", totalPrice);
+          console.log("Admin commission (5%):", adminCommission);
+          console.log("Doctor earnings (95%):", doctorEarnings);
+          
+          // Update booking with earnings breakdown
+          await updateDoc(appointmentRef, { 
+            status: "completed",
+            adminCommission: adminCommission,
+            doctorEarnings: doctorEarnings,
+            completedAt: new Date()
+          });
+          
+          console.log("Booking updated with commission breakdown");
+          
+          // Add commission to admin wallet
+          const adminWalletRef = doc(db, "admin", "wallet");
+          const adminWalletSnap = await getDoc(adminWalletRef);
+          
+          if (adminWalletSnap.exists()) {
+            const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
+            console.log("Current admin wallet balance:", currentBalance);
+            await updateDoc(adminWalletRef, {
+              balance: currentBalance + adminCommission
+            });
+            console.log("Updated admin wallet balance:", currentBalance + adminCommission);
+          } else {
+            console.log("Creating new admin wallet with balance:", adminCommission);
+            await setDoc(adminWalletRef, {
+              balance: adminCommission,
+              createdAt: new Date()
+            });
+          }
+          
+          // Add transaction record for admin
+          const adminTransactionsRef = collection(db, "admin", "wallet", "transactions");
+          const transactionData = {
+            amount: adminCommission,
+            type: "commission",
+            bookingId: appointmentId,
+            doctorId: appointmentData.doctorId,
+            doctorName: appointmentData.doctorName,
+            patientName: appointmentData.patientName,
+            service: appointmentData.service,
+            date: new Date(),
+            description: `5% commission from booking with ${appointmentData.patientName}`
+          };
+          
+          await addDoc(adminTransactionsRef, transactionData);
+          console.log("Admin transaction added:", transactionData);
+        }
+        
         await this.fetchAppointments();
+        
         // Check if medical details exist
         const detailsRef = collection(db, "bookings", appointmentId, "medicalDetails");
         const querySnapshot = await getDocs(detailsRef);
