@@ -24,13 +24,13 @@ export function calculateRefund(appointment, cancellerRole) {
       doctorEarnings = 0;
       adminCommission = 0;
     } else {
-      // Patient gets 15%, remaining 85% split between doctor and admin
-      refundAmount = appointment.price * 0.15;
-      refundType = "15% refund";
+      // Patient gets 85%, remaining 15% split between doctor and admin
+      refundAmount = appointment.price * 0.85;
+      refundType = "85% refund";
       
-      const remainingAmount = appointment.price * 0.85;
-      adminCommission = remainingAmount * 0.05; // 5% من الـ 85% = 4.25% من الإجمالي
-      doctorEarnings = remainingAmount * 0.95; // 95% من الـ 85% = 80.75% من الإجمالي
+      const remainingAmount = appointment.price * 0.15;
+      adminCommission = remainingAmount * (5/15); // 5% من الإجمالي
+      doctorEarnings = remainingAmount * (10/15); // 10% من الإجمالي
     }
   } else {
     // doctor or admin cancels - full refund to patient
