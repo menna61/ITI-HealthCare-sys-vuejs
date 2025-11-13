@@ -187,7 +187,7 @@
   "unknownSpeciality": "Unknown Speciality",
   "noAppointments": "No appointments found.",
   "terms_cancel_12h": "You can cancel an appointment up to 12 hours before the scheduled time for a full refund.",
-  "terms_cancel_6h": "Cancellations made less than 12 hours before the appointment will refund 15% of your payment.",
+  "terms_cancel_6h": "Cancellations made less than 12 hours before the appointment will refund 85% of your payment.",
   "terms_doctor_cancel": "If the doctor cancels the session, you’ll automatically receive a full refund.",
   "overdue": "Overdue",
   "completed": "Completed",
