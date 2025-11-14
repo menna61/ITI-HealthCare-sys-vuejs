@@ -42,7 +42,7 @@ export default {
   },
   watch: {
     revenueData() {
-      this.updateChart();
+      // this.updateChart();
     },
     labels() {
       this.updateChart();
@@ -86,7 +86,7 @@ export default {
       if (this.chartInstance) {
         this.chartInstance.data.labels = this.labels;
         this.chartInstance.data.datasets[0].data = this.revenueData;
-        this.chartInstance.update();
+        // this.chartInstance.update();
       }
     },
   },

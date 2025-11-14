@@ -1,11 +1,11 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'"  class="w-dwh">
     <main-nav />
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page title-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold">Patients</h1>
-        <p class="text-gray-500">Manage your patients data</p>
+        <h1 class="text-2xl font-bold">{{ $t("patients_page_title") }}</h1>
+        <p class="text-gray-500">{{ $t("manage_patients_data") }}</p>
       </div>
 
       <!--page content-->
@@ -42,7 +42,7 @@
                   type="search"
                   id="default-search"
                   class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Search patient..."
+                  :placeholder="$t('search_patient')"
                   required
                 />
               </div>
@@ -59,11 +59,11 @@
                   class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
                 >
                   <tr>
-                    <th scope="col" class="px-6 py-3">Name</th>
-                    <th scope="col" class="px-6 py-3">Age</th>
-                    <th scope="col" class="px-6 py-3">Gender</th>
-                    <th scope="col" class="px-6 py-3">Email</th>
-                    <th scope="col" class="px-6 py-3">Actions</th>
+                    <th scope="col" class="px-6 py-3">{{ $t("name") }}</th>
+                    <th scope="col" class="px-6 py-3">{{ $t("age") }}</th>
+                    <th scope="col" class="px-6 py-3">{{ $t("gender") }}</th>
+                    <th scope="col" class="px-6 py-3">{{ $t("email") }}</th>
+                    <th scope="col" class="px-6 py-3">{{ $t("actions") }}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -90,7 +90,7 @@
                       <a
                         @click="viewPatientDetails(patient.id)"
                         class="font-medium text-blue-600 dark:text-blue-500 hover:underline cursor-pointer"
-                        >View details</a
+                        >{{ $t("view_details") }}</a
                       >
                     </td>
                   </tr>
@@ -112,7 +112,7 @@
                         ? 'text-gray-300 bg-gray-100 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
                         : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
                     ]"
-                    >Previous</a
+                    >{{ $t("previous") }}</a
                   >
                 </li>
                 <li v-for="page in totalPages" :key="page">
@@ -136,7 +136,7 @@
                         ? 'text-gray-300 bg-gray-100 cursor-not-allowed dark:bg-gray-700 dark:text-gray-500'
                         : 'text-gray-500 bg-white hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white',
                     ]"
-                    >Next</a
+                    >{{ $t("next") }}</a
                   >
                 </li>
               </ul>
@@ -149,7 +149,7 @@
     <!-- Patient Details Modal -->
     <UiModal
       v-model="showDetailsModal"
-      :title="'Medical Details for ' + (selectedPatient ? selectedPatient.name : '')"
+      :title="$t('medical_details_for') + ' ' + (selectedPatient ? selectedPatient.name : '')"
     >
       <!-- Tab Navigation -->
       <div class="mb-6">
@@ -163,7 +163,7 @@
                 : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
             ]"
           >
-            Visit History
+            {{ $t("visit_history") }}
           </button>
         </div>
       </div>
@@ -194,10 +194,10 @@
                 </span>
               </div>
               <p class="text-sm text-gray-600 dark:text-gray-400 mb-1">
-                <span class="font-medium">Doctor:</span> {{ booking.doctorName }}
+                <span class="font-medium">{{ $t("doctor") }}:</span> {{ booking.doctorName }}
               </p>
               <p class="text-sm text-gray-600 dark:text-gray-400">
-                <span class="font-medium">Speciality:</span> {{ booking.speciality }}
+                <span class="font-medium">{{ $t("speciality") }}:</span> {{ booking.speciality }}
               </p>
             </div>
             <button
@@ -205,10 +205,10 @@
               @click="viewBookingDetails(booking.id)"
               class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors text-sm"
             >
-              View Details
+              {{ $t("view_details_btn") }}
             </button>
             <span v-else class="text-sm text-gray-500 dark:text-gray-400">
-              No details available
+              {{ $t("no_details_available") }}
             </span>
           </div>
         </div>
@@ -216,7 +216,7 @@
           v-if="patientBookings.length === 0"
           class="text-center py-4 text-gray-500 dark:text-gray-400"
         >
-          No visit history available
+          {{ $t("no_visit_history") }}
         </div>
       </div>
 
@@ -224,9 +224,12 @@
       <UiModal
         v-model="showBookingDetailsModal"
         :title="
-          'Medical Details for ' +
+          $t('medical_details_for') +
+          ' ' +
           (selectedBooking ? formatDate(selectedBooking.date) : '') +
-          ' at ' +
+          ' ' +
+          $t('at') +
+          ' ' +
           (selectedBooking ? selectedBooking.time : '')
         "
       >
@@ -272,7 +275,7 @@
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
               ]"
             >
-              Complaint
+              {{ $t("complaint") }}
             </button>
             <button
               @click="detailsActiveTab = 'prescription'"
@@ -283,7 +286,7 @@
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
               ]"
             >
-              Prescription
+              {{ $t("prescription") }}
             </button>
             <button
               @click="detailsActiveTab = 'requirements'"
@@ -303,7 +306,7 @@
         <div v-if="detailsActiveTab === 'complaint'" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Patient Complaint
+              {{ $t("patient_complaint") }}
             </label>
             <textarea
               v-model="selectedMedicalDetails.patientComplaint"
@@ -314,7 +317,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Diagnosis
+              {{ $t("diagnosis") }}
             </label>
             <textarea
               v-model="selectedMedicalDetails.diagnosis"
@@ -325,7 +328,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Instructions
+              {{ $t("instructions") }}
             </label>
             <textarea
               v-model="selectedMedicalDetails.instructions"
@@ -336,7 +339,7 @@
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Allergies
+              {{ $t("allergies") }}
             </label>
             <textarea
               v-model="selectedMedicalDetails.allergies"
@@ -357,7 +360,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Medication Name
+                  {{ $t("medication_name") }}
                 </label>
                 <input
                   v-model="medication.name"
@@ -368,7 +371,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Dosage
+                  {{ $t("dosage") }}
                 </label>
                 <input
                   v-model="medication.dosage"
@@ -379,7 +382,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Frequency
+                  {{ $t("frequency") }}
                 </label>
                 <input
                   v-model="medication.frequency"
@@ -390,7 +393,7 @@
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Duration
+                  {{ $t("duration") }}
                 </label>
                 <input
                   v-model="medication.duration"
@@ -405,7 +408,7 @@
             v-if="selectedMedicalDetails.prescriptions.length === 0"
             class="text-center py-4 text-gray-500 dark:text-gray-400"
           >
-            No prescriptions available
+            {{ $t("no_prescriptions_available") }}
           </div>
         </div>
 
@@ -513,7 +516,7 @@
             @click="showBookingDetailsModal = false"
             class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
           >
-            Close
+            {{ $t("close") }}
           </button>
         </template>
       </UiModal>
@@ -523,7 +526,7 @@
           @click="showDetailsModal = false"
           class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
         >
-          Close
+          {{ $t("close") }}
         </button>
       </template>
     </UiModal>

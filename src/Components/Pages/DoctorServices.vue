@@ -1,13 +1,13 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
     <main-nav />
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page top-->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <!--Titles-->
         <div class="title flex flex-col gap-4">
-          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Services</h1>
-          <p class="text-gray-500 dark:text-gray-400">Track your services</p>
+          <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $t("services") }}</h1>
+          <p class="text-gray-500 dark:text-gray-400">{{ $t("track_services") }}</p>
         </div>
 
         <!--Button at top right-->
@@ -35,7 +35,7 @@
           </svg>
 
           <!-- Text -->
-          Add new services
+          {{ $t("add_new_services") }}
         </button>
       </div>
 
@@ -60,10 +60,10 @@
               ></path>
             </svg>
             <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              No services yet
+              {{ $t("no_services_yet") }}
             </h3>
             <p class="text-gray-500 dark:text-gray-400 mb-6">
-              Start by creating your first service to begin accepting appointments.
+              {{ $t("start_creating_service_desc") }}
             </p>
             <button
               @click="openServiceModal"
@@ -83,7 +83,7 @@
                   d="M12 4v16m8-8H4"
                 ></path>
               </svg>
-              Start creating service
+              {{ $t("start_creating_service") }}
             </button>
           </div>
         </div>
@@ -114,7 +114,7 @@
                   rel="noopener noreferrer"
                   class="inline-flex w-fit items-center px-3 py-1 text-sm font-medium text-white bg-green-600 hover:bg-green-700 rounded-md transition"
                 >
-                  Sign up on Doxy.me
+                  {{ $t("sign_up_doxy") }}
                   <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
                       stroke-linecap="round"
@@ -130,7 +130,7 @@
                     v-model="service._roomLinkDraft"
                     type="url"
                     inputmode="url"
-                    placeholder="Add room link (e.g., https://doxy.me/your-room)"
+                    :placeholder="$t('add_room_link')"
                     class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                   />
                   <button
@@ -138,7 +138,7 @@
                     @click="saveRoomLink(service)"
                     class="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md"
                   >
-                    Save
+                    {{ $t("save") }}
                   </button>
                 </div>
                 <div
@@ -213,7 +213,7 @@
                 class="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"
               ></div>
               <div class="ml-[10px] text-gray-900 dark:text-white">
-                {{ service.isActive ? "Active" : "Inactive" }}
+                {{ service.isActive ? $t("active") : $t("inactive") }}
               </div>
             </label>
           </div>
@@ -227,7 +227,7 @@
           <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4 z-100">
             <div class="flex justify-between items-center mb-4">
               <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
-                {{ isEditing ? "Edit Service" : "Create New Service" }}
+                {{ isEditing ? $t("edit_service") : $t("create_new_service") }}
               </h3>
               <button
                 @click="closeModal"
@@ -246,35 +246,35 @@
 
             <form @submit.prevent="saveService" class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >Service Name</label
-                >
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                  $t("service_name")
+                }}</label>
                 <input
                   v-model="serviceForm.name"
                   type="text"
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="e.g., General Consultation"
+                  :placeholder="$t('service_name_placeholder')"
                 />
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >Description</label
-                >
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                  $t("description")
+                }}</label>
                 <textarea
                   v-model="serviceForm.description"
                   required
                   rows="3"
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="Describe your service..."
+                  :placeholder="$t('description_placeholder')"
                 ></textarea>
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
-                  >Price per Session ($)</label
-                >
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{{
+                  $t("price_per_session")
+                }}</label>
                 <input
                   v-model.number="serviceForm.price"
                   type="number"
@@ -282,7 +282,7 @@
                   step="0.01"
                   required
                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                  placeholder="0.00"
+                  :placeholder="$t('price_placeholder')"
                 />
               </div>
 
@@ -292,7 +292,9 @@
                   type="checkbox"
                   class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 dark:border-gray-600 rounded"
                 />
-                <label class="ml-2 block text-sm text-gray-900 dark:text-white">Active</label>
+                <label class="ml-2 block text-sm text-gray-900 dark:text-white">{{
+                  $t("active")
+                }}</label>
               </div>
 
               <div class="flex justify-end gap-3 pt-4">
@@ -301,14 +303,14 @@
                   @click="closeModal"
                   class="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
                 >
-                  Cancel
+                  {{ $t("cancel") }}
                 </button>
                 <button
                   type="submit"
                   :disabled="loading"
                   class="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 disabled:opacity-50"
                 >
-                  {{ loading ? "Saving..." : "Save Service" }}
+                  {{ loading ? $t("saving") : $t("save_service") }}
                 </button>
               </div>
             </form>
@@ -459,7 +461,7 @@ export default {
         const serviceDoc = doc(db, "doctors", user.uid, "services", service.id);
         await updateDoc(serviceDoc, { roomLink: link });
         service.roomLink = link;
-        this.toast = { type: "success", message: "Room link saved." };
+        this.toast = { type: "success", message: this.$t("room_link_saved") };
       } catch (error) {
         console.error("Error saving room link:", error);
       }

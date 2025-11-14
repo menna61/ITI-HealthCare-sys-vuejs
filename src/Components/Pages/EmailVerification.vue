@@ -269,6 +269,26 @@ export default {
         this.loading = false;
       }
     },
+    getFirebaseErrorMessage(error) {
+      const errorCode = error?.code || "";
+
+      // Map Firebase error codes to translation keys
+      const errorMap = {
+        "auth/email-already-in-use": "email_already_in_use",
+        "auth/invalid-email": "invalid_email",
+        "auth/operation-not-allowed": "operation_not_allowed",
+        "auth/weak-password": "weak_password",
+        "auth/network-request-failed": "network_error",
+      };
+
+      const translationKey = errorMap[errorCode];
+      if (translationKey) {
+        return this.$t(translationKey);
+      }
+
+      // Return original message if no mapping found
+      return error?.message || this.$t("account_creation_failed");
+    },
     async createAccount() {
       try {
         const cred = await registerWithEmail(this.email, this.userData.password);
@@ -294,7 +314,7 @@ export default {
         }, 1500);
       } catch (error) {
         console.error("Error creating account:", error);
-        this.errorMsg = error?.message || this.$t("account_creation_failed");
+        this.errorMsg = this.getFirebaseErrorMessage(error);
       } finally {
         this.loading = false;
       }

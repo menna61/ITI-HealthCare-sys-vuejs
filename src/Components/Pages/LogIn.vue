@@ -31,13 +31,19 @@
                       $t("Mobile_or_Email")
                     }}</label>
                     <div
-                      class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                      class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                      :class="
+                        emailError
+                          ? 'border-red-500 dark:border-red-500'
+                          : 'border-gray-200 dark:border-gray-600'
+                      "
                     >
                       <input
                         v-model="email"
                         type="text"
                         :placeholder="$t('Enter_mobile_or_email')"
                         class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        @input="emailError = false"
                       />
                     </div>
                   </div>
@@ -48,13 +54,19 @@
                     <div class="flex flex-col gap-2 w-full">
                       <label class="text-gray-700 dark:text-gray-300">{{ $t("Password") }}</label>
                       <div
-                        class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
+                        class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
+                        :class="
+                          passwordError
+                            ? 'border-red-500 dark:border-red-500'
+                            : 'border-gray-200 dark:border-gray-600'
+                        "
                       >
                         <input
                           v-model="password"
                           :type="showPassword ? 'text' : 'password'"
                           :placeholder="$t('Enter_mobile_or_email')"
                           class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                          @input="passwordError = false"
                         />
                         <!-- Eye icon when password is hidden -->
                         <svg
@@ -146,19 +158,58 @@ export default {
       showPassword: false,
       loading: false,
       error: null,
+      emailError: false,
+      passwordError: false,
     };
   },
   methods: {
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
+    getFirebaseErrorMessage(error) {
+      const errorCode = error?.code || "";
+
+      // Map Firebase error codes to translation keys
+      const errorMap = {
+        "auth/invalid-credential": "invalid_credentials",
+        "auth/user-not-found": "user_not_found",
+        "auth/wrong-password": "wrong_password",
+        "auth/invalid-email": "invalid_email",
+        "auth/user-disabled": "user_disabled",
+        "auth/too-many-requests": "too_many_requests",
+        "auth/network-request-failed": "network_error",
+      };
+
+      const translationKey = errorMap[errorCode];
+      if (translationKey) {
+        return this.$t(translationKey);
+      }
+
+      // Return original message if no mapping found
+      return error?.message || String(error);
+    },
     async loginUser() {
       if (this.loading) return;
       this.error = null;
+      this.emailError = false;
+      this.passwordError = false;
       this.loading = true;
 
       try {
         if (!this.$auth || !this.$auth.loginWithEmail) throw new Error("Auth not initialized");
+
+        // First, check if email exists
+        if (!this.$auth.checkEmailExists) throw new Error("Invalid email or password");
+        const emailExists = await this.$auth.checkEmailExists(this.email);
+
+        if (!emailExists) {
+          this.emailError = true;
+          this.error = this.$t("email_does_not_exist");
+          this.loading = false;
+          return;
+        }
+
+        // If email exists, try to login
         const cred = await this.$auth.loginWithEmail(this.email, this.password);
         const user = cred.user;
 
@@ -193,7 +244,23 @@ export default {
         // return this.$router.push("/");
       } catch (err) {
         console.error("Login error", err);
-        this.error = err?.message || String(err);
+        const errorCode = err?.code || "";
+
+        // Since we already verified email exists, any auth error here means wrong password
+        if (
+          errorCode === "auth/wrong-password" ||
+          errorCode === "auth/invalid-credential" ||
+          errorCode === "auth/invalid-login-credentials"
+        ) {
+          this.passwordError = true;
+          this.error = this.$t("password_is_wrong");
+        } else if (errorCode === "auth/too-many-requests") {
+          this.error = this.$t("too_many_requests");
+        } else if (errorCode === "auth/user-disabled") {
+          this.error = this.$t("user_disabled");
+        } else {
+          this.error = this.getFirebaseErrorMessage(err);
+        }
       } finally {
         this.loading = false;
       }

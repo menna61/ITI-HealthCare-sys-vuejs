@@ -1,11 +1,11 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
     <main-nav />
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Appointments</h1>
-        <p class="text-gray-500">Manage your appointments</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("doctor_appointments_title") }}</h1>
+        <p class="text-gray-500">{{ $t("doctor_appointments_desc") }}</p>
       </div>
 
       <!-- Appointments Tab -->
@@ -17,15 +17,15 @@
             <table class="min-w-full">
               <thead class="bg-[var(--main-color-500)] text-white">
                 <tr>
-                  <th class="py-4 px-6 text-left font-semibold">Patient Name</th>
-                  <th class="py-4 px-6 text-left font-semibold">Patient Email</th>
-                  <th class="py-4 px-6 text-left font-semibold">Patient Phone</th>
-                  <th class="py-4 px-6 text-left font-semibold">Service</th>
-                  <th class="py-4 px-6 text-left font-semibold">Date</th>
-                  <th class="py-4 px-6 text-left font-semibold">Time</th>
-                  <th class="py-4 px-6 text-left font-semibold">Status</th>
-                  <th class="py-4 px-6 text-left font-semibold">Mark as Completed</th>
-                  <th class="py-4 px-6 text-left font-semibold">Actions</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("patient_name") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("patient_email") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("patient_phone") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("service") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("date") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("time") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("status") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("mark_as_completed") }}</th>
+                  <th class="py-4 px-6 text-left font-semibold">{{ $t("actions") }}</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
@@ -122,7 +122,7 @@
                       <button
                         v-if="appointment.status.toLowerCase() !== 'cancelled'"
                         @click="addDetails(appointment.id)"
-                        class="px-3 py-1 bg-[var(--main-color-500)]  text-white rounded  transition-colors text-sm"
+                        class="px-3 py-1 bg-[var(--main-color-500)] text-white rounded transition-colors text-sm"
                       >
                         {{ hasMedicalDetails(appointment.id) ? "Edit Details" : "Add Details" }}
                       </button>
@@ -139,16 +139,18 @@
             </table>
           </div>
           <div v-if="appointments.length === 0" class="text-center py-12 animate-fade-in">
-            <div class="text-gray-500 dark:text-gray-400 text-lg">No appointments found</div>
+            <div class="text-gray-500 dark:text-gray-400 text-lg">
+              {{ $t("no_appointments_found") }}
+            </div>
             <div class="text-gray-400 dark:text-gray-500 text-sm mt-2">
-              Your scheduled appointments will appear here
+              {{ $t("scheduled_appointments_appear") }}
             </div>
           </div>
         </div>
       </div>
 
       <!-- Add Details Modal -->
-      <UiModal v-model="showAddDetailsModal" title="Add Medical Details">
+      <UiModal v-model="showAddDetailsModal" :title="$t('add_medical_details')">
         <!-- Tab Navigation -->
         <div class="mb-6">
           <div class="flex border-b border-gray-200 dark:border-gray-700">
@@ -161,7 +163,7 @@
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
               ]"
             >
-              Complaint
+              {{ $t("complaint_tab") }}
             </button>
             <button
               @click="activeTab = 'prescription'"
@@ -172,7 +174,7 @@
                   : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300',
               ]"
             >
-              Prescription
+              {{ $t("prescription_tab") }}
             </button>
             <button
               @click="activeTab = 'requirements'"
@@ -192,46 +194,46 @@
         <div v-if="activeTab === 'complaint'" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Patient Complaint
+              {{ $t("patient_complaint_label") }}
             </label>
             <textarea
               v-model="medicalDetails.patientComplaint"
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               rows="3"
-              placeholder="Describe the patient's complaint..."
+              :placeholder="$t('patient_complaint_placeholder')"
             ></textarea>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Diagnosis
+              {{ $t("diagnosis_label") }}
             </label>
             <textarea
               v-model="medicalDetails.diagnosis"
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               rows="3"
-              placeholder="Enter diagnosis..."
+              :placeholder="$t('diagnosis_placeholder')"
             ></textarea>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Instructions
+              {{ $t("instructions_label") }}
             </label>
             <textarea
               v-model="medicalDetails.instructions"
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               rows="3"
-              placeholder="Provide instructions for the patient..."
+              :placeholder="$t('instructions_placeholder')"
             ></textarea>
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Allergies
+              {{ $t("allergies_label") }}
             </label>
             <textarea
               v-model="medicalDetails.allergies"
               class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
               rows="2"
-              placeholder="List any known allergies..."
+              :placeholder="$t('allergies_placeholder')"
             ></textarea>
           </div>
         </div>
@@ -246,46 +248,46 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Medication Name
+                  {{ $t("medication_name_label") }}
                 </label>
                 <input
                   v-model="medication.name"
                   type="text"
                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="Enter medication name"
+                  :placeholder="$t('medication_name_placeholder')"
                 />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Dosage
+                  {{ $t("dosage_label") }}
                 </label>
                 <input
                   v-model="medication.dosage"
                   type="text"
                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="e.g., 500mg"
+                  :placeholder="$t('dosage_placeholder')"
                 />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Frequency
+                  {{ $t("frequency_label") }}
                 </label>
                 <input
                   v-model="medication.frequency"
                   type="text"
                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="e.g., twice daily"
+                  :placeholder="$t('frequency_placeholder')"
                 />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Duration
+                  {{ $t("duration_label") }}
                 </label>
                 <input
                   v-model="medication.duration"
                   type="text"
                   class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
-                  placeholder="e.g., 7 days"
+                  :placeholder="$t('duration_placeholder')"
                 />
               </div>
             </div>
@@ -294,7 +296,7 @@
                 @click="removeMedication(index)"
                 class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
               >
-                Remove
+                {{ $t("remove") }}
               </button>
             </div>
           </div>
@@ -303,7 +305,7 @@
               @click="addMedication"
               class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
             >
-              Add Medication
+              {{ $t("add_medication") }}
             </button>
           </div>
         </div>
@@ -397,13 +399,13 @@
             @click="showAddDetailsModal = false"
             class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
           >
-            Cancel
+            {{ $t("cancel") }}
           </button>
           <button
             @click="saveDetails"
             class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
           >
-            Save Details
+            {{ $t("save_details") }}
           </button>
         </template>
       </UiModal>
