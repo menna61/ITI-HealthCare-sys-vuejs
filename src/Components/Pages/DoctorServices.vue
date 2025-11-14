@@ -1,5 +1,5 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
     <main-nav />
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page top-->
