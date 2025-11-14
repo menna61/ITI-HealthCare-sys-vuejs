@@ -198,15 +198,16 @@ export default {
       try {
         if (!this.$auth || !this.$auth.loginWithEmail) throw new Error("Auth not initialized");
 
-        // First, check if email exists
-        if (!this.$auth.checkEmailExists) throw new Error("Invalid email or password");
-        const emailExists = await this.$auth.checkEmailExists(this.email);
-
-        if (!emailExists) {
-          this.emailError = true;
-          this.error = this.$t("email_does_not_exist");
-          this.loading = false;
-          return;
+        // First, check if email exists in database
+        if (this.$auth.checkEmailInDB) {
+          const emailInDB = await this.$auth.checkEmailInDB(this.email);
+          if (!emailInDB) {
+            // Email doesn't exist
+            this.emailError = true;
+            this.error = this.$t("email_does_not_exist");
+            this.loading = false;
+            return;
+          }
         }
 
         // If email exists, try to login
@@ -246,14 +247,22 @@ export default {
         console.error("Login error", err);
         const errorCode = err?.code || "";
 
-        // Since we already verified email exists, any auth error here means wrong password
-        if (
+        // Check the specific error type
+        if (errorCode === "auth/user-not-found") {
+          // Email doesn't exist
+          this.emailError = true;
+          this.error = this.$t("email_does_not_exist");
+        } else if (
           errorCode === "auth/wrong-password" ||
           errorCode === "auth/invalid-credential" ||
           errorCode === "auth/invalid-login-credentials"
         ) {
+          // Since we already verified email exists, this must be a password error
           this.passwordError = true;
           this.error = this.$t("password_is_wrong");
+        } else if (errorCode === "auth/invalid-email") {
+          this.emailError = true;
+          this.error = this.$t("invalid_email");
         } else if (errorCode === "auth/too-many-requests") {
           this.error = this.$t("too_many_requests");
         } else if (errorCode === "auth/user-disabled") {

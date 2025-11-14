@@ -35,6 +35,8 @@ import {
   registerWithEmail,
   loginWithEmail,
   resetPassword,
+  checkEmailExists,
+  checkEmailInDB,
 } from "/src/authHandler.js";
 import DoctorAvail from "./Components/Pages/DoctorAvail.vue";
 import DoctorsPage from "./Components/Pages/PatientFlow/DoctorsPage.vue";
@@ -90,6 +92,8 @@ vueApp.config.globalProperties.$auth = {
   registerWithEmail,
   loginWithEmail,
   resetPassword,
+  checkEmailExists,
+  checkEmailInDB,
 };
 
 // const routes = [
@@ -225,7 +229,7 @@ const routes = [
       { path: "documents", component: DocumentApproval },
       { path: "totalAppointments", component: TotalAppointments },
       { path: "doctorAvailability", component: DoctorAvailability },
-      { path: "wallet", component: AdminWallet}
+      { path: "wallet", component: AdminWallet },
     ],
   },
 
