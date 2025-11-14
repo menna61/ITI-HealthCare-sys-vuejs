@@ -245,8 +245,27 @@ export default {
           errorCode === "auth/invalid-credential" ||
           errorCode === "auth/invalid-login-credentials"
         ) {
-          // Could be wrong email or wrong password - show generic message
-          this.error = this.$t("invalid_credentials");
+          // Try to check if email exists in DB to give better error message
+          if (this.$auth.checkEmailInDB) {
+            try {
+              const emailInDB = await this.$auth.checkEmailInDB(this.email);
+              if (emailInDB) {
+                // Email exists, so it's a password error
+                this.passwordError = true;
+                this.error = this.$t("password_is_wrong");
+              } else {
+                // Email doesn't exist
+                this.emailError = true;
+                this.error = this.$t("email_does_not_exist");
+              }
+            } catch (dbError) {
+              // If DB check fails, show generic message
+              this.error = this.$t("invalid_credentials");
+            }
+          } else {
+            // Fallback to generic message
+            this.error = this.$t("invalid_credentials");
+          }
         } else if (errorCode === "auth/invalid-email") {
           this.emailError = true;
           this.error = this.$t("invalid_email");
