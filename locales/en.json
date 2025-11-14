@@ -277,6 +277,7 @@
   "mark_as_completed": "Mark as Completed",
   "approve": "Approve",
   "reject": "Reject",
-  "adminwallettitle":"Wallet",
-  "adminwalletdesc":"Manage your wallet"
+  "reupload_document": "Re-upload Document",
+  "adminwallettitle": "Wallet",
+  "adminwalletdesc": "Manage your wallet"
 }

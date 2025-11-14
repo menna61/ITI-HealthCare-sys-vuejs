@@ -295,7 +295,7 @@
             <div class="info-item">
               <span class="info-label">📱 {{ $t("phone") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
-                selectedDoctor.phone
+                selectedDoctor.phoneNumber || selectedDoctor.phone
               }}</span>
             </div>
             <div class="info-item">
@@ -736,6 +736,19 @@ export default {
           // Continue with the deletion even if auth deletion fails
         }
 
+        // Delete doctor availability from doctorAvailability collection
+        try {
+          const availabilityRef = doc(db, "doctorAvailability", this.doctorToDelete.id);
+          const availabilitySnap = await getDoc(availabilityRef);
+          if (availabilitySnap.exists()) {
+            await deleteDoc(availabilityRef);
+            console.log("✅ Doctor availability deleted successfully");
+          }
+        } catch (availabilityError) {
+          console.error("❌ Error deleting doctor availability:", availabilityError);
+          // Continue with the deletion even if availability deletion fails
+        }
+
         // Delete the doctor from Firestore
         await deleteDoc(doc(db, "doctors", this.doctorToDelete.id));
         this.doctors = this.doctors.filter((doctor) => doctor.id !== this.doctorToDelete.id);
@@ -784,7 +797,7 @@ export default {
           [
             `"${doctor.firstName} ${doctor.lastName}"`,
             `"${doctor.email}"`,
-            `"${doctor.phone}"`,
+            `"${doctor.phoneNumber || doctor.phone || "N/A"}"`,
             `"${doctor.speciality}"`,
             `"${doctor.clinicAddress}"`,
             doctor.yearsOfExperience,
@@ -845,7 +858,7 @@ export default {
           doctor.speciality || "",
           services,
           availableDays,
-          doctor.phone || "",
+          doctor.phoneNumber || doctor.phone || "N/A",
           doctor.patientCount || 0,
           doctor.email || "",
           doctor.degree || "",

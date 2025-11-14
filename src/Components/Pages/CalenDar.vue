@@ -34,7 +34,7 @@
 
                 <!--Client info and actions-->
                 <div class="client flex justify-between items-start">
-                  <div class="user flex gap-2 items-center">
+                  <div class="user flex gap-4 items-start">
                     <div
                       class="img w-10 h-10 rounded-full bg-[#EEF1FF] flex items-center justify-center"
                     >
@@ -134,7 +134,7 @@
                       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z"
                     />
                   </svg>
-                  <div>
+                  <div class="flex-1">
                     <h4 class="text-yellow-900 dark:text-yellow-200 font-semibold">
                       {{ $t("documents_uploaded") }}
                     </h4>
@@ -142,6 +142,55 @@
                       {{ $t("documents_uploaded_desc") }}
                     </p>
                   </div>
+                </div>
+                <div
+                  v-if="hasUnionCard && !isApproved && status !== 'rejected'"
+                  class="flex flex-col gap-2"
+                >
+                  <input
+                    ref="reuploadCardInput"
+                    type="file"
+                    accept="image/*"
+                    @change="handleReuploadCard"
+                    class="hidden"
+                  />
+                  <button
+                    @click="triggerReuploadInput"
+                    :disabled="uploading"
+                    class="bg-yellow-600 hover:bg-yellow-700 text-white font-medium py-2 px-4 rounded-lg inline-flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <svg v-if="uploading" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                      <circle
+                        class="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        stroke-width="4"
+                        fill="none"
+                      ></circle>
+                      <path
+                        class="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      ></path>
+                    </svg>
+                    <svg
+                      v-else
+                      class="w-4 h-4"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                      ></path>
+                    </svg>
+                    {{ uploading ? $t("uploading") : $t("reupload_document") }}
+                  </button>
                 </div>
                 <div class="flex items-center gap-3" v-if="hasUnionCard && status === 'rejected'">
                   <svg
@@ -519,7 +568,20 @@ export default {
     triggerUnionCardInput() {
       this.$refs.unionCardInput.click();
     },
+    triggerReuploadInput() {
+      this.$refs.reuploadCardInput.click();
+    },
     async handleUnionCardUpload(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.uploading = true;
+        this.uploadError = "";
+        this.uploadSuccess = "";
+        await this.uploadUnionCardToCloudinary(file);
+        this.uploading = false;
+      }
+    },
+    async handleReuploadCard(event) {
       const file = event.target.files[0];
       if (file) {
         this.uploading = true;
@@ -647,7 +709,7 @@ export default {
                 date: appointment.date,
                 name: patientName,
                 time: appointment.time,
-                type: appointment.type,
+                type: appointment.service || appointment.type,
                 status: appointment.status,
                 patientId: appointment.patientId,
                 price: appointment.price,
@@ -763,13 +825,74 @@ export default {
         const user = auth.currentUser;
         if (!user) return;
 
-        // Update appointment status to completed
+        const totalPrice = parseFloat(appointment.price) || 0;
+
+        // Calculate commission: 5% for admin, 95% for doctor
+        const adminCommission = totalPrice * 0.05;
+        const doctorEarnings = totalPrice * 0.95;
+
+        console.log("Marking appointment as completed:");
+        console.log("Total price:", totalPrice);
+        console.log("Admin commission (5%):", adminCommission);
+        console.log("Doctor earnings (95%):", doctorEarnings);
+
+        // Update appointment status to completed with earnings breakdown
         const appointmentRef = doc(db, "bookings", appointment.id);
         await updateDoc(appointmentRef, {
           status: "completed",
           completedAt: new Date(),
           completedBy: user.uid,
+          adminCommission: adminCommission,
+          doctorEarnings: doctorEarnings,
         });
+
+        console.log("Booking updated with commission breakdown");
+
+        // Add commission to admin wallet
+        const adminWalletRef = doc(db, "admin", "wallet");
+        const adminWalletSnap = await getDoc(adminWalletRef);
+
+        if (adminWalletSnap.exists()) {
+          const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
+          console.log("Current admin wallet balance:", currentBalance);
+          await updateDoc(adminWalletRef, {
+            balance: currentBalance + adminCommission,
+          });
+          console.log("Updated admin wallet balance:", currentBalance + adminCommission);
+        } else {
+          console.log("Creating new admin wallet with balance:", adminCommission);
+          await setDoc(adminWalletRef, {
+            balance: adminCommission,
+            createdAt: new Date(),
+          });
+        }
+
+        // Get doctor name
+        const doctorRef = doc(db, "doctors", user.uid);
+        const doctorSnap = await getDoc(doctorRef);
+        let doctorName = "Doctor";
+        if (doctorSnap.exists()) {
+          const doctorData = doctorSnap.data();
+          doctorName =
+            `${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() || "Doctor";
+        }
+
+        // Add transaction record for admin
+        const adminTransactionsRef = collection(db, "admin", "wallet", "transactions");
+        const transactionData = {
+          amount: adminCommission,
+          type: "commission",
+          bookingId: appointment.id,
+          doctorId: user.uid,
+          doctorName: doctorName,
+          patientName: appointment.name,
+          service: appointment.type,
+          date: new Date(),
+          description: `5% commission from booking with ${appointment.name}`,
+        };
+
+        await addDoc(adminTransactionsRef, transactionData);
+        console.log("Admin transaction added:", transactionData);
 
         // Add notification to patient
         await addDoc(collection(db, "notifications"), {

@@ -293,14 +293,11 @@ export default {
         console.log("✅ Notification sent to doctor");
 
         // Send email to patient if it's a telemedicine appointment
-        if (
-          bookingData.service &&
-          bookingData.service.toLowerCase() === "telemedicine"
-        ) {
+        if (bookingData.service && bookingData.service.toLowerCase() === "telemedicine") {
           try {
             // Get roomLink from booking data or fetch from doctor's service
             let roomLink = bookingData.roomLink || "";
-            
+
             // If roomLink is missing, try to get it from doctor's service
             if (!roomLink && bookingData.doctorId) {
               console.log("🔍 RoomLink not found in booking, fetching from doctor's service...");
@@ -319,10 +316,10 @@ export default {
               if (teleService && typeof teleService.roomLink === "string") {
                 roomLink = teleService.roomLink;
                 console.log("✅ RoomLink found in doctor's service:", roomLink);
-                
+
                 // Update the booking with the roomLink
                 await updateDoc(doc(db, "bookings", bookingDoc.id), {
-                  roomLink: roomLink
+                  roomLink: roomLink,
                 });
                 console.log("✅ Booking updated with roomLink");
               }
@@ -341,7 +338,9 @@ export default {
               });
               console.log("✅ Telemedicine email sent successfully");
             } else {
-              console.warn("⚠️ Cannot send email: RoomLink not available for telemedicine appointment");
+              console.warn(
+                "⚠️ Cannot send email: RoomLink not available for telemedicine appointment"
+              );
             }
           } catch (emailError) {
             console.error("❌ Error sending telemedicine email:", emailError);
@@ -406,7 +405,10 @@ export default {
         }
 
         // Calculate refund based on terms and conditions
-        const { refundAmount, refundType, doctorEarnings, adminCommission } = calculateRefund(appointment, "patient");
+        const { refundAmount, refundType, doctorEarnings, adminCommission } = calculateRefund(
+          appointment,
+          "patient"
+        );
 
         console.log("Cancellation refund calculation:");
         console.log("Total price:", appointment.price);
@@ -427,22 +429,32 @@ export default {
         // If there's admin commission (late cancellation), add it to admin wallet
         if (adminCommission > 0) {
           console.log("Adding admin commission from late cancellation:", adminCommission);
-          
+
           const adminWalletRef = doc(db, "admin", "wallet");
           const adminWalletSnap = await getDoc(adminWalletRef);
-          
+
           if (adminWalletSnap.exists()) {
             const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
             await updateDoc(adminWalletRef, {
-              balance: currentBalance + adminCommission
+              balance: currentBalance + adminCommission,
             });
           } else {
             await setDoc(adminWalletRef, {
               balance: adminCommission,
-              createdAt: new Date()
+              createdAt: new Date(),
             });
           }
-          
+
+          // Get patient name from database
+          const patientRef = doc(db, "patients", user.uid);
+          const patientSnap = await getDoc(patientRef);
+          let patientName = appointment.patientName || "Patient";
+          if (patientSnap.exists()) {
+            const patientData = patientSnap.data();
+            patientName =
+              `${patientData.firstName || ""} ${patientData.lastName || ""}`.trim() || patientName;
+          }
+
           // Add transaction record for admin
           await addDoc(collection(db, "admin", "wallet", "transactions"), {
             amount: adminCommission,
@@ -450,12 +462,12 @@ export default {
             bookingId: appointmentSnap.id,
             doctorId: appointment.doctorId,
             doctorName: appointment.doctorName,
-            patientName: appointment.patientName,
+            patientName: patientName,
             service: appointment.service,
             date: new Date(),
-            description: `5% commission from late cancellation by ${appointment.patientName}`
+            description: `5% commission from late cancellation by ${patientName}`,
           });
-          
+
           console.log("Admin commission added successfully");
         }
 

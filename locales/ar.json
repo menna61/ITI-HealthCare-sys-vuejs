@@ -276,6 +276,7 @@
   "mark_as_completed": "وضع علامة مكتمل",
   "approve": "موافقة",
   "reject": "رفض",
-  "adminwallettitle":"المحفظة",
-  "adminwalletdesc":"إدارة محفظتك"
+  "reupload_document": "إعادة رفع الوثيقة",
+  "adminwallettitle": "المحفظة",
+  "adminwalletdesc": "إدارة محفظتك"
 }

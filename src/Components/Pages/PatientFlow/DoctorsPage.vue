@@ -154,7 +154,7 @@
 
     <!-- Doctor Details Modal -->
     <Modal v-model="showModal" title="Doctor Details" @close="closeModal">
-      <div v-if="selectedDoctor" class="max-h-[600px]">
+      <div v-if="selectedDoctor" class="max-h-auto mb-4">
         <div class="flex flex-col gap-4">
           <div class="flex items-center gap-4">
             <img
@@ -194,6 +194,15 @@
             </svg>
             <p class="dark:text-gray-300">{{ selectedDoctor.clinicAddress }}</p>
           </div>
+
+          <!-- Bio Section -->
+          <div v-if="selectedDoctor.bio" class="bio-section mt-2">
+            <h3 class="text-md font-semibold mb-2 dark:text-white">About</h3>
+            <p class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+              {{ selectedDoctor.bio }}
+            </p>
+          </div>
+
           <!-- Services Section -->
           <div v-for="service in selectedDoctor.services" :key="service.name">
             <div
@@ -321,14 +330,6 @@
           </div>
         </div>
       </div>
-      <template #footer>
-        <button
-          @click="closeModal"
-          class="px-4 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-        >
-          Close
-        </button>
-      </template>
     </Modal>
   </div>
 </template>
