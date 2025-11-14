@@ -4,8 +4,8 @@
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page title-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Financial</h1>
-        <p class="text-gray-500 dark:text-gray-400">Track your earnings and payments</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("financial") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t("track_earnings_payments") }}</p>
       </div>
 
       <!--Page content-->
@@ -16,11 +16,13 @@
             class="flex justify-between p-4 bg-white dark:bg-gray-800 rounded-xl w-full border-t-4 border-green-500"
           >
             <div class="flex flex-col gap-2">
-              <p class="text-gray-500 dark:text-gray-400">Total earnings</p>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t("total_earnings") }}</p>
               <p class="font-medium text-xl text-gray-900 dark:text-white" v-if="!loading">
                 ${{ totalEarnings.toLocaleString() }}
               </p>
-              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>Loading...</p>
+              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>
+                {{ $t("loading") }}
+              </p>
             </div>
             <div
               class="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center"
@@ -42,11 +44,13 @@
             class="flex justify-between p-4 bg-white dark:bg-gray-800 rounded-xl w-full border-t-4 border-[var(--main-color-500)]"
           >
             <div class="flex flex-col gap-2">
-              <p class="text-gray-500 dark:text-gray-400">Total appointments</p>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t("total_appointments") }}</p>
               <p class="font-medium text-xl text-gray-900 dark:text-white" v-if="!loading">
                 +{{ totalAppointments.toLocaleString() }}
               </p>
-              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>Loading...</p>
+              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>
+                {{ $t("loading") }}
+              </p>
             </div>
             <div
               class="w-16 h-16 bg-[var(--main-color-25)] dark:bg-gray-700 rounded-full flex items-center justify-center"
@@ -68,11 +72,13 @@
             class="flex justify-between p-4 bg-white dark:bg-gray-800 rounded-xl w-full border-t-4 border-[var(--sec-color-500)]"
           >
             <div class="flex flex-col gap-2">
-              <p class="text-gray-500 dark:text-gray-400">Total patients</p>
+              <p class="text-gray-500 dark:text-gray-400">{{ $t("total_patients") }}</p>
               <p class="font-medium text-xl text-gray-900 dark:text-white" v-if="!loading">
                 +{{ totalPatients.toLocaleString() }}
               </p>
-              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>Loading...</p>
+              <p class="font-medium text-xl text-gray-900 dark:text-white" v-else>
+                {{ $t("loading") }}
+              </p>
             </div>
             <div
               class="w-16 h-16 bg-[var(--sec-color-25)] dark:bg-gray-700 rounded-full flex items-center justify-center"
@@ -97,8 +103,8 @@
             v-model="selectedPeriod"
             class="p-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg"
           >
-            <option value="Monthly">Monthly</option>
-            <option value="Weekly">Weekly</option>
+            <option value="Monthly">{{ $t("monthly") }}</option>
+            <option value="Weekly">{{ $t("weekly") }}</option>
           </select>
           <select
             v-model="selectedYear"
@@ -114,7 +120,9 @@
         <div class="charts flex flex-col lg:flex-row gap-6">
           <div class="booking p-4 bg-white dark:bg-gray-800 rounded-xl w-full flex flex-col gap-4">
             <div class="text">
-              <h1 class="text-xl font-bold text-gray-900 dark:text-white">Booking status</h1>
+              <h1 class="text-xl font-bold text-gray-900 dark:text-white">
+                {{ $t("booking_status") }}
+              </h1>
             </div>
             <div class="chart">
               <donghut-chart
@@ -128,7 +136,7 @@
 
           <div class="revenu p-4 bg-white dark:bg-gray-800 rounded-xl w-full">
             <div class="text">
-              <h1 class="text-xl font-bold text-gray-900 dark:text-white">Revenue</h1>
+              <h1 class="text-xl font-bold text-gray-900 dark:text-white">{{ $t("revenue") }}</h1>
             </div>
             <div class="chart">
               <line-chart :revenue-data="monthlyRevenue" :labels="revenueLabels" />
@@ -138,23 +146,30 @@
 
         <!--Earnings breakdown-->
         <div class="earnings-breakdown p-4 bg-white dark:bg-gray-800 rounded-xl w-full">
-          <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-4">Earnings Breakdown</h1>
+          <h1 class="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            {{ $t("earnings_breakdown") }}
+          </h1>
           <div class="overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
               <thead
                 class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400"
               >
                 <tr>
-                  <th scope="col" class="px-6 py-3">Service</th>
-                  <th scope="col" class="px-6 py-3">Bookings</th>
-                  <th scope="col" class="px-6 py-3">Earnings</th>
+                  <th scope="col" class="px-6 py-3">{{ $t("service") }}</th>
+                  <th scope="col" class="px-6 py-3">{{ $t("bookings") }}</th>
+                  <th scope="col" class="px-6 py-3">{{ $t("earnings") }}</th>
                 </tr>
               </thead>
               <tbody>
+                <tr v-if="earningsBreakdown?.length === 0" class="bg-white dark:bg-gray-800">
+                  <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    {{ $t("no_completed_appointments") }}
+                  </td>
+                </tr>
                 <tr
                   v-for="(item, index) in earningsBreakdown"
                   :key="index"
-                  class="bg-white border-b dark:bg-gray-800 dark:border-gray-700"
+                  class="bg-white border-b border-gray-200 dark:bg-gray-800 dark:border-gray-700"
                 >
                   <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                     {{ item.service }}
@@ -177,6 +192,7 @@ import MainNav from "../Layouts/MainNav.vue";
 import LineChart from "../LineChart.vue";
 import { db, auth } from "@/firebase";
 import { collection, getDocs, query, where, onSnapshot } from "firebase/firestore";
+import { nextTick } from "vue";
 
 export default {
   name: "FinancialPage",
@@ -199,23 +215,11 @@ export default {
       unsubscribe: null,
       selectedPeriod: "Monthly",
       selectedYear: new Date().getFullYear().toString(),
-      revenueLabels: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
+      revenueLabels: [],
     };
   },
   async mounted() {
+    this.updateRevenueLabels();
     this.loading = true;
     const user = auth.currentUser;
     if (user) {
@@ -230,10 +234,14 @@ export default {
   },
   watch: {
     selectedPeriod() {
+      this.updateRevenueLabels();
       this.recalculateData();
     },
     selectedYear() {
       this.recalculateData();
+    },
+    "$i18n.locale"() {
+      this.updateRevenueLabels();
     },
   },
   beforeUnmount() {
@@ -242,8 +250,28 @@ export default {
     }
   },
   methods: {
+    updateRevenueLabels() {
+      if (this.selectedPeriod === "Monthly") {
+        this.revenueLabels = [
+          this.$t("jan"),
+          this.$t("feb"),
+          this.$t("mar"),
+          this.$t("apr"),
+          this.$t("may"),
+          this.$t("jun"),
+          this.$t("jul"),
+          this.$t("aug"),
+          this.$t("sep"),
+          this.$t("oct"),
+          this.$t("nov"),
+          this.$t("dec"),
+        ];
+      } else if (this.selectedPeriod === "Weekly") {
+        this.revenueLabels = Array.from({ length: 52 }, (_, i) => `${this.$t("week")} ${i + 1}`);
+      }
+    },
     calculateFromBookings(querySnapshot) {
-      console.log(`Found ${querySnapshot.size} bookings`);
+    
 
       let totalEarnings = 0;
       let totalAppointments = 0;
@@ -259,32 +287,16 @@ export default {
 
       // Initialize revenue data based on selected period
       let revenueData = [];
-      let labels = [];
+      this.updateRevenueLabels();
       if (this.selectedPeriod === "Monthly") {
         revenueData = Array(12).fill(0);
-        labels = [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ];
       } else if (this.selectedPeriod === "Weekly") {
         revenueData = Array(52).fill(0);
-        labels = Array.from({ length: 52 }, (_, i) => `Week ${i + 1}`);
       }
 
       querySnapshot.forEach((doc) => {
         const booking = doc.data();
-        console.log("Booking data:", booking);
-        console.log("Booking status:", booking.status);
+
 
         const price = parseFloat(booking.price) || 0;
         const bookingDate = booking.date ? new Date(booking.date) : null;
@@ -297,13 +309,16 @@ export default {
         // Count only completed bookings for earnings and breakdown (as per task: update on mark as complete)
         if (booking.status === "completed") {
           // Use doctor earnings (95%) if available, otherwise calculate it
-          const doctorEarning = booking.doctorEarnings ? parseFloat(booking.doctorEarnings) : price * 0.95;
+          const doctorEarning = booking.doctorEarnings
+            ? parseFloat(booking.doctorEarnings)
+            : price * 0.95;
           totalEarnings += doctorEarning;
           totalAppointments += 1;
           uniquePatients.add(booking.patientId);
 
-          // Dynamic service breakdown
-          const serviceName = booking.service || "Other";
+          // Dynamic service breakdown - get service name from booking
+          const serviceName = booking.service || booking.serviceName || "Unknown Service";
+
           if (!serviceBreakdown[serviceName]) {
             serviceBreakdown[serviceName] = { bookings: 0, earnings: 0 };
           }
@@ -347,10 +362,14 @@ export default {
         }
 
         // إضافة أرباح الدكتور من الحجوزات الملغاة (85% من المبلغ)
-        if (booking.status === "cancelled" && booking.doctorEarnings && booking.doctorEarnings > 0) {
+        if (
+          booking.status === "cancelled" &&
+          booking.doctorEarnings &&
+          booking.doctorEarnings > 0
+        ) {
           const doctorEarning = parseFloat(booking.doctorEarnings) || 0;
           totalEarnings += doctorEarning;
-          
+
           // إضافة للـ breakdown
           const serviceName = booking.service || "Other";
           if (!serviceBreakdown[serviceName]) {
@@ -383,10 +402,6 @@ export default {
         }
       });
 
-      console.log(
-        `Calculated: totalAppointments=${totalAppointments}, totalEarnings=${totalEarnings}, totalPatients=${uniquePatients.size}`
-      );
-
       // Update data from calculated values
       this.totalEarnings = totalEarnings;
       this.totalAppointments = totalAppointments;
@@ -399,13 +414,21 @@ export default {
       this.confirmedAppointments = confirmedAppointments;
       this.cancelledAppointments = cancelledAppointments;
       this.monthlyRevenue = revenueData;
-      this.revenueLabels = labels;
-      this.earningsBreakdown = Object.keys(serviceBreakdown).map((service) => ({
+
+      // Convert service breakdown to array and force reactivity
+      const breakdownArray = Object.keys(serviceBreakdown).map((service) => ({
         service,
         bookings: serviceBreakdown[service].bookings,
         earnings: serviceBreakdown[service].earnings,
       }));
+
+
+      // Force Vue reactivity by creating a completely new array reference
+      this.earningsBreakdown = JSON.parse(JSON.stringify(breakdownArray));
+
       this.loading = false;
+
+     
     },
     setupRealtimeUpdates() {
       const user = auth.currentUser;
@@ -418,7 +441,7 @@ export default {
       const q = query(bookingsRef, where("doctorId", "==", user.uid));
 
       this.unsubscribe = onSnapshot(q, (snapshot) => {
-        console.log("Realtime update triggered for financial data");
+       
         this.calculateFromBookings(snapshot);
       });
     },

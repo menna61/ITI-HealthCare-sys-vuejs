@@ -5,22 +5,21 @@
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!-- Page top -->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Availability</h1>
-        <p class="text-gray-500 dark:text-gray-400">Set your available days and time slots</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("availability") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t("set_available_days_time") }}</p>
         <div
           v-if="!isApproved"
           class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded"
         >
-          <p>You must be approved by the admin before you can set your availability.</p>
+          <p>{{ $t("must_be_approved") }}</p>
         </div>
         <div
           v-if="isApproved && !hasAnyAvailability"
           class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 rounded"
         >
-          <p class="font-medium">Welcome! Please set your availability.</p>
+          <p class="font-medium">{{ $t("welcome_set_availability") }}</p>
           <p class="text-sm mt-1">
-            Toggle the days you're available and set your working hours. Patients will be able to
-            book appointments based on your schedule.
+            {{ $t("toggle_days_hours") }}
           </p>
         </div>
       </div>
@@ -56,7 +55,7 @@
                 ></div>
               </div>
               <span class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                {{ day.available ? "Available" : "Not Available" }}
+                {{ day.available ? $t("available") : $t("not_available") }}
               </span>
             </label>
           </div>
@@ -65,13 +64,13 @@
             v-if="day.available"
             class="bottom p-4 rounded-lg bg-gray-100 dark:bg-gray-700 flex flex-col gap-2"
           >
-            <p class="text-lg font-medium text-gray-900 dark:text-white">Time slots</p>
+            <p class="text-lg font-medium text-gray-900 dark:text-white">{{ $t("time_slots") }}</p>
             <form class="mx-auto grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
               <div class="w-full">
                 <label
                   for="start-time"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >Start time:</label
+                  >{{ $t("start_time") }}</label
                 >
                 <input
                   type="time"
@@ -87,7 +86,7 @@
                 <label
                   for="end-time"
                   class="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                  >End time:</label
+                  >{{ $t("end_time") }}</label
                 >
                 <input
                   type="time"
@@ -110,7 +109,7 @@
             :disabled="!isApproved"
             class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
           >
-            Save
+            {{ $t("save") }}
           </button>
 
           <!-- Success Message -->
@@ -127,7 +126,7 @@
                   d="M5 13l4 4L19 7"
                 ></path>
               </svg>
-              <span class="text-sm font-medium">Availability saved successfully!</span>
+              <span class="text-sm font-medium">{{ $t("availability_saved") }}</span>
             </div>
           </transition>
         </div>
@@ -320,21 +319,21 @@ export default {
     generateNext7Days() {
       const days = [];
       const today = new Date();
-      const dayNames = [
-        "Sunday",
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
+      const dayNamesKeys = [
+        "sunday",
+        "monday",
+        "tuesday",
+        "wednesday",
+        "thursday",
+        "friday",
+        "saturday",
       ];
       for (let i = 0; i < 7; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() + i);
         days.push({
           date: date,
-          name: dayNames[date.getDay()],
+          name: this.$t(dayNamesKeys[date.getDay()]),
           isToday: i === 0,
           available: false,
           start: "",
