@@ -198,19 +198,7 @@ export default {
       try {
         if (!this.$auth || !this.$auth.loginWithEmail) throw new Error("Auth not initialized");
 
-        // First, check if email exists in database
-        if (this.$auth.checkEmailInDB) {
-          const emailInDB = await this.$auth.checkEmailInDB(this.email);
-          if (!emailInDB) {
-            // Email doesn't exist
-            this.emailError = true;
-            this.error = this.$t("email_does_not_exist");
-            this.loading = false;
-            return;
-          }
-        }
-
-        // If email exists, try to login
+        // Try to login directly - Firebase will handle the validation
         const cred = await this.$auth.loginWithEmail(this.email, this.password);
         const user = cred.user;
 
@@ -257,9 +245,8 @@ export default {
           errorCode === "auth/invalid-credential" ||
           errorCode === "auth/invalid-login-credentials"
         ) {
-          // Since we already verified email exists, this must be a password error
-          this.passwordError = true;
-          this.error = this.$t("password_is_wrong");
+          // Could be wrong email or wrong password - show generic message
+          this.error = this.$t("invalid_credentials");
         } else if (errorCode === "auth/invalid-email") {
           this.emailError = true;
           this.error = this.$t("invalid_email");
