@@ -15,7 +15,7 @@
         <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden animate-fade-in">
           <div class="relative overflow-x-auto">
             <table class="min-w-full">
-              <thead class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
+              <thead class="bg-[var(--main-color-500)] text-white">
                 <tr>
                   <th class="py-4 px-6 text-left font-semibold">Patient Name</th>
                   <th class="py-4 px-6 text-left font-semibold">Patient Email</th>
@@ -122,7 +122,7 @@
                       <button
                         v-if="appointment.status.toLowerCase() !== 'cancelled'"
                         @click="addDetails(appointment.id)"
-                        class="px-3 py-1 bg-purple-500 text-white rounded hover:bg-purple-600 transition-colors text-sm"
+                        class="px-3 py-1 bg-[var(--main-color-500)]  text-white rounded  transition-colors text-sm"
                       >
                         {{ hasMedicalDetails(appointment.id) ? "Edit Details" : "Add Details" }}
                       </button>
@@ -502,7 +502,7 @@ export default {
                 appointment.patientName ||
                 "";
               appointment.patientEmail = patientData.email || "";
-              appointment.patientPhone = patientData.phone || "";
+              appointment.patientPhone = patientData.phoneNumber || "";
             }
           }
 
@@ -606,49 +606,49 @@ export default {
         // Get appointment details first
         const appointmentRef = doc(db, "bookings", appointmentId);
         const appointmentSnap = await getDoc(appointmentRef);
-        
+
         if (appointmentSnap.exists()) {
           const appointmentData = appointmentSnap.data();
           const totalPrice = parseFloat(appointmentData.price) || 0;
-          
+
           // Calculate commission: 5% for admin, 95% for doctor
           const adminCommission = totalPrice * 0.05;
           const doctorEarnings = totalPrice * 0.95;
-          
+
           console.log("Marking appointment as completed:");
           console.log("Total price:", totalPrice);
           console.log("Admin commission (5%):", adminCommission);
           console.log("Doctor earnings (95%):", doctorEarnings);
-          
+
           // Update booking with earnings breakdown
-          await updateDoc(appointmentRef, { 
+          await updateDoc(appointmentRef, {
             status: "completed",
             adminCommission: adminCommission,
             doctorEarnings: doctorEarnings,
-            completedAt: new Date()
+            completedAt: new Date(),
           });
-          
+
           console.log("Booking updated with commission breakdown");
-          
+
           // Add commission to admin wallet
           const adminWalletRef = doc(db, "admin", "wallet");
           const adminWalletSnap = await getDoc(adminWalletRef);
-          
+
           if (adminWalletSnap.exists()) {
             const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
             console.log("Current admin wallet balance:", currentBalance);
             await updateDoc(adminWalletRef, {
-              balance: currentBalance + adminCommission
+              balance: currentBalance + adminCommission,
             });
             console.log("Updated admin wallet balance:", currentBalance + adminCommission);
           } else {
             console.log("Creating new admin wallet with balance:", adminCommission);
             await setDoc(adminWalletRef, {
               balance: adminCommission,
-              createdAt: new Date()
+              createdAt: new Date(),
             });
           }
-          
+
           // Add transaction record for admin
           const adminTransactionsRef = collection(db, "admin", "wallet", "transactions");
           const transactionData = {
@@ -660,15 +660,15 @@ export default {
             patientName: appointmentData.patientName,
             service: appointmentData.service,
             date: new Date(),
-            description: `5% commission from booking with ${appointmentData.patientName}`
+            description: `5% commission from booking with ${appointmentData.patientName}`,
           };
-          
+
           await addDoc(adminTransactionsRef, transactionData);
           console.log("Admin transaction added:", transactionData);
         }
-        
+
         await this.fetchAppointments();
-        
+
         // Check if medical details exist
         const detailsRef = collection(db, "bookings", appointmentId, "medicalDetails");
         const querySnapshot = await getDocs(detailsRef);

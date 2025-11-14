@@ -1,6 +1,7 @@
 <template>
   <div class="w-dwh lg:ml-[302px] ml-0">
     <main-nav />
+
     <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!-- Page top -->
       <div class="title flex flex-col gap-4">
@@ -103,7 +104,7 @@
         </div>
 
         <!-- Save button -->
-        <div class="flex justify-center lg:justify-end">
+        <div class="flex flex-col items-center lg:items-end gap-3">
           <button
             @click="saveAvailability"
             :disabled="!isApproved"
@@ -111,6 +112,24 @@
           >
             Save
           </button>
+
+          <!-- Success Message -->
+          <transition name="fade">
+            <div
+              v-if="showSuccessPopup"
+              class="bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2"
+            >
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M5 13l4 4L19 7"
+                ></path>
+              </svg>
+              <span class="text-sm font-medium">Availability saved successfully!</span>
+            </div>
+          </transition>
         </div>
       </div>
     </div>
@@ -130,6 +149,7 @@ export default {
     return {
       days: [],
       isApproved: false,
+      showSuccessPopup: false,
     };
   },
   computed: {
@@ -345,6 +365,12 @@ export default {
         await setDoc(doc(db, "doctorAvailability", user.uid), {
           availability: availabilityForFirebase,
         });
+
+        // Show success popup
+        this.showSuccessPopup = true;
+        setTimeout(() => {
+          this.showSuccessPopup = false;
+        }, 3000);
       } catch (error) {
         console.error("Error saving availability:", error);
       }
@@ -352,3 +378,15 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

@@ -46,8 +46,12 @@ export default {
 }
 .dark {
   --main-color-500: #6b73ff;
+  --main-color-600: #1542a2ff;
   --main-color-25: #374151;
   --sec-color-500: #0cb8b6;
   --sec-color-25: #374151;
+}
+button{
+  cursor: pointer
 }
 </style>

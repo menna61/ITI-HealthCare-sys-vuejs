@@ -91,7 +91,7 @@
 
         <!-- Pending Approvals -->
         <router-link to="/admin/documents">
-          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md dark:shadow-lg h-[123px]">
             <div class="flex items-center justify-between">
               <div>
                 <p class="text-gray-500 dark:text-gray-200 text-sm">{{ $t("pendingApprovals") }}</p>

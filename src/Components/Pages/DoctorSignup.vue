@@ -154,7 +154,7 @@
                         v-model="firstName"
                         type="text"
                         placeholder="Enter first name"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
@@ -177,7 +177,7 @@
                         v-model="lastName"
                         type="text"
                         placeholder="Enter last name"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
@@ -202,7 +202,7 @@
                         v-model="email"
                         type="text"
                         placeholder="Enter email"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
@@ -231,7 +231,7 @@
                         @input="validatePhoneOnInput"
                         type="text"
                         placeholder="+20 1234 223 43"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                     </div>
                     <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
@@ -266,7 +266,7 @@
                         @input="validatePasswordOnInput"
                         :type="showPassword ? 'text' : 'password'"
                         placeholder="Enter your password"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                       />
                       <!-- Eye icon when password is hidden -->
                       <svg
@@ -323,7 +323,7 @@
                       v-model="yearsOfExperience"
                       type="text"
                       placeholder="Enter years of experience"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -336,7 +336,7 @@
                       v-model="medicalLicenseNumber"
                       type="text"
                       placeholder="Enter license number"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -351,7 +351,7 @@
                       v-model="clinicName"
                       type="text"
                       placeholder="Enter clinic name"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -364,7 +364,7 @@
                       v-model="clinicAddress"
                       type="text"
                       placeholder="Enter clinic address"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                     />
                   </div>
                 </div>
@@ -380,7 +380,7 @@
                       v-model="selectedDegree"
                       type="text"
                       placeholder="Select your scientific degree"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
                       readonly
                     />
                     <svg
@@ -429,7 +429,7 @@
                       v-model="selectedSpeciality"
                       type="text"
                       placeholder="Select your speciality"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
                       readonly
                     />
                     <svg
@@ -475,7 +475,7 @@
               <textarea
                 v-model="bio"
                 placeholder="Enter your bio"
-                class="w-full h-full p-4 resize-none outline-none bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
+                class="focus:outline-none w-full h-full p-4 resize-none outline-none bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
               ></textarea>
             </div>
           </div>

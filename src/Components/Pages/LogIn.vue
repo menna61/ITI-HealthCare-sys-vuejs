@@ -37,7 +37,7 @@
                         v-model="email"
                         type="text"
                         :placeholder="$t('Enter_mobile_or_email')"
-                        class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                        class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                       />
                     </div>
                   </div>
@@ -54,7 +54,7 @@
                           v-model="password"
                           :type="showPassword ? 'text' : 'password'"
                           :placeholder="$t('Enter_mobile_or_email')"
-                          class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                          class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                         />
                         <!-- Eye icon when password is hidden -->
                         <svg

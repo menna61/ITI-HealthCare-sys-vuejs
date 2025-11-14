@@ -54,7 +54,7 @@
                   {{ patient.email }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                  {{ patient.phone  || '-'}} 
+                  {{ patient.phoneNumber || "-" }}
                 </td>
                 <td
                   class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-center gap-2"
@@ -137,7 +137,7 @@
             </div>
             <div class="info-item">
               <span class="info-label">📱 {{ $t("phone") }}:</span>
-              <span class="info-value">{{ selectedPatient.phone }}</span>
+              <span class="info-value">{{ selectedPatient.phoneNumber }}</span>
             </div>
             <div class="info-item">
               <span class="info-label">👨‍⚕️ {{ $t("doctorName") }}:</span>
@@ -268,12 +268,12 @@ export default {
           where("patientId", "==", this.patientToDelete.id)
         );
         const bookingsSnapshot = await getDocs(bookingsQuery);
-        
+
         // Process each booking - mark as cancelled but DON'T delete
         // This preserves doctor earnings and admin commission
         for (const bookingDoc of bookingsSnapshot.docs) {
           const booking = bookingDoc.data();
-          
+
           // Only process confirmed bookings
           if (booking.status === "confirmed") {
             // Mark booking as cancelled by admin
@@ -286,8 +286,10 @@ export default {
               // Keep doctor earnings and admin commission as they were
               // Doctor keeps their money, admin keeps their commission
             });
-            
-            console.log(`✅ Booking ${bookingDoc.id} marked as cancelled (doctor earnings preserved)`);
+
+            console.log(
+              `✅ Booking ${bookingDoc.id} marked as cancelled (doctor earnings preserved)`
+            );
           }
         }
 

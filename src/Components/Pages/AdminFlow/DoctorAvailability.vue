@@ -4,8 +4,10 @@
     <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
       <!-- Page titles -->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">{{ $t('doctorsWithAppointments') }}</h1>
-        <p class="text-gray-500 dark:text-gray-400">{{ $t('viewDoctorsWithActiveAppointments') }}</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("doctorsWithAppointments") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">
+          {{ $t("viewDoctorsWithActiveAppointments") }}
+        </p>
       </div>
 
       <div class="tableDoctors px-4">
@@ -13,20 +15,30 @@
           <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
             <thead class="bg-gradient-to-r from-blue-500 to-purple-600">
               <tr>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
-                  {{ $t('doctorName') }}
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("doctorName") }}
                 </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
-                  {{ $t('email') }}
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("email") }}
                 </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
-                  {{ $t('speciality') }}
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("speciality") }}
                 </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
-                  {{ $t('phone') }}
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("phone") }}
                 </th>
-                <th class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap">
-                  {{ $t('appointments') }}
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("appointments") }}
                 </th>
               </tr>
             </thead>
@@ -40,7 +52,9 @@
                 class="hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 cursor-pointer transition-all duration-500 animate-fadeInUp hover:scale-[1.02] hover:shadow-lg"
                 :style="{ animationDelay: `${index * 0.1}s` }"
               >
-                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+                >
                   {{ doctor.firstName }} {{ doctor.lastName }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
@@ -54,7 +68,7 @@
                   </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                  {{ doctor.phone }}
+                  {{ doctor.phoneNumber }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-center">
                   <span
@@ -68,9 +82,14 @@
           </table>
 
           <!-- Empty state -->
-          <div v-if="doctorsWithAppointments.length === 0" class="text-center py-12 animate-fade-in">
-            <div class="text-gray-500 dark:text-gray-400 text-lg">{{ $t('noDoctorsFound') }}</div>
-            <div class="text-gray-400 dark:text-gray-500 text-sm mt-2">{{ $t('doctorsWillAppear') }}</div>
+          <div
+            v-if="doctorsWithAppointments.length === 0"
+            class="text-center py-12 animate-fade-in"
+          >
+            <div class="text-gray-500 dark:text-gray-400 text-lg">{{ $t("noDoctorsFound") }}</div>
+            <div class="text-gray-400 dark:text-gray-500 text-sm mt-2">
+              {{ $t("doctorsWillAppear") }}
+            </div>
           </div>
         </div>
       </div>

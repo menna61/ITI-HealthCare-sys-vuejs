@@ -51,7 +51,7 @@
                       required
                       type="text"
                       :placeholder="$t('Enter_first_name')"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div class="sname w-full">
@@ -61,7 +61,7 @@
                       required
                       type="text"
                       :placeholder="$t('Enter_last_name')"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -75,7 +75,7 @@
                       required
                       type="email"
                       :placeholder="$t('Enter_email')"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                   <div class="phone w-full">
@@ -87,7 +87,7 @@
                       type="text"
                       :placeholder="$t('Enter_phone_number')"
                       :class="[
-                        'w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
+                        'focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white',
                         phoneNumberError
                           ? 'border-red-500 dark:border-red-400'
                           : 'border-gray-300 dark:border-gray-600',
@@ -107,7 +107,7 @@
                     <select
                       v-model="selectedGender"
                       required
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     >
                       <option disabled value="">{{ $t("Select_gender") }}</option>
                       <option value="male">{{ $t("Male") }}</option>
@@ -120,7 +120,7 @@
                       v-model="birthdate"
                       required
                       type="date"
-                      class="w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
+                      class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
                 </div>
@@ -142,7 +142,7 @@
                       required
                       :type="showPassword ? 'text' : 'password'"
                       :placeholder="$t('Enter_password')"
-                      class="w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
+                      class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400"
                     />
                     <!-- Eye icon when password is hidden -->
                     <svg

@@ -736,6 +736,19 @@ export default {
           // Continue with the deletion even if auth deletion fails
         }
 
+        // Delete doctor availability from doctorAvailability collection
+        try {
+          const availabilityRef = doc(db, "doctorAvailability", this.doctorToDelete.id);
+          const availabilitySnap = await getDoc(availabilityRef);
+          if (availabilitySnap.exists()) {
+            await deleteDoc(availabilityRef);
+            console.log("✅ Doctor availability deleted successfully");
+          }
+        } catch (availabilityError) {
+          console.error("❌ Error deleting doctor availability:", availabilityError);
+          // Continue with the deletion even if availability deletion fails
+        }
+
         // Delete the doctor from Firestore
         await deleteDoc(doc(db, "doctors", this.doctorToDelete.id));
         this.doctors = this.doctors.filter((doctor) => doctor.id !== this.doctorToDelete.id);
