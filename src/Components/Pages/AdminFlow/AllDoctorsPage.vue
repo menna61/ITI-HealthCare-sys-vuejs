@@ -295,7 +295,7 @@
             <div class="info-item">
               <span class="info-label">📱 {{ $t("phone") }}:</span>
               <span class="info-value text-gray-900 dark:text-gray-100">{{
-                selectedDoctor.phone
+                selectedDoctor.phoneNumber || selectedDoctor.phone
               }}</span>
             </div>
             <div class="info-item">
@@ -797,7 +797,7 @@ export default {
           [
             `"${doctor.firstName} ${doctor.lastName}"`,
             `"${doctor.email}"`,
-            `"${doctor.phone}"`,
+            `"${doctor.phoneNumber || doctor.phone || "N/A"}"`,
             `"${doctor.speciality}"`,
             `"${doctor.clinicAddress}"`,
             doctor.yearsOfExperience,
@@ -858,7 +858,7 @@ export default {
           doctor.speciality || "",
           services,
           availableDays,
-          doctor.phone || "",
+          doctor.phoneNumber || doctor.phone || "N/A",
           doctor.patientCount || 0,
           doctor.email || "",
           doctor.degree || "",

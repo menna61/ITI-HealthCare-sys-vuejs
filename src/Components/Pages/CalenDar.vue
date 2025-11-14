@@ -34,7 +34,7 @@
 
                 <!--Client info and actions-->
                 <div class="client flex justify-between items-start">
-                  <div class="user flex gap-2 items-center">
+                  <div class="user flex gap-4 items-start">
                     <div
                       class="img w-10 h-10 rounded-full bg-[#EEF1FF] flex items-center justify-center"
                     >
@@ -709,7 +709,7 @@ export default {
                 date: appointment.date,
                 name: patientName,
                 time: appointment.time,
-                type: appointment.type,
+                type: appointment.service || appointment.type,
                 status: appointment.status,
                 patientId: appointment.patientId,
                 price: appointment.price,
@@ -825,13 +825,74 @@ export default {
         const user = auth.currentUser;
         if (!user) return;
 
-        // Update appointment status to completed
+        const totalPrice = parseFloat(appointment.price) || 0;
+
+        // Calculate commission: 5% for admin, 95% for doctor
+        const adminCommission = totalPrice * 0.05;
+        const doctorEarnings = totalPrice * 0.95;
+
+        console.log("Marking appointment as completed:");
+        console.log("Total price:", totalPrice);
+        console.log("Admin commission (5%):", adminCommission);
+        console.log("Doctor earnings (95%):", doctorEarnings);
+
+        // Update appointment status to completed with earnings breakdown
         const appointmentRef = doc(db, "bookings", appointment.id);
         await updateDoc(appointmentRef, {
           status: "completed",
           completedAt: new Date(),
           completedBy: user.uid,
+          adminCommission: adminCommission,
+          doctorEarnings: doctorEarnings,
         });
+
+        console.log("Booking updated with commission breakdown");
+
+        // Add commission to admin wallet
+        const adminWalletRef = doc(db, "admin", "wallet");
+        const adminWalletSnap = await getDoc(adminWalletRef);
+
+        if (adminWalletSnap.exists()) {
+          const currentBalance = parseFloat(adminWalletSnap.data().balance) || 0;
+          console.log("Current admin wallet balance:", currentBalance);
+          await updateDoc(adminWalletRef, {
+            balance: currentBalance + adminCommission,
+          });
+          console.log("Updated admin wallet balance:", currentBalance + adminCommission);
+        } else {
+          console.log("Creating new admin wallet with balance:", adminCommission);
+          await setDoc(adminWalletRef, {
+            balance: adminCommission,
+            createdAt: new Date(),
+          });
+        }
+
+        // Get doctor name
+        const doctorRef = doc(db, "doctors", user.uid);
+        const doctorSnap = await getDoc(doctorRef);
+        let doctorName = "Doctor";
+        if (doctorSnap.exists()) {
+          const doctorData = doctorSnap.data();
+          doctorName =
+            `${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() || "Doctor";
+        }
+
+        // Add transaction record for admin
+        const adminTransactionsRef = collection(db, "admin", "wallet", "transactions");
+        const transactionData = {
+          amount: adminCommission,
+          type: "commission",
+          bookingId: appointment.id,
+          doctorId: user.uid,
+          doctorName: doctorName,
+          patientName: appointment.name,
+          service: appointment.type,
+          date: new Date(),
+          description: `5% commission from booking with ${appointment.name}`,
+        };
+
+        await addDoc(adminTransactionsRef, transactionData);
+        console.log("Admin transaction added:", transactionData);
 
         // Add notification to patient
         await addDoc(collection(db, "notifications"), {
