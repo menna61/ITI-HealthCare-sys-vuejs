@@ -37,6 +37,7 @@ import {
   resetPassword,
   checkEmailExists,
   checkEmailInDB,
+  checkEmailExistsComplete,
 } from "/src/authHandler.js";
 import DoctorAvail from "./Components/Pages/DoctorAvail.vue";
 import DoctorsPage from "./Components/Pages/PatientFlow/DoctorsPage.vue";
@@ -94,6 +95,7 @@ vueApp.config.globalProperties.$auth = {
   resetPassword,
   checkEmailExists,
   checkEmailInDB,
+  checkEmailExistsComplete,
 };
 
 // const routes = [

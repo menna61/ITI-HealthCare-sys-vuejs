@@ -106,16 +106,16 @@ export default {
       try {
         if (!this.$auth || !this.$auth.resetPassword) throw new Error("Auth not initialized");
 
-        // Check if email exists in database before sending reset email
-        if (!this.$auth.checkEmailInDB) {
-          throw new Error("checkEmailInDB not available");
+        // Check if email exists in both Auth and Database before sending reset email
+        if (!this.$auth.checkEmailExistsComplete) {
+          throw new Error("checkEmailExistsComplete not available");
         }
 
         console.log("Checking email:", this.email);
-        const emailInDB = await this.$auth.checkEmailInDB(this.email);
-        console.log("Email exists in DB:", emailInDB);
+        const emailExists = await this.$auth.checkEmailExistsComplete(this.email);
+        console.log("Email exists (Auth + DB):", emailExists);
 
-        if (!emailInDB) {
+        if (!emailExists) {
           this.error = this.$t("Email_not_found") || "This email is not registered in our system.";
           this.loading = false;
           return;
