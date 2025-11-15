@@ -1,6 +1,20 @@
 <template>
-  <div class="cont h-full p-8 bg-white dark:bg-gray-800 rounded-2xl flex flex-col gap-10">
-    <div class="top flex flex-col gap-10">
+  <div class="h-full cont p-8  bg-white dark:bg-gray-800 flex gap-14 rounded-xl ">
+
+    <div class="left relative">
+      <div class="img relative">
+        <div class="overlay bg-gradient-to-t from-[var(--sec-color-500)]/90 to-transparent  w-full h-full absolute rounded-xl z-1"></div>
+        <img src="../../../public/images/signupdoctor.png" alt="" class="w-[1600px] rounded-2xl rotate-y-180 z-0">
+      </div>
+
+      <div class="absolute top-3/4 pl-8 z-3">
+          <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">Become part of our medical network</p>
+          <p class="text-white text-xl">Deliver better care with smart, easy-to-use tools built for doctors.</p>
+      </div>
+    </div>
+
+    <div class="right flex flex-col gap-10 w-full">
+      <div class="top flex flex-col gap-10">
       <back-btn />
 
       <div class="stepper flex flex-col gap-8">
@@ -78,8 +92,10 @@
         </div>
       </div>
     </div>
+
+    <!--Signup forms-->
     <div
-      class="bottom flex flex-col items-center justify-center xl:flex-row xl:items-start gap-10"
+      class="bottom flex flex-col items-center justify-center xl:items-start gap-10"
       v-if="currentStep === 1"
     >
       <!--Upload image-->
@@ -114,11 +130,6 @@
       <div class="right w-full">
         <div class="form">
           <form class="flex flex-col gap-6" action="">
-            <div class="or flex gap-2 items-center justify-center">
-              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
-              <p class="text-gray-600 dark:text-gray-300">or</p>
-              <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
-            </div>
 
             <div class="flex flex-col gap-8 items-end">
               <div
@@ -134,7 +145,7 @@
                 {{ successMsg }}
               </div>
               <div class="inputs w-full flex flex-col gap-4">
-                <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
+                <div class="name flex flex-col  gap-4 items-center w-full">
                   <div class="fname flex flex-col gap-2 w-full">
                     <label class="text-gray-900 dark:text-white">First name</label>
                     <div
@@ -182,7 +193,7 @@
                     </div>
                   </div>
                 </div>
-                <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
+                <div class="phone,email flex flex-col  gap-4 items-center w-full">
                   <div class="email flex flex-col gap-2 w-full">
                     <label class="text-gray-900 dark:text-white">Email</label>
                     <div
@@ -313,7 +324,7 @@
         <form class="flex flex-col gap-6" action="">
           <div class="flex flex-col gap-8 items-end">
             <div class="inputs w-full flex flex-col gap-4">
-              <div class="name flex flex-col xl:flex-row gap-4 items-center w-full">
+              <div class="name flex flex-col gap-4 items-center w-full">
                 <div class="fname flex flex-col gap-2 w-full">
                   <label class="text-gray-900 dark:text-white">Years of experience</label>
                   <div
@@ -341,7 +352,7 @@
                   </div>
                 </div>
               </div>
-              <div class="phone,email flex flex-col xl:flex-row gap-4 items-center w-full">
+              <div class="phone,email flex flex-col gap-4 items-center w-full">
                 <div class="email flex flex-col gap-2 w-full">
                   <label class="text-gray-900 dark:text-white">Clinic name</label>
                   <div
@@ -369,7 +380,7 @@
                   </div>
                 </div>
               </div>
-              <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
+              <div class="pass flex flex-col  gap-4 items-center w-full">
                 <div class="pass flex flex-col gap-2 w-full relative">
                   <label class="text-gray-900 dark:text-white">Degree</label>
                   <div
@@ -500,7 +511,7 @@
         <button
           v-show="currentStep > 1"
           @click="prevStep"
-          class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] dark:border-blue-400 text-[#5271FF] dark:text-blue-400 w-fit px-10 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg border border-[#5271FF] dark:border-blue-400 text-[#5271FF] dark:text-blue-400 w-full px-10 cursor-pointer hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors"
         >
           <svg
             class="w-6 h-6 fill-[#5271FF]"
@@ -518,7 +529,7 @@
         <button
           @click="nextStep"
           :disabled="loading || uploading || !isFormValid"
-          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] dark:bg-blue-600 text-white w-fit px-10 cursor-pointer disabled:opacity-60 hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] dark:bg-blue-600 text-white w-full px-10 cursor-pointer disabled:opacity-60 hover:bg-blue-700 dark:hover:bg-blue-700 transition-colors"
         >
           <svg
             v-if="loading || uploading"
@@ -562,6 +573,10 @@
         </button>
       </div>
     </div>
+    </div>
+
+    
+
   </div>
 </template>
 
@@ -839,4 +854,6 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>
