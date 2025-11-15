@@ -1,7 +1,21 @@
 <template>
-  <div class="cont flex items-center justify-center">
-    <div class="h-full p-8 bg-white dark:bg-gray-800 rounded-2xl flex flex-col gap-10 w-[500px]">
-      <div class="top flex flex-col gap-10">
+  <div class="flex items-center justify-center">
+    <div class="h-full cont p-8  bg-white dark:bg-gray-800 flex gap-14 rounded-xl ">
+
+      <div class="left relative">
+        <div class="img relative">
+          <div class="overlay bg-gradient-to-t from-[var(--sec-color-500)]/90 to-transparent  w-full h-full absolute rounded-xl z-1"></div>
+          <img src="../../../public/images/loginimage.png" alt="" class="w-[1600px] h-[640px] rounded-2xl rotate-y-180 z-0">
+        </div>
+
+        <div class="absolute top-3/4 pl-8 z-3">
+            <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">Welcome back</p>
+            <p class="text-white text-xl">access your healthcare account</p>
+        </div>
+      </div>
+
+      <div class="right flex flex-col gap-10 w-full">
+        <div class="top flex flex-col gap-10">
         <back-btn />
         <div class="stepper flex flex-col gap-8">
           <div class="top flex flex-col gap-4">
@@ -117,7 +131,7 @@
         <button
           @click="loginUser"
           :disabled="loading"
-          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-fit px-10 cursor-pointer disabled:opacity-60"
+          class="flex gap-2 items-center justify-center h-12 rounded-lg bg-[#5271FF] text-white w-full px-10 cursor-pointer disabled:opacity-60"
         >
           <svg
             v-if="loading"
@@ -139,6 +153,8 @@
           <p>{{ loading ? $t("Signing_in") : $t("Login") }}</p>
         </button>
       </div>
+      </div>
+      
     </div>
   </div>
 </template>
@@ -258,9 +274,10 @@ export default {
                 this.emailError = true;
                 this.error = this.$t("email_does_not_exist");
               }
-            } catch (dbError) {
+            } catch (err) {
               // If DB check fails, show generic message
               this.error = this.$t("invalid_credentials");
+              console.log(err)
             }
           } else {
             // Fallback to generic message
