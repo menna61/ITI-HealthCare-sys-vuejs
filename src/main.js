@@ -59,6 +59,7 @@ import TotalAppointments from "./Components/Pages/AdminFlow/TotalAppointments.vu
 import DocumentApproval from "./Components/Pages/AdminFlow/DocumentApproval.vue";
 import PatientWallet from "./Components/Pages/PatientFlow/PatientWallet.vue";
 import PatientProfile from "./Components/Pages/PatientFlow/PatientProfile.vue";
+import TermsAndConditions from "./Components/Pages/TermsAndConditions.vue";
 
 // import { h } from 'vue'
 import { createI18n } from "vue-i18n";
@@ -246,6 +247,10 @@ const routes = [
   {
     path: "/success",
     component: SuccessPage,
+  },
+  {
+    path: "/terms-and-conditions",
+    component: TermsAndConditions,
   },
   {
     path: "/:pathMatch(.*)*",
