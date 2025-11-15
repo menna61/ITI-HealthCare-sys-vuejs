@@ -20,7 +20,7 @@
       <div class="stepper flex flex-col gap-8">
         <div class="top flex flex-col gap-4">
           <h1 class="text-4xl font-bold text-gray-900 dark:text-white">Sign up as a doctor</h1>
-          <p class="text-gray-600 dark:text-gray-300 text-xl">Create your professional account</p>
+          <p class="text-gray-400 dark:text-gray-300 text-xl">Create your professional account</p>
         </div>
 
         <!-- Stepper structure -->

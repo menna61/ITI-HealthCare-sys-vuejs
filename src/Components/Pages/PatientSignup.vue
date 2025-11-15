@@ -1,13 +1,27 @@
 <template>
-  <div class="cont h-full p-8 bg-white dark:bg-gray-800 rounded-2xl flex flex-col gap-10">
-    <div class="top flex flex-col gap-10">
+  <div class="h-full cont p-8  bg-white dark:bg-gray-800 flex flex-col lg:flex-row gap-14 rounded-xl">
+
+    <div class="left relative">
+      <div class="img relative">
+        <div class="overlay bg-gradient-to-t from-[var(--sec-color-500)]/90 to-transparent  w-full h-full absolute rounded-xl z-1"></div>
+        <img src="../../../public/images/signuppatient.png" alt="" class="w-[1600px] rounded-2xl rotate-y-180 z-0">
+      </div>
+
+      <div class="absolute top-3/4 pl-8 z-3">
+          <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">Join our healthcare network</p>
+          <p class="text-white text-xl">Your health, our priority.</p>
+      </div>
+    </div>
+
+    <div class="right flex flex-col gap-10 w-full">
+       <div class="top flex flex-col gap-10">
       <back-btn />
       <div class="stepper flex flex-col gap-8">
         <div class="top flex flex-col gap-4">
           <h1 class="text-4xl font-bold text-gray-900 dark:text-white">
             {{ $t("Sign_up_as_patient") }}
           </h1>
-          <p class="text-gray-600 dark:text-gray-300 text-xl">
+          <p class="text-gray-400 dark:text-gray-300 text-xl">
             {{ $t("Create_your_patient_account") }}
           </p>
         </div>
@@ -43,8 +57,8 @@
             <div class="flex flex-col gap-8 items-end">
               <div class="inputs w-full flex flex-col gap-4">
                 <!-- Name -->
-                <div class="name flex gap-4 w-full">
-                  <div class="fname w-full">
+                <div class="name flex flex-col gap-4 w-full">
+                  <div class="fname w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("First_name") }}</label>
                     <input
                       v-model="firstName"
@@ -54,7 +68,7 @@
                       class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
-                  <div class="sname w-full">
+                  <div class="sname w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("Last_name") }}</label>
                     <input
                       v-model="lastName"
@@ -67,8 +81,8 @@
                 </div>
 
                 <!-- Email & Phone -->
-                <div class="flex gap-4 w-full">
-                  <div class="email w-full">
+                <div class="flex flex-col gap-4 w-full">
+                  <div class="email w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("Email") }}</label>
                     <input
                       v-model="email"
@@ -78,7 +92,7 @@
                       class="focus:outline-none w-full h-12 px-4 border rounded-lg bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white"
                     />
                   </div>
-                  <div class="phone w-full">
+                  <div class="phone w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("Phone_number") }}</label>
                     <input
                       v-model="phoneNumber"
@@ -101,8 +115,8 @@
                 </div>
 
                 <!-- Gender & Birthdate -->
-                <div class="flex gap-4 w-full">
-                  <div class="gender w-full">
+                <div class="flex flex-col gap-4 w-full">
+                  <div class="gender w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("Gender") }}</label>
                     <select
                       v-model="selectedGender"
@@ -114,7 +128,7 @@
                       <option value="female">{{ $t("Female") }}</option>
                     </select>
                   </div>
-                  <div class="birthdate w-full">
+                  <div class="birthdate w-full flex flex-col gap-2">
                     <label class="text-gray-900 dark:text-white">{{ $t("Birthdate") }}</label>
                     <input
                       v-model="birthdate"
@@ -126,7 +140,7 @@
                 </div>
 
                 <!-- Password -->
-                <div class="pass w-full">
+                <div class="pass w-full flex flex-col gap-2">
                   <label class="text-gray-900 dark:text-white">{{ $t("Password") }}</label>
                   <div
                     class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
@@ -214,6 +228,8 @@
       </div>
     </div>
 
+    </div>
+   
     <!-- Terms and Conditions Modal -->
     <Modal v-model="showTermsModal" title="Terms and conditions">
       <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-300">
