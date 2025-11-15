@@ -38,6 +38,11 @@ export default {
 .cont {
   margin: 0 80px;
 }
+@media (max-width: 1024px) {
+  .cont {
+    margin: 0 32px;
+  }
+}
 :root {
   --main-color-500: #5271ff;
   --main-color-25: #eef1ff;

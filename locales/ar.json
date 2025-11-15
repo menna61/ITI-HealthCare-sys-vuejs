@@ -425,5 +425,6 @@
   "save_details": "حفظ التفاصيل",
   "late": "متأخر",
   "pending": "قيد الانتظار",
-  "no_completed_appointments": "لا توجد مواعيد مكتملة بعد"
+  "no_completed_appointments": "لا توجد مواعيد مكتملة بعد",
+  "Sign_up_as_patient": "انشاء حساب كمستخدم"
 }
