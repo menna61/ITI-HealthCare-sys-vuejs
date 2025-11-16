@@ -24,7 +24,7 @@
         <div class="title">
           <h1 class="text-2xl md:text-3xl font-medium">{{ $t("contactinfo") }}</h1>
         </div>
-        <div class="info flex w-full justify-around gap-6">
+        <div class="info flex flex-col w-full justify-around gap-6 xl:flex-row">
           <div class="flex gap-4 items-center">
             <div
               class="icon w-10 h-10 flex items-center justify-center bg-[var(--main-color-25)] rounded-lg"
