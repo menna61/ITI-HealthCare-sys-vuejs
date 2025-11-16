@@ -727,7 +727,8 @@ export default {
 
         // Delete Firebase Authentication user first (using doctor.id which is the same as auth uid)
         try {
-          await axios.post("http://localhost:4242/delete-auth-user", {
+          const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4242";
+          await axios.post(`${apiUrl}/delete-auth-user`, {
             uid: this.doctorToDelete.id,
           });
           console.log("✅ Doctor deleted from Firebase Authentication");

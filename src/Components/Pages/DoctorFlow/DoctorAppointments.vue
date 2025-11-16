@@ -562,7 +562,8 @@ export default {
           try {
             const patientName =
               patientData.name || patientData.fullName || appointment.patientName || "Patient";
-            await fetch("http://localhost:4242/send-cancellation-email", {
+            const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4242";
+            await fetch(`${apiUrl}/send-cancellation-email`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({
