@@ -12,8 +12,8 @@ import { sendApprovalEmail } from "./mail.js";
 dotenv.config();
 
 // ✅ Initialize Firebase Admin
-const privateKey = process.env.FIREBASE_PRIVATE_KEY 
-  ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')
+const privateKey = process.env.FIREBASE_PRIVATE_KEY
+  ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
   : undefined;
 
 if (!process.env.FIREBASE_CLIENT_EMAIL || !privateKey) {
@@ -35,13 +35,13 @@ app.use(cors());
 app.use(express.json());
 
 // ✅ Stripe secret key (test mode)
-const response = await fetch('/.netlify/functions/create-payment-intent',{
+const response = await fetch("/.netlify/functions/create-payment-intent", {
   method: "POST",
-  headers:{"Content-Type":"application/json"},
+  headers: { "Content-Type": "application/json" },
   body: JSON.stringify({
     amount: 1000,
-    currency: "usd"
-  })
+    currency: "usd",
+  }),
 });
 const data = await response.json();
 const clientSecret = data.clientSecret;
@@ -64,8 +64,9 @@ app.post("/create-checkout-session", async (req, res) => {
           quantity: 1,
         },
       ],
-      success_url: "http://localhost:5173/#/patient/appointments",
-      cancel_url: "http://localhost:5173/cancel",
+      success_url:
+        "https://astonishing-crepe-674f1f.netlify.app/#/patient/appointments?payment=success",
+      cancel_url: "https://astonishing-crepe-674f1f.netlify.app/#/cancel",
     });
 
     res.json({ url: session.url });
@@ -180,7 +181,7 @@ app.post("/delete-auth-user", async (req, res) => {
     console.log("🗑️ Deleting user from Firebase Auth:", uid);
     await admin.auth().deleteUser(uid);
     console.log("✅ User deleted successfully from Firebase Auth:", uid);
-    
+
     res.status(200).json({ message: "User deleted successfully from Authentication" });
   } catch (error) {
     console.error("❌ Error deleting auth user:", error);

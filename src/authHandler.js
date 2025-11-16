@@ -9,14 +9,14 @@ import {
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
   setPersistence,
-  browserSessionPersistence,
+  browserLocalPersistence,
   fetchSignInMethodsForEmail,
 } from "firebase/auth";
 import { getFirestore, collection, query, where, getDocs } from "firebase/firestore";
 
 // Initialize products
 const authApi = getAuth(firebaseApp);
-setPersistence(authApi, browserSessionPersistence);
+setPersistence(authApi, browserLocalPersistence);
 const db = (function () {
   try {
     return getFirestore(firebaseApp);
