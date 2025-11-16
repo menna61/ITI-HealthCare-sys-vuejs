@@ -35,9 +35,17 @@ app.use(cors());
 app.use(express.json());
 
 // ✅ Stripe secret key (test mode)
-const stripe = new Stripe(
-  "sk_test_51SMGyS5xDzYJEhy7m2UdB1dmwV3tLY3Ysv6qM2W2rzcOinc0dEgbFdDiphCVvChPYIXkHpF0YDSzgDbK41svXulX00Kxp8mByo"
-);
+const response = await fetch('/.netlify/functions/create-payment-intent',{
+  method: "POST",
+  headers:{"Content-Type":"application/json"},
+  body: JSON.stringify({
+    amount: 1000,
+    currency: "usd"
+  })
+});
+const data = await response.json();
+const clientSecret = data.clientSecret;
+const stripe = clientSecret;
 
 // ✅ Create checkout session endpoint
 app.post("/create-checkout-session", async (req, res) => {
