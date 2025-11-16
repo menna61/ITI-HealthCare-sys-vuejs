@@ -65,8 +65,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       success_url:
-        "https://astonishing-crepe-674f1f.netlify.app/#/patient/appointments?payment=success",
-      cancel_url: "https://astonishing-crepe-674f1f.netlify.app/#/cancel",
+        "https://fastidious-jelly-b1b358.netlify.app/#/patient/appointments?payment=success",
+      cancel_url: "https://fastidious-jelly-b1b358.netlify.app/#/cancel",
     });
 
     res.json({ url: session.url });
