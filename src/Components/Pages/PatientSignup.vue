@@ -388,18 +388,32 @@ export default {
           this.phoneNumberError = false;
         }
 
-        // Check if email already exists in Auth or DB
+        // Check if email already exists in DB (all collections: patients, doctors, admin)
         this.loading = true;
-        const authExists = await checkEmailExists(this.email);
-        const dbExists = await checkEmailInDB(this.email);
-        this.loading = false;
+        this.errorMsg = "";
 
-        if (authExists || dbExists) {
+        try {
+          console.log(`Checking if email ${this.email} exists in database...`);
+          const dbExists = await checkEmailInDB(this.email);
+          console.log(`DB check result: ${dbExists}`);
+
+          if (dbExists) {
+            this.errorMsg =
+              "This email is already registered. Please use a different email or try logging in.";
+            this.loading = false;
+            return;
+          }
+
+          console.log("Email is available, proceeding to terms modal");
+        } catch (error) {
+          console.error("Error checking email:", error);
           this.errorMsg =
-            "This email is already registered. Please use a different email or try logging in.";
+            "Unable to verify email availability. Please try again or contact support.";
+          this.loading = false;
           return;
         }
 
+        this.loading = false;
         this.showTermsModal = true;
       } else {
         // Trigger HTML5 validation

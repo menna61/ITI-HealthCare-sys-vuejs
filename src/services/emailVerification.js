@@ -24,10 +24,36 @@ export function generateOTP() {
  * @param {string} email - Recipient email
  * @param {string} name - Recipient name
  * @param {string} userType - 'patient' or 'doctor'
+ * @param {boolean} skipEmailCheck - Skip email existence check (default: false)
  * @returns {Promise<{success: boolean, otp?: string, error?: string}>}
  */
-export async function sendOTP(email, name, userType = "user") {
+export async function sendOTP(email, name, userType = "user", skipEmailCheck = false) {
   try {
+    // Check if email already exists (unless explicitly skipped)
+    if (!skipEmailCheck) {
+      const { checkEmailExists, checkEmailInDB } = await import("../authHandler.js");
+
+      try {
+        const [authExists, dbExists] = await Promise.all([
+          checkEmailExists(email),
+          checkEmailInDB(email),
+        ]);
+
+        console.log(`Email check in sendOTP - Auth: ${authExists}, DB: ${dbExists}`);
+
+        if (authExists || dbExists) {
+          return {
+            success: false,
+            error:
+              "This email is already registered. Please use a different email or try logging in.",
+          };
+        }
+      } catch (checkError) {
+        console.warn("Email check failed in sendOTP, continuing anyway:", checkError);
+        // Continue with OTP sending even if check fails
+      }
+    }
+
     const otp = generateOTP();
     const expirationTime = Date.now() + 5 * 60 * 1000; // 5 minutes
 
