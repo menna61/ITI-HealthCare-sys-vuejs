@@ -56,55 +56,100 @@ const checkEmailExists = async (email) => {
 
 const checkEmailInDB = async (email) => {
   try {
-    console.log(`=== Checking DB for email: "${email}" ===`);
+    // Normalize email to lowercase for consistent comparison
+    const normalizedEmail = email.toLowerCase().trim();
+    console.log(`=== Checking DB for email: "${normalizedEmail}" ===`);
+    console.log(`Original email: "${email}"`);
     console.log(`Email type: ${typeof email}, length: ${email.length}`);
 
     if (!db) {
       console.log("DB not available");
-      return false;
+      throw new Error("Database not available");
     }
 
+    let foundInAnyCollection = false;
+    let hadPermissionError = false;
+
     // Check patients collection
-    console.log("Checking patients collection...");
-    const patientsQuery = query(collection(db, "patients"), where("email", "==", email));
-    const patientsSnapshot = await getDocs(patientsQuery);
-    console.log(`Patients snapshot size: ${patientsSnapshot.size}`);
-    if (!patientsSnapshot.empty) {
-      console.log(`✓ Email ${email} exists in patients`);
-      return true;
+    try {
+      console.log("Checking patients collection...");
+      const patientsRef = collection(db, "patients");
+      const patientsSnapshot = await getDocs(patientsRef);
+      console.log(`Total patients documents: ${patientsSnapshot.size}`);
+
+      patientsSnapshot.forEach((doc) => {
+        const docEmail = doc.data().email;
+        if (docEmail && docEmail.toLowerCase().trim() === normalizedEmail) {
+          console.log(`✓ Email ${normalizedEmail} exists in patients (doc: ${doc.id})`);
+          foundInAnyCollection = true;
+        }
+      });
+    } catch (error) {
+      console.warn("Error checking patients collection:", error.message, error.code);
+      if (error.code === "permission-denied") {
+        hadPermissionError = true;
+      }
     }
 
     // Check doctors collection
-    console.log("Checking doctors collection...");
-    const doctorsQuery = query(collection(db, "doctors"), where("email", "==", email));
-    const doctorsSnapshot = await getDocs(doctorsQuery);
-    console.log(`Doctors snapshot size: ${doctorsSnapshot.size}`);
-    if (!doctorsSnapshot.empty) {
-      console.log(`✓ Email ${email} exists in doctors`);
-      return true;
+    try {
+      console.log("Checking doctors collection...");
+      const doctorsRef = collection(db, "doctors");
+      const doctorsSnapshot = await getDocs(doctorsRef);
+      console.log(`Total doctors documents: ${doctorsSnapshot.size}`);
+
+      doctorsSnapshot.forEach((doc) => {
+        const docEmail = doc.data().email;
+        if (docEmail && docEmail.toLowerCase().trim() === normalizedEmail) {
+          console.log(`✓ Email ${normalizedEmail} exists in doctors (doc: ${doc.id})`);
+          foundInAnyCollection = true;
+        }
+      });
+    } catch (error) {
+      console.warn("Error checking doctors collection:", error.message, error.code);
+      if (error.code === "permission-denied") {
+        hadPermissionError = true;
+      }
     }
 
     // Check admin collection
-    console.log("Checking admin collection...");
-    const adminQuery = query(collection(db, "admin"), where("email", "==", email));
-    const adminSnapshot = await getDocs(adminQuery);
-    console.log(`Admin snapshot size: ${adminSnapshot.size}`);
+    try {
+      console.log("Checking admin collection...");
+      const adminRef = collection(db, "admin");
+      const adminSnapshot = await getDocs(adminRef);
+      console.log(`Total admin documents: ${adminSnapshot.size}`);
 
-    // Log all admin documents to debug
-    adminSnapshot.forEach((doc) => {
-      console.log(`Admin doc ID: ${doc.id}, email: ${doc.data().email}`);
-    });
+      adminSnapshot.forEach((doc) => {
+        const docEmail = doc.data().email;
+        console.log(`Admin doc ID: ${doc.id}, email: ${docEmail}`);
+        if (docEmail && docEmail.toLowerCase().trim() === normalizedEmail) {
+          console.log(`✓ Email ${normalizedEmail} exists in admin (doc: ${doc.id})`);
+          foundInAnyCollection = true;
+        }
+      });
+    } catch (error) {
+      console.warn("Error checking admin collection:", error.message, error.code);
+      if (error.code === "permission-denied") {
+        hadPermissionError = true;
+      }
+    }
 
-    if (!adminSnapshot.empty) {
-      console.log(`✓ Email ${email} exists in admin`);
+    if (foundInAnyCollection) {
+      console.log(`✓✓✓ Email ${normalizedEmail} FOUND in database`);
       return true;
     }
 
-    console.log(`✗ Email ${email} not found in any collection`);
+    // If we had permission errors, we can't be sure the email doesn't exist
+    if (hadPermissionError) {
+      console.warn("⚠️ Had permission errors - cannot verify email doesn't exist");
+      throw new Error("Unable to verify email due to permission restrictions");
+    }
+
+    console.log(`✗✗✗ Email ${normalizedEmail} NOT FOUND in any collection`);
     return false;
   } catch (error) {
     console.error("Error checking email in database:", error);
-    return false;
+    throw error; // Re-throw to let caller handle it
   }
 };
 
