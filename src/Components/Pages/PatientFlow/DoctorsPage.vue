@@ -424,7 +424,8 @@ export default {
 
       // Proceed to payment
       const amount = parseInt(this.selectedService.price) * 100; // convert USD to cents
-      const res = await fetch("http://localhost:4242/create-checkout-session", {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4242";
+      const res = await fetch(`${apiUrl}/create-checkout-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount }),

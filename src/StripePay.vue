@@ -7,10 +7,7 @@
       placeholder="Enter amount in USD"
       class="border p-2 rounded w-60 text-center"
     />
-    <button
-      @click="checkout"
-      class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-    >
+    <button @click="checkout" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
       Pay Now
     </button>
   </div>
@@ -22,7 +19,8 @@ const price = ref(10);
 
 async function checkout() {
   const amount = price.value * 100; // convert USD to cents
-  const res = await fetch("http://localhost:4242/create-checkout-session", {
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4242";
+  const res = await fetch(`${apiUrl}/create-checkout-session`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ amount }),
