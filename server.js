@@ -30,22 +30,11 @@ admin.initializeApp({
   }),
 });
 const app = express();
-// const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json());
 
-// ✅ Stripe secret key (test mode)
-const response = await fetch("/.netlify/functions/create-payment-intent", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({
-    amount: 1000,
-    currency: "usd",
-  }),
-});
-const data = await response.json();
-const clientSecret = data.clientSecret;
-const stripe = clientSecret;
+// ✅ Initialize Stripe
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
 // ✅ Create checkout session endpoint
 app.post("/create-checkout-session", async (req, res) => {
