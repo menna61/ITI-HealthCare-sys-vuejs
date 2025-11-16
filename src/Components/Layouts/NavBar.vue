@@ -15,7 +15,7 @@
 
         <!-- 🔍 Search Section -->
         <div v-if="!isAuthPages" class="search w-full lg:w-auto relative" ref="searchWrapper">
-          <form class="w-full lg:w-96">
+          <form class="w-full lg:w-140">
             <div class="relative">
               <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                 <svg
@@ -50,7 +50,7 @@
           </form>
 
           <!-- 🔽 Overlay Dropdown -->
-          
+
         </div>
 
         <!-- 🔔 Notifications & User Section -->
@@ -378,7 +378,7 @@ export default {
   computed: {
     dropdownStyle() {
       return {
-       
+
         top: `${this.dropdownRect.top}px`,
         width: `${this.dropdownRect.width}px`,
       };
