@@ -1,11 +1,11 @@
 <template>
   <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
     <main-nav />
-    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6 ">
       <!--Page top-->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <!--Titles-->
-        <div class="title flex flex-col gap-4">
+        <div class="title flex flex-col gap-4 ">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $t("services") }}</h1>
           <p class="text-gray-500 dark:text-gray-400">{{ $t("track_services") }}</p>
         </div>
@@ -39,62 +39,14 @@
         </button>
       </div>
 
-      <div class="content flex gap-6 w-full flex-wrap">
-        <!-- Empty state for new doctors -->
-        <div
-          v-if="services.length === 0"
-          class="empty-state flex flex-col items-center justify-center py-16 w-full"
-        >
-          <div class="text-center">
-            <svg
-              class="w-24 h-24 text-gray-300 mx-auto mb-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="1"
-                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
-              ></path>
-            </svg>
-            <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-              {{ $t("no_services_yet") }}
-            </h3>
-            <p class="text-gray-500 dark:text-gray-400 mb-6">
-              {{ $t("start_creating_service_desc") }}
-            </p>
-            <button
-              @click="openServiceModal"
-              :disabled="!isApproved || status === 'rejected'"
-              :class="[
-                'font-medium py-2 px-6 rounded-lg inline-flex items-center gap-2',
-                isApproved && status !== 'rejected'
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white cursor-pointer'
-                  : 'bg-gray-400 text-white cursor-not-allowed',
-              ]"
-            >
-              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 4v16m8-8H4"
-                ></path>
-              </svg>
-              {{ $t("start_creating_service") }}
-            </button>
-          </div>
-        </div>
-
+      <div class="content flex gap-6 w-full flex-wrap ">
         <div
           v-for="service in services"
           :key="service.id"
-          class="relative bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-4 justify-between w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+          class="relative bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-4 justify-between w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] overflow-hidden"
         >
           <!-- Top Row: Text left + Icons right -->
-          <div class="flex justify-between items-start gap-6">
+          <div class="flex justify-between items-start gap-6 ">
             <!-- Text -->
             <div class="flex flex-col gap-2">
               <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
@@ -158,28 +110,14 @@
             </div>
 
             <!-- Icons -->
-            <div class="flex">
-              <div
-                @click="deleteService(service)"
-                class="icon-delete bg-#ffff w-[32px] h-[32px] rounded-md flex cursor-pointer hover:opacity-80 transition"
-              >
-                <svg
-                  class="w-6 h-6 fill-red-500"
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 640 640"
-                >
-                  <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
-                  <path
-                    d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"
-                  />
-                </svg>
-              </div>
-              <div
+            <div class="flex flex-col gap-1">
+              <button
                 @click="editService(service)"
-                class="icon-edit bg-#ffff w-[24px] h-[24px] rounded-md flex items-center cursor-pointer hover:opacity-80 transition"
+                class="w-6 h-6 bg-green-600 hover:bg-green-700 text-white rounded flex items-center justify-center transition"
+                title="Edit service"
               >
                 <svg
-                  class="w-6 h-6 fill-[var(--main-color-500)]"
+                  class="w-3.5 h-3.5 fill-white"
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 640 640"
                 >
@@ -188,14 +126,30 @@
                     d="M535.6 85.7C513.7 63.8 478.3 63.8 456.4 85.7L432 110.1L529.9 208L554.3 183.6C576.2 161.7 576.2 126.3 554.3 104.4L535.6 85.7zM236.4 305.7C230.3 311.8 225.6 319.3 222.9 327.6L193.3 416.4C190.4 425 192.7 434.5 199.1 441C205.5 447.5 215 449.7 223.7 446.8L312.5 417.2C320.7 414.5 328.2 409.8 334.4 403.7L496 241.9L398.1 144L236.4 305.7zM160 128C107 128 64 171 64 224L64 480C64 533 107 576 160 576L416 576C469 576 512 533 512 480L512 384C512 366.3 497.7 352 480 352C462.3 352 448 366.3 448 384L448 480C448 497.7 433.7 512 416 512L160 512C142.3 512 128 497.7 128 480L128 224C128 206.3 142.3 192 160 192L256 192C273.7 192 288 177.7 288 160C288 142.3 273.7 128 256 128L160 128z"
                   />
                 </svg>
-              </div>
+              </button>
+              <button
+                @click="deleteService(service)"
+                class="w-6 h-6 my-1 bg-red-600 hover:bg-red-700 text-white rounded flex items-center justify-center transition"
+                title="Delete service"
+              >
+                <svg
+                  class="w-3.5 h-3.5 fill-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 640 640"
+                >
+                  <!--!Font Awesome Free v7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.-->
+                  <path
+                    d="M232.7 69.9L224 96L128 96C110.3 96 96 110.3 96 128C96 145.7 110.3 160 128 160L512 160C529.7 160 544 145.7 544 128C544 110.3 529.7 96 512 96L416 96L407.3 69.9C402.9 56.8 390.7 48 376.9 48L263.1 48C249.3 48 237.1 56.8 232.7 69.9zM512 208L128 208L149.1 531.1C150.7 556.4 171.7 576 197 576L443 576C468.3 576 489.3 556.4 490.9 531.1L512 208z"
+                  />
+                </svg>
+              </button>
             </div>
           </div>
 
           <!-- Bottom Row: Price left + Toggle right -->
           <div class="flex items-center justify-between">
             <!-- Price -->
-            <span class="text-lg font-semibold dark:text-blue-400"
+            <span class="text-lg font-semibold text-blue-600 dark:text-blue-400"
               >${{ service.price
               }}<span class="text-gray-500 dark:text-gray-400">/session</span></span
             >
@@ -217,6 +171,32 @@
               </div>
             </label>
           </div>
+        </div>
+
+        <!-- Add Service Cards -->
+        <div
+          v-for="n in 6"
+          :key="'add-' + n"
+          @click="openServiceModal"
+          :class="[
+            'relative bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 flex flex-col gap-4 justify-center items-center cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]',
+            isApproved && status !== 'rejected' ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
+          ]"
+        >
+          <svg
+            class="w-8 h-8 text-gray-400 dark:text-gray-500"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M12 4v16m8-8H4"
+            />
+          </svg>
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">{{ $t("add_new_service") }}</p>
         </div>
 
         <!-- Service Modal -->
@@ -366,11 +346,23 @@ export default {
           const data = { id: doc.id, ...doc.data() };
           // local draft field for room link input (not persisted)
           data._roomLinkDraft = data.roomLink || "";
+          // local field for actions menu
+          data.showActionsMenu = false;
           return data;
         });
       } catch (error) {
         console.error("Error loading services:", error);
       }
+    },
+    toggleActionsMenu(service) {
+      // Close all other menus first
+      this.services.forEach(s => {
+        if (s.id !== service.id) {
+          s.showActionsMenu = false;
+        }
+      });
+      // Toggle the clicked menu
+      service.showActionsMenu = !service.showActionsMenu;
     },
     async checkUnionCard() {
       try {
@@ -525,4 +517,5 @@ export default {
   },
 };
 </script>
+
 <style scoped></style>

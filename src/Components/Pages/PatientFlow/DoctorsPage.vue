@@ -182,9 +182,16 @@
               </p>
             </div>
           </div>
-          <div class="flex gap-2 items-center">
+          <a
+            :href="`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+              selectedDoctor.clinicAddress
+            )}`"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="flex gap-2 items-center hover:text-blue-600 transition-colors cursor-pointer group"
+          >
             <svg
-              class="w-6 h-6 fill-gray-500"
+              class="w-6 h-6 fill-gray-500 group-hover:fill-blue-600 transition-colors"
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 640 640"
             >
@@ -192,8 +199,10 @@
                 d="M128 252.6C128 148.4 214 64 320 64C426 64 512 148.4 512 252.6C512 371.9 391.8 514.9 341.6 569.4C329.8 582.2 310.1 582.2 298.3 569.4C248.1 514.9 127.9 371.9 127.9 252.6zM320 320C355.3 320 384 291.3 384 256C384 220.7 355.3 192 320 192C284.7 192 256 220.7 256 256C256 291.3 284.7 320 320 320z"
               />
             </svg>
-            <p class="dark:text-gray-300">{{ selectedDoctor.clinicAddress }}</p>
-          </div>
+            <p class="dark:text-gray-300 group-hover:text-blue-600 transition-colors">
+              {{ selectedDoctor.clinicAddress }}
+            </p>
+          </a>
 
           <!-- Bio Section -->
           <div v-if="selectedDoctor.bio" class="bio-section mt-2">
