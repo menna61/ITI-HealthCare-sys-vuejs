@@ -342,6 +342,9 @@
                           class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200"
                         >
                           ✓ {{ $t("resultsUploaded") }}
+                          <span v-if="requirement.fileType" class="ml-1"
+                            >({{ requirement.fileType.toUpperCase() }})</span
+                          >
                         </span>
                       </div>
                       <p class="text-sm font-medium text-gray-900 dark:text-white mb-1">
@@ -355,114 +358,174 @@
                       </p>
 
                       <!-- Upload Section -->
-                      <div class="mt-3 space-y-2">
-                        <!-- Show uploaded image -->
-                        <div v-if="requirement.imageUrl" class="flex items-center gap-2">
-                          <button
-                            @click="viewImage(requirement.imageUrl)"
-                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
-                          >
-                            <svg
-                              class="w-4 h-4 mr-1.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                              ></path>
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                              ></path>
-                            </svg>
-                            {{ $t("viewImage") }}
-                          </button>
-                          <button
-                            @click="deleteImage(record.id, index)"
-                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
-                          >
-                            <svg
-                              class="w-4 h-4 mr-1.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                              ></path>
-                            </svg>
-                            {{ $t("deleteImage") }}
-                          </button>
+                      <div class="mt-3">
+                        <!-- Uploaded file card -->
+                        <div
+                          v-if="requirement.imageUrl"
+                          class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3 border border-gray-200 dark:border-gray-600"
+                        >
+                          <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2">
+                              <!-- File icon -->
+                              <div class="flex-shrink-0">
+                                <svg
+                                  v-if="requirement.fileType === 'pdf'"
+                                  class="w-8 h-8 text-red-500"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path d="M4 18h12V6h-4V2H4v16zm-2 1V0h12l4 4v16H2v-1z" />
+                                  <text x="6" y="14" font-size="6" fill="white" font-weight="bold">
+                                    PDF
+                                  </text>
+                                </svg>
+                                <svg
+                                  v-else
+                                  class="w-8 h-8 text-blue-500"
+                                  fill="currentColor"
+                                  viewBox="0 0 20 20"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </div>
+
+                              <!-- File info -->
+                              <div class="flex-1 min-w-0">
+                                <p
+                                  class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                                >
+                                  {{ requirement.name || "Medical Document" }}
+                                </p>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">
+                                  {{
+                                    requirement.fileType === "pdf" ? "PDF Document" : "Image File"
+                                  }}
+                                </p>
+                              </div>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="flex items-center gap-2">
+                              <a
+                                :href="requirement.imageUrl"
+                                :download="
+                                  requirement.fileType === 'pdf'
+                                    ? `${requirement.name || 'document'}.pdf`
+                                    : true
+                                "
+                                target="_blank"
+                                class="inline-flex items-center justify-center w-8 h-8 text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
+                                :title="
+                                  requirement.fileType === 'pdf' ? 'Download PDF' : 'View Image'
+                                "
+                              >
+                                <svg
+                                  class="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                                  ></path>
+                                </svg>
+                              </a>
+                              <button
+                                @click="deleteFile(record.id, index)"
+                                class="inline-flex items-center justify-center w-8 h-8 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/30 rounded-lg hover:bg-red-100 dark:hover:bg-red-900/50 transition-colors"
+                                title="Delete file"
+                              >
+                                <svg
+                                  class="w-4 h-4"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  ></path>
+                                </svg>
+                              </button>
+                            </div>
+                          </div>
                         </div>
 
-                        <!-- Upload button -->
-                        <div class="relative">
+                        <!-- Upload button (when no file) -->
+                        <div v-else class="relative">
                           <input
                             type="file"
                             :id="`file-${record.id}-${index}`"
-                            accept="image/*"
-                            @change="handleImageUpload($event, record.id, index)"
+                            accept="image/*,application/pdf"
+                            @change="handleFileUpload($event, record.id, index)"
                             class="hidden"
                           />
                           <label
                             :for="`file-${record.id}-${index}`"
-                            class="inline-flex items-center px-3 py-1.5 text-sm font-medium cursor-pointer rounded-lg transition-colors"
+                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer transition-all"
                             :class="
                               uploadingStates[`${record.id}-${index}`]
-                                ? 'text-gray-400 bg-gray-100 dark:bg-gray-700 cursor-not-allowed'
-                                : 'text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/30 hover:bg-purple-100 dark:hover:bg-purple-900/50'
+                                ? 'border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 cursor-not-allowed'
+                                : 'border-purple-300 dark:border-purple-600 bg-purple-50 dark:bg-purple-900/20 hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:border-purple-400 dark:hover:border-purple-500'
                             "
                           >
-                            <svg
-                              v-if="!uploadingStates[`${record.id}-${index}`]"
-                              class="w-4 h-4 mr-1.5"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
-                            >
-                              <path
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                                stroke-width="2"
-                                d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                              ></path>
-                            </svg>
-                            <svg
-                              v-else
-                              class="animate-spin w-4 h-4 mr-1.5"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                class="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
+                            <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                              <svg
+                                v-if="!uploadingStates[`${record.id}-${index}`]"
+                                class="w-10 h-10 mb-3 text-purple-500 dark:text-purple-400"
+                                fill="none"
                                 stroke="currentColor"
-                                stroke-width="4"
-                              ></circle>
-                              <path
-                                class="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                              ></path>
-                            </svg>
-                            {{
-                              uploadingStates[`${record.id}-${index}`]
-                                ? $t("uploading")
-                                : requirement.imageUrl
-                                ? $t("uploadImage")
-                                : $t("clickToUpload")
-                            }}
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  stroke-linecap="round"
+                                  stroke-linejoin="round"
+                                  stroke-width="2"
+                                  d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                                ></path>
+                              </svg>
+                              <svg
+                                v-else
+                                class="animate-spin w-10 h-10 mb-3 text-purple-500 dark:text-purple-400"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  class="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  stroke-width="4"
+                                ></circle>
+                                <path
+                                  class="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                              </svg>
+                              <p
+                                class="mb-1 text-sm font-medium text-purple-600 dark:text-purple-400"
+                              >
+                                {{
+                                  uploadingStates[`${record.id}-${index}`]
+                                    ? $t("uploading")
+                                    : $t("clickToUpload")
+                                }}
+                              </p>
+                              <p class="text-xs text-gray-500 dark:text-gray-400">
+                                {{ $t("supportedFormats") }}: JPG, PNG, PDF (Max 10MB)
+                              </p>
+                            </div>
                           </label>
                         </div>
                       </div>
@@ -532,6 +595,50 @@
         </button>
       </template>
     </UiModal>
+
+    <!-- PDF Viewer Modal -->
+    <UiModal v-model="showPdfModal" title="PDF Viewer" size="large">
+      <div class="pdf-viewer-container">
+        <div v-if="loadingPdf" class="flex justify-center items-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+        </div>
+        <div v-else class="space-y-4">
+          <div class="flex justify-between items-center mb-4">
+            <span class="text-sm text-gray-600 dark:text-gray-400">
+              Page {{ currentPdfPage }} of {{ totalPdfPages }}
+            </span>
+            <div class="flex gap-2">
+              <button
+                @click="previousPage"
+                :disabled="currentPdfPage <= 1"
+                class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+              <button
+                @click="nextPage"
+                :disabled="currentPdfPage >= totalPdfPages"
+                class="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+          <canvas
+            ref="pdfCanvas"
+            class="w-full border border-gray-300 dark:border-gray-600"
+          ></canvas>
+        </div>
+      </div>
+      <template #footer>
+        <button
+          @click="showPdfModal = false"
+          class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors"
+        >
+          {{ $t("close") }}
+        </button>
+      </template>
+    </UiModal>
   </div>
 </template>
 
@@ -549,11 +656,15 @@ import {
   updateDoc,
   addDoc,
 } from "firebase/firestore";
-import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
+import { getStorage, ref as storageRef, getDownloadURL, uploadBytes } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import * as pdfjsLib from "pdfjs-dist";
+
+// Configure PDF.js worker with proper URL
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
 
 // eslint-disable-next-line no-unused-vars
 const unused = doc; // Prevent ESLint error for unused import
@@ -577,6 +688,11 @@ export default {
       showMessageModal: false,
       messageModalTitle: "",
       messageModalContent: "",
+      showPdfModal: false,
+      loadingPdf: false,
+      currentPdfPage: 1,
+      totalPdfPages: 0,
+      pdfDoc: null,
     };
   },
   async mounted() {
@@ -703,50 +819,89 @@ export default {
         this.loading = false;
       }
     },
-    async handleImageUpload(event, bookingId, requirementIndex) {
+    async handleFileUpload(event, bookingId, requirementIndex) {
       const file = event.target.files[0];
       if (!file) return;
+
+      // Validate file type
+      const validTypes = ["image/jpeg", "image/jpg", "image/png", "application/pdf"];
+      if (!validTypes.includes(file.type)) {
+        this.showMessage(this.$t("error"), "Please upload only JPG, PNG, or PDF files");
+        return;
+      }
+
+      // Validate file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      if (file.size > maxSize) {
+        this.showMessage(this.$t("error"), "File size must be less than 10MB");
+        return;
+      }
 
       const key = `${bookingId}-${requirementIndex}`;
       this.uploadingStates[key] = true;
 
       try {
-        // Upload to Cloudinary
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "ml_default"); // Replace with your upload preset
-        formData.append("cloud_name", "dtaqbcmmg");
+        // Determine file type
+        const fileType = file.type === "application/pdf" ? "pdf" : "image";
+        let downloadURL;
 
-        const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
-          method: "POST",
-          body: formData,
-        });
+        if (fileType === "pdf") {
+          // For PDFs: Convert to Base64 and store directly
+          const reader = new FileReader();
+          downloadURL = await new Promise((resolve, reject) => {
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsDataURL(file);
+          });
+        } else {
+          // For images: Upload to Cloudinary
+          const formData = new FormData();
+          formData.append("file", file);
+          formData.append("upload_preset", "ml_default");
 
-        const data = await response.json();
+          const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
+            method: "POST",
+            body: formData,
+          });
 
-        if (data.secure_url) {
-          // Update Firebase with the image URL
-          await this.updateRequirementImage(bookingId, requirementIndex, data.secure_url);
+          const data = await response.json();
 
-          // Update local state
-          const record = this.medicalHistory.find((r) => r.id === bookingId);
-          if (record && record.details.medicalRequirements[requirementIndex]) {
-            record.details.medicalRequirements[requirementIndex].imageUrl = data.secure_url;
+          if (!data.secure_url) {
+            throw new Error(data.error?.message || "Upload failed");
           }
 
-          // Send notification to doctor
-          await this.sendNotificationToDoctor(bookingId, requirementIndex);
-
-          this.showMessage(this.$t("success"), this.$t("imageUploaded"));
+          downloadURL = data.secure_url;
         }
+
+        // Update Firebase with the file URL and type
+        await this.updateRequirementFile(bookingId, requirementIndex, downloadURL, fileType);
+
+        // Update local state
+        const record = this.medicalHistory.find((r) => r.id === bookingId);
+        if (record && record.details.medicalRequirements[requirementIndex]) {
+          record.details.medicalRequirements[requirementIndex].imageUrl = downloadURL;
+          record.details.medicalRequirements[requirementIndex].fileType = fileType;
+        }
+
+        // Send notification to doctor
+        await this.sendNotificationToDoctor(bookingId, requirementIndex);
+
+        this.showMessage(
+          this.$t("success"),
+          fileType === "pdf" ? "PDF uploaded successfully" : this.$t("imageUploaded")
+        );
       } catch (error) {
-        console.error("Error uploading image:", error);
-        this.showMessage(this.$t("error"), this.$t("uploadFailed"));
+        console.error("Error uploading file:", error);
+        this.showMessage(this.$t("error"), error.message || this.$t("uploadFailed"));
       } finally {
         this.uploadingStates[key] = false;
       }
     },
-    async updateRequirementImage(bookingId, requirementIndex, imageUrl) {
+    async handleImageUpload(event, bookingId, requirementIndex) {
+      // Keep for backward compatibility
+      await this.handleFileUpload(event, bookingId, requirementIndex);
+    },
+    async updateRequirementFile(bookingId, requirementIndex, fileUrl, fileType) {
       try {
         const detailsRef = collection(db, "bookings", bookingId, "medicalDetails");
         const detailsSnapshot = await getDocs(detailsRef);
@@ -755,10 +910,11 @@ export default {
           const docRef = detailsSnapshot.docs[0].ref;
           const docData = detailsSnapshot.docs[0].data();
 
-          // Update the specific requirement with the image URL
+          // Update the specific requirement with the file URL and type
           const updatedRequirements = [...(docData.medicalRequirements || [])];
           if (updatedRequirements[requirementIndex]) {
-            updatedRequirements[requirementIndex].imageUrl = imageUrl;
+            updatedRequirements[requirementIndex].imageUrl = fileUrl;
+            updatedRequirements[requirementIndex].fileType = fileType;
 
             await updateDoc(docRef, {
               medicalRequirements: updatedRequirements,
@@ -767,33 +923,47 @@ export default {
           }
         }
       } catch (error) {
-        console.error("Error updating requirement image:", error);
+        console.error("Error updating requirement file:", error);
         throw error;
       }
     },
-    deleteImage(bookingId, requirementIndex) {
-      this.confirmModalTitle = this.$t("deleteImage");
-      this.confirmModalMessage = this.$t("confirmDeleteImage");
+    async updateRequirementImage(bookingId, requirementIndex, imageUrl) {
+      // Keep for backward compatibility
+      await this.updateRequirementFile(
+        bookingId,
+        requirementIndex,
+        imageUrl,
+        imageUrl ? "image" : null
+      );
+    },
+    deleteFile(bookingId, requirementIndex) {
+      this.confirmModalTitle = "Delete File";
+      this.confirmModalMessage = "Are you sure you want to delete this file?";
       this.confirmCallback = async () => {
         try {
-          // Update Firebase to remove the image URL
-          await this.updateRequirementImage(bookingId, requirementIndex, null);
+          // Update Firebase to remove the file URL
+          await this.updateRequirementFile(bookingId, requirementIndex, null, null);
 
           // Update local state
           const record = this.medicalHistory.find((r) => r.id === bookingId);
           if (record && record.details.medicalRequirements[requirementIndex]) {
             record.details.medicalRequirements[requirementIndex].imageUrl = null;
+            record.details.medicalRequirements[requirementIndex].fileType = null;
           }
 
           this.showConfirmModal = false;
-          this.showMessage(this.$t("success"), this.$t("imageDeleted"));
+          this.showMessage(this.$t("success"), "File deleted successfully");
         } catch (error) {
-          console.error("Error deleting image:", error);
+          console.error("Error deleting file:", error);
           this.showConfirmModal = false;
-          this.showMessage(this.$t("error"), this.$t("deleteFailed"));
+          this.showMessage(this.$t("error"), "Failed to delete file");
         }
       };
       this.showConfirmModal = true;
+    },
+    deleteImage(bookingId, requirementIndex) {
+      // Keep for backward compatibility
+      this.deleteFile(bookingId, requirementIndex);
     },
     confirmAction() {
       if (this.confirmCallback) {
@@ -833,8 +1003,86 @@ export default {
         console.error("Error sending notification to doctor:", error);
       }
     },
+    viewFile(fileUrl, fileType) {
+      if (fileType === "pdf") {
+        this.showPdfModal = true;
+        this.loadPdf(fileUrl);
+      } else {
+        window.open(fileUrl, "_blank");
+      }
+    },
+    downloadPDF(pdfUrl, fileName = "medical-document") {
+      // Simple download - just open the URL in a new tab
+      // The browser will handle the download
+      window.open(pdfUrl, "_blank");
+    },
     viewImage(imageUrl) {
+      // Keep for backward compatibility
       window.open(imageUrl, "_blank");
+    },
+    async loadPdf(url) {
+      this.loadingPdf = true;
+      try {
+        // Configure PDF loading with CORS support
+        const loadingTask = pdfjsLib.getDocument({
+          url: url,
+          cMapUrl: `https://cdn.jsdelivr.net/npm/pdfjs-dist@${pdfjsLib.version}/cmaps/`,
+          cMapPacked: true,
+          withCredentials: false,
+        });
+
+        this.pdfDoc = await loadingTask.promise;
+        this.totalPdfPages = this.pdfDoc.numPages;
+        this.currentPdfPage = 1;
+        await this.renderPage(1);
+      } catch (error) {
+        console.error("Error loading PDF:", error);
+        console.error("PDF URL:", url);
+        console.error("Error details:", error.message);
+        this.showMessage(
+          this.$t("error"),
+          "Failed to load PDF. Please try downloading it instead."
+        );
+        this.showPdfModal = false;
+      } finally {
+        this.loadingPdf = false;
+      }
+    },
+    async renderPage(pageNum) {
+      if (!this.pdfDoc) return;
+
+      try {
+        const page = await this.pdfDoc.getPage(pageNum);
+        const canvas = this.$refs.pdfCanvas;
+        if (!canvas) return;
+
+        const context = canvas.getContext("2d");
+        const viewport = page.getViewport({ scale: 1.5 });
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+
+        const renderContext = {
+          canvasContext: context,
+          viewport: viewport,
+        };
+
+        await page.render(renderContext).promise;
+      } catch (error) {
+        console.error("Error rendering page:", error);
+      }
+    },
+    async nextPage() {
+      if (this.currentPdfPage < this.totalPdfPages) {
+        this.currentPdfPage++;
+        await this.renderPage(this.currentPdfPage);
+      }
+    },
+    async previousPage() {
+      if (this.currentPdfPage > 1) {
+        this.currentPdfPage--;
+        await this.renderPage(this.currentPdfPage);
+      }
     },
     // downloadAsPDF(record) {
     //   const doc = new jsPDF();
@@ -1078,5 +1326,13 @@ export default {
 </script>
 
 <style scoped>
-/* Additional custom styles if needed */
+.pdf-viewer-container {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.pdf-viewer-container canvas {
+  max-width: 100%;
+  height: auto;
+}
 </style>
