@@ -356,13 +356,28 @@
 
                       <!-- Upload Section -->
                       <div class="mt-3 space-y-2">
-                        <!-- Show uploaded image -->
+                        <!-- Show uploaded image/PDF -->
                         <div v-if="requirement.imageUrl" class="flex items-center gap-2">
                           <button
                             @click="viewImage(requirement.imageUrl)"
                             class="inline-flex items-center px-3 py-1.5 text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-900/50 transition-colors"
                           >
                             <svg
+                              v-if="requirement.imageUrl.toLowerCase().includes('.pdf')"
+                              class="w-4 h-4 mr-1.5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+                              ></path>
+                            </svg>
+                            <svg
+                              v-else
                               class="w-4 h-4 mr-1.5"
                               fill="none"
                               stroke="currentColor"
@@ -381,7 +396,11 @@
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                               ></path>
                             </svg>
-                            {{ $t("viewImage") }}
+                            {{
+                              requirement.imageUrl.toLowerCase().includes(".pdf")
+                                ? $t("viewPDF") || "View PDF"
+                                : $t("viewImage")
+                            }}
                           </button>
                           <button
                             @click="deleteImage(record.id, index)"
@@ -460,8 +479,8 @@
                               uploadingStates[`${record.id}-${index}`]
                                 ? $t("uploading")
                                 : requirement.imageUrl
-                                ? $t("uploadImage")
-                                : $t("clickToUpload")
+                                ? $t("uploadImage") || "Upload Image/PDF"
+                                : $t("clickToUpload") || "Upload Image/PDF"
                             }}
                           </label>
                         </div>
@@ -549,7 +568,7 @@ import {
   updateDoc,
   addDoc,
 } from "firebase/firestore";
-import { getStorage, ref as storageRef, getDownloadURL } from "firebase/storage";
+import { getStorage, ref as storageRef, getDownloadURL, uploadBytes } from "firebase/storage";
 import { firebaseApp } from "/src/firebase.js";
 
 import jsPDF from "jspdf";
@@ -714,7 +733,7 @@ export default {
         // Upload to Cloudinary
         const formData = new FormData();
         formData.append("file", file);
-        formData.append("upload_preset", "ml_default"); // Replace with your upload preset
+        formData.append("upload_preset", "ml_default");
         formData.append("cloud_name", "dtaqbcmmg");
 
         const response = await fetch("https://api.cloudinary.com/v1_1/dtaqbcmmg/image/upload", {
@@ -834,7 +853,15 @@ export default {
       }
     },
     viewImage(imageUrl) {
-      window.open(imageUrl, "_blank");
+      // Open in new tab with proper handling for PDF
+      const isPDF = imageUrl.toLowerCase().includes(".pdf") || imageUrl.includes("application/pdf");
+      if (isPDF) {
+        // For PDF, open in new tab with PDF viewer
+        window.open(imageUrl, "_blank", "noopener,noreferrer");
+      } else {
+        // For images, open in new tab
+        window.open(imageUrl, "_blank", "noopener,noreferrer");
+      }
     },
     // downloadAsPDF(record) {
     //   const doc = new jsPDF();
