@@ -231,6 +231,7 @@
   "imageUploaded": "Image uploaded successfully",
   "uploadFailed": "Failed to upload image",
   "viewImage": "View Image",
+  "viewPDF": "View PDF",
   "noImageUploaded": "No image uploaded yet",
   "clickToUpload": "Click to upload file",
   "resultsUploaded": "Results Uploaded",
