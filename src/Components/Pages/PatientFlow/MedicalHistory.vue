@@ -18,7 +18,7 @@
         <div
           v-for="record in medicalHistory"
           :key="record.id"
-          class="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-xl  border border-gray-200 dark:border-gray-700 overflow-hidden"
         >
           <!-- Visit header -->
           <div
@@ -28,28 +28,30 @@
             <div class="flex justify-between items-start">
               <div class="flex items-center gap-4">
                 <div
-                  class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center overflow-hidden"
+                  class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center overflow-hidden border-2 border-blue-200 dark:border-blue-700"
                 >
-                  <img
-                    v-if="record.profilePic"
-                    :src="record.profilePic"
-                    :alt="record.doctorName"
-                    class="w-full h-full object-cover"
-                  />
-                  <svg
-                    v-else
-                    class="w-6 h-6 text-blue-600 dark:text-blue-400"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    ></path>
-                  </svg>
+                  <template v-if="record.profilePic">
+                    <img
+                      :src="record.profilePic"
+                      :alt="record.doctorName"
+                      class="w-full h-full object-cover"
+                    />
+                  </template>
+                  <template v-else>
+                    <svg
+                      class="w-6 h-6 text-blue-600 dark:text-blue-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      ></path>
+                    </svg>
+                  </template>
                 </div>
                 <div>
                   <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
@@ -59,6 +61,7 @@
                   <p class="text-sm text-gray-500 dark:text-gray-500">
                     {{ formatDate(record.date) }} at {{ record.time }}
                   </p>
+                  <!-- Debug: {{ record.profilePic ? 'Has pic' : 'No pic' }} -->
                 </div>
               </div>
               <div class="flex items-center gap-3">
@@ -651,13 +654,12 @@ import {
   query,
   where,
   getDocs,
-  doc,
+  doc as firestoreDoc,
   getDoc,
   updateDoc,
   addDoc,
 } from "firebase/firestore";
-import { getStorage, ref as storageRef, getDownloadURL, uploadBytes } from "firebase/storage";
-import { firebaseApp } from "/src/firebase.js";
+import { getStorage, ref as storageRef, uploadBytes } from "firebase/storage";
 
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
@@ -665,9 +667,6 @@ import * as pdfjsLib from "pdfjs-dist";
 
 // Configure PDF.js worker with proper URL
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-
-// eslint-disable-next-line no-unused-vars
-const unused = doc; // Prevent ESLint error for unused import
 
 export default {
   name: "MedicalHistory",
@@ -754,35 +753,18 @@ export default {
 
             try {
               if (bookingData.doctorId) {
-                const storage = getStorage(firebaseApp);
-                const doctorRef = doc(db, "doctors", bookingData.doctorId);
+                const doctorRef = firestoreDoc(db, "doctors", bookingData.doctorId);
                 const doctorSnap = await getDoc(doctorRef);
                 if (doctorSnap.exists()) {
                   const doctorData = doctorSnap.data();
+
                   doctorName =
-                    `Dr. ${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() ||
+                    `${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() ||
                     doctorName;
                   speciality = doctorData.speciality || speciality;
 
-                  // Handle profile picture fetching like in PatientAppointments.vue
-                  if (
-                    doctorData.profileImageUrl &&
-                    typeof doctorData.profileImageUrl === "string"
-                  ) {
-                    profilePic = doctorData.profileImageUrl;
-                  } else if (doctorData.image && typeof doctorData.image === "string") {
-                    // If it's a storage path, resolve to download URL
-                    if (!doctorData.image.startsWith("http")) {
-                      try {
-                        const url = await getDownloadURL(storageRef(storage, doctorData.image));
-                        profilePic = url;
-                      } catch (e) {
-                        console.warn("Failed to load doctor image from storage", e);
-                      }
-                    } else {
-                      profilePic = doctorData.image;
-                    }
-                  }
+                  // Get profile image URL directly like in DoctorsPage
+                  profilePic = doctorData.profileImageUrl || null;
                 }
               }
             } catch (error) {
@@ -978,7 +960,7 @@ export default {
     async sendNotificationToDoctor(bookingId, requirementIndex) {
       try {
         // Get booking details to find doctor ID
-        const bookingRef = doc(db, "bookings", bookingId);
+        const bookingRef = firestoreDoc(db, "bookings", bookingId);
         const bookingSnap = await getDoc(bookingRef);
 
         if (bookingSnap.exists()) {
