@@ -471,5 +471,14 @@
   "viewPDF": "View PDF",
   "deleteFile": "Delete File",
   "uploadFile": "Upload File",
-  "supportedFormats": "Supported formats"
+  "supportedFormats": "Supported formats",
+  "medications_list": "Medications",
+  "no_medications_added": "No medications added yet",
+  "click_add_medication": "Click the button above to add a medication",
+  "click_add_medication_below": "Click the button below to add a medication",
+  "medication": "Medication",
+  "requirements_list": "Medical Requirements",
+  "click_add_requirement": "Click the button above to add a requirement",
+  "click_add_requirement_below": "Click the button below to add a requirement",
+  "requirement": "Requirement"
 }

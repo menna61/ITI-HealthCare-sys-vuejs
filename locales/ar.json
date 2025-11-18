@@ -471,5 +471,14 @@
   "viewPDF": "عرض PDF",
   "deleteFile": "حذف الملف",
   "uploadFile": "رفع ملف",
-  "supportedFormats": "الصيغ المدعومة"
+  "supportedFormats": "الصيغ المدعومة",
+  "medications_list": "قائمة الأدوية",
+  "no_medications_added": "لم يتم إضافة أي أدوية بعد",
+  "click_add_medication": "اضغط على الزر أعلاه لإضافة دواء",
+  "click_add_medication_below": "اضغط على الزر أدناه لإضافة دواء",
+  "medication": "دواء",
+  "requirements_list": "الطلبات الطبية",
+  "click_add_requirement": "اضغط على الزر أعلاه لإضافة طلب",
+  "click_add_requirement_below": "اضغط على الزر أدناه لإضافة طلب",
+  "requirement": "طلب"
 }
