@@ -1,66 +1,108 @@
 <template>
   <div
-    class="flex h-screen bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-950"
+    class="flex h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-950"
   >
     <!-- Sidebar for Chat History -->
     <div
-      class="hidden md:flex md:w-1/4 bg-white/80 dark:bg-gray-800/80 backdrop-blur border-r border-gray-200 dark:border-gray-700 flex-col fixed top-[66px] h-full"
+      class="hidden md:flex md:w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex-col fixed top-[66px] h-full shadow-xl"
     >
       <div
-        class="p-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between"
+        class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-[var(--main-color-50)] to-transparent dark:from-gray-800"
       >
-        <h2 class="text-base font-semibold text-gray-900 dark:text-white">Conversations</h2>
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+          <svg
+            class="w-5 h-5 text-[var(--main-color-500)]"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+            />
+          </svg>
+          Conversations
+        </h2>
         <button
           @click="startNewChat"
-          class="inline-flex items-center gap-2 bg-[var(--main-color-500)] text-white py-2 px-3 rounded-lg hover:bg-[var(--main-color-600)] transition-colors"
+          class="inline-flex items-center gap-2 bg-[var(--main-color-500)] text-white py-2.5 px-4 rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 font-medium"
         >
-          <span class="text-sm">New</span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            fill="currentColor"
+            fill="none"
+            stroke="currentColor"
             class="w-4 h-4"
           >
-            <path
-              d="M12 5v14m-7-7h14"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            />
+            <path d="M12 5v14m-7-7h14" stroke-width="2" stroke-linecap="round" />
           </svg>
+          <span class="text-sm">New</span>
         </button>
       </div>
-      <div class="flex-1 overflow-y-auto p-4 space-y-2">
-        <div v-if="chatHistory.length === 0" class="text-gray-500 dark:text-gray-400 text-sm">
-          No previous chats
+      <div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+        <div v-if="chatHistory.length === 0" class="text-center py-12">
+          <svg
+            class="w-16 h-16 mx-auto text-gray-300 dark:text-gray-600 mb-3"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+            />
+          </svg>
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">No conversations yet</p>
+          <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">Start a new chat to begin</p>
         </div>
         <div v-else>
-          <div v-for="(chat, index) in chatHistory" :key="chat.id || index" class="relative group">
+          <div
+            v-for="(chat, index) in chatHistory"
+            :key="chat.id || index"
+            class="relative group chat-item"
+          >
             <button
               @click="loadChat(chat)"
-              class="w-full text-left p-3 bg-gray-50/80 dark:bg-gray-700/60 hover:bg-gray-100 dark:hover:bg-gray-600 rounded-xl transition-colors"
+              :class="[
+                'w-full text-left p-4 rounded-2xl transition-all duration-200 border',
+                currentChat.id === chat.id
+                  ? 'bg-gradient-to-r from-[var(--main-color-100)] to-[var(--main-color-50)] dark:from-[var(--main-color-900)] dark:to-gray-700 border-[var(--main-color-300)] dark:border-[var(--main-color-700)] shadow-md'
+                  : 'bg-gray-50/80 dark:bg-gray-700/60 hover:bg-white dark:hover:bg-gray-600 border-transparent hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-md',
+              ]"
             >
-              <p class="text-sm text-gray-900 dark:text-white truncate">
+              <p class="text-sm font-medium text-gray-900 dark:text-white truncate pr-8">
                 {{ chat.messages && chat.messages[0] ? chat.messages[0].text : "New Chat" }}
               </p>
-              <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-1">
+              <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 flex items-center gap-1">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
                 {{ formatDate(chat.createdAt) }}
               </p>
             </button>
             <button
               @click.stop="deleteChat(index)"
-              class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity bg-red-500 hover:bg-red-600 text-white rounded-full p-1"
+              class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-red-500 hover:bg-red-600 text-white rounded-lg p-1.5 hover:scale-110 shadow-lg"
               title="Delete chat"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 24 24"
-                fill="currentColor"
-                class="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                class="w-3.5 h-3.5"
               >
                 <path
                   d="M6 18L18 6M6 6l12 12"
-                  stroke="currentColor"
                   stroke-width="2"
                   stroke-linecap="round"
                   stroke-linejoin="round"
@@ -76,30 +118,50 @@
     <div class="flex-1 flex flex-col">
       <!-- Header -->
       <div
-        class="fixed w-full top-0 z-10 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 backdrop-blur"
+        class="fixed w-full top-0 z-10 border-b border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-sm"
       >
-        <div class="px-4 md:px-6 py-3 flex items-center justify-between">
-          <div class="flex items-center gap-3">
-            <img :src="aiIcon" alt="AI" class="w-8 h-8 rounded" />
+        <div class="px-6 md:px-8 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="relative">
+              <img
+                :src="aiIcon"
+                alt="AI"
+                class="w-10 h-10 rounded-xl shadow-md ring-2 ring-[var(--main-color-200)] dark:ring-[var(--main-color-800)]"
+              />
+              <span
+                class="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-white dark:border-gray-900"
+                :class="isLoading ? 'bg-yellow-400 animate-pulse' : 'bg-emerald-500'"
+              ></span>
+            </div>
             <div>
-              <h1 class="text-sm md:text-base font-semibold text-gray-900 dark:text-white w-full">
-                Your AI assistant
-              </h1>
-              <div class="flex items-center gap-2">
+              <h1
+                class="text-base md:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"
+              >
+                Your AI Assistant
                 <span
-                  class="inline-flex h-2 w-2 rounded-full"
-                  :class="isLoading ? 'bg-yellow-500 animate-pulse' : 'bg-emerald-500'"
-                ></span>
-                <span class="text-[11px] text-gray-500 dark:text-gray-400">{{
-                  isLoading ? "Thinking..." : "Online"
+                  class="text-xs font-normal px-2 py-0.5 bg-[var(--main-color-100)] dark:bg-[var(--main-color-900)] text-[var(--main-color-700)] dark:text-[var(--main-color-300)] rounded-full"
+                  >Pro</span
+                >
+              </h1>
+              <div class="flex items-center gap-2 mt-0.5">
+                <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">{{
+                  isLoading ? "🤔 Thinking..." : "✨ Ready to help"
                 }}</span>
               </div>
             </div>
           </div>
           <button
-            class="md:hidden inline-flex items-center gap-2 text-gray-700 dark:text-gray-300 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800"
+            class="md:hidden inline-flex items-center gap-2 bg-[var(--main-color-500)] text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 font-medium"
             @click="startNewChat"
           >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
             New Chat
           </button>
         </div>
@@ -109,25 +171,44 @@
         <!-- Chat Messages -->
         <div
           ref="messagesPane"
-          class="flex-1 overflow-y-auto px-4 md:px-6 py-6 space-y-4 ml-[422px] mr-[300px] mt-[80px]"
+          class="flex-1 overflow-y-auto px-6 md:px-8 py-8 space-y-6 ml-[320px] mr-[340px] mt-[80px] custom-scrollbar"
         >
           <!-- Empty state -->
           <div
             v-if="currentChat.messages.length === 0 && !isLoading"
             class="h-full w-full flex items-center justify-center"
           >
-            <div class="text-center">
-              <img
-                :src="startImg"
-                alt="Start chatting"
-                class="mx-auto w-40 h-40 object-contain opacity-90"
-              />
-              <h3 class="mt-4 text-lg font-semibold text-gray-900 dark:text-white">
+            <div class="text-center max-w-md animate-fade-in">
+              <div class="relative inline-block">
+                <img
+                  :src="startImg"
+                  alt="Start chatting"
+                  class="mx-auto w-48 h-48 object-contain opacity-90 drop-shadow-2xl"
+                />
+                <div
+                  class="absolute inset-0 bg-gradient-to-t from-[var(--main-color-100)] to-transparent opacity-30 rounded-full blur-3xl"
+                ></div>
+              </div>
+              <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
                 Start a conversation
               </h3>
-              <p class="mt-1 text-sm text-gray-600 dark:text-gray-400">
+              <p class="mt-3 text-base text-gray-600 dark:text-gray-400 leading-relaxed">
                 Ask anything about health, appointments, or general queries.
               </p>
+              <div class="mt-6 flex flex-wrap gap-2 justify-center">
+                <span
+                  class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
+                  >💊 Prescriptions</span
+                >
+                <span
+                  class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
+                  >🩺 Diagnoses</span
+                >
+                <span
+                  class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
+                  >💬 Patient Care</span
+                >
+              </div>
             </div>
           </div>
 
@@ -135,51 +216,64 @@
           <div
             v-for="(message, index) in currentChat.messages"
             :key="index"
-            class="flex items-end gap-3"
+            class="flex items-end gap-4 message-item"
             :class="message.sender === 'user' ? 'justify-end' : 'justify-start'"
           >
             <img
               v-if="message.sender !== 'user'"
               :src="aiIcon"
               alt="AI"
-              class="w-8 h-8 rounded-md shadow-sm border border-gray-200 dark:border-gray-700"
+              class="w-9 h-9 rounded-xl shadow-md border-2 border-white dark:border-gray-800 ring-2 ring-[var(--main-color-200)] dark:ring-[var(--main-color-800)]"
             />
             <div
               :class="[
-                'max-w-[80%] md:max-w-[70%] rounded-2xl shadow-sm px-4 py-3',
+                'max-w-[75%] md:max-w-[65%] rounded-2xl shadow-lg px-5 py-4 transition-all duration-200 hover:shadow-xl',
                 message.sender === 'user'
-                  ? 'bg-[var(--main-color-500)] text-white rounded-br-md'
-                  : 'bg-white/90 dark:bg-gray-800/80 text-gray-900 dark:text-gray-50 border border-gray-200/70 dark:border-gray-700/60 rounded-bl-md',
+                  ? 'bg-[var(--main-color-500)] text-white rounded-br-sm'
+                  : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50 border border-gray-200/70 dark:border-gray-700/60 rounded-bl-sm',
               ]"
             >
-              <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
-              <span class="block text-[11px] mt-1 opacity-70">{{
-                formatDate(message.createdAt || new Date())
-              }}</span>
+              <p class="whitespace-pre-wrap leading-relaxed text-[15px]">{{ message.text }}</p>
+              <span
+                class="flex items-center gap-1 text-[11px] mt-2"
+                :class="
+                  message.sender === 'user' ? 'text-white/70' : 'text-gray-500 dark:text-gray-400'
+                "
+              >
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                {{ formatDate(message.createdAt || new Date()) }}
+              </span>
             </div>
           </div>
 
           <!-- Typing indicator -->
-          <div v-if="isLoading" class="flex items-end gap-3 justify-start">
+          <div v-if="isLoading" class="flex items-end gap-4 justify-start message-item">
             <img
               :src="aiIcon"
               alt="AI"
-              class="w-8 h-8 rounded-md shadow-sm border border-gray-200 dark:border-gray-700"
+              class="w-9 h-9 rounded-xl shadow-md border-2 border-white dark:border-gray-800 ring-2 ring-[var(--main-color-200)] dark:ring-[var(--main-color-800)]"
             />
             <div
-              class="bg-white/90 dark:bg-gray-800/80 text-gray-900 dark:text-gray-50 border border-gray-200/70 dark:border-gray-700/60 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm"
+              class="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-50 border border-gray-200/70 dark:border-gray-700/60 rounded-2xl rounded-bl-sm px-5 py-4 shadow-lg"
             >
-              <div class="flex items-center gap-1">
+              <div class="flex items-center gap-1.5">
                 <span
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 0ms"
                 ></span>
                 <span
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 150ms"
                 ></span>
                 <span
-                  class="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 300ms"
                 ></span>
               </div>
@@ -187,67 +281,123 @@
           </div>
         </div>
 
-        <!-- Right Tools Panel (Option B) -->
+        <!-- Right Tools Panel -->
         <aside
-          class="hidden xl:flex xl:w-80 flex-col border-l border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-900/70 p-4 gap-3 fixed right-0"
+          class="hidden xl:flex xl:w-80 flex-col border-l border-gray-200/50 dark:border-gray-700/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl p-6 gap-4 fixed right-0 shadow-xl"
         >
-          <h3 class="text-sm font-semibold text-gray-900 dark:text-white">AI Medical Tools</h3>
-          <p class="text-xs text-gray-500 dark:text-gray-400">
-            Select text in chat or type a message, then click a tool.
-          </p>
+          <div class="space-y-2">
+            <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <svg
+                class="w-5 h-5 text-[var(--main-color-500)]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                />
+              </svg>
+              AI Medical Tools
+            </h3>
+            <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+              Select text in chat or type a message, then click a tool to analyze.
+            </p>
+          </div>
 
-          <button
-            class="w-full text-left py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border hover:shadow-sm"
-            @click="runFeature('diagnose')"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-medium">Suggest Diagnoses & Tests</div>
-                <div class="text-xs text-gray-500 mt-1">From symptoms → possible conditions</div>
+          <div class="space-y-3">
+            <button
+              class="w-full text-left p-4 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 border border-blue-200 dark:border-blue-800 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 group"
+              @click="runFeature('diagnose')"
+            >
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="text-xl">🩺</span>
+                    Diagnoses & Tests
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
+                    Analyze symptoms → suggest conditions
+                  </div>
+                </div>
+                <div
+                  class="text-xs font-mono text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/40 px-2 py-1 rounded"
+                >
+                  Ctrl+2
+                </div>
               </div>
-              <div class="text-xs text-gray-400">Ctrl+2</div>
-            </div>
-          </button>
+            </button>
 
-          <button
-            class="w-full text-left py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border hover:shadow-sm"
-            @click="runFeature('interactions')"
-          >
-            <div class="flex items-center justify-between">
-              <div>
-                <div class="font-medium">Check Drug Interactions</div>
-                <div class="text-xs text-gray-500 mt-1">Warn about dangerous combinations</div>
+            <button
+              class="w-full text-left p-4 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 border border-purple-200 dark:border-purple-800 hover:shadow-lg hover:scale-[1.02] transition-all duration-200 group"
+              @click="runFeature('interactions')"
+            >
+              <div class="flex items-start justify-between">
+                <div class="flex-1">
+                  <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                    <span class="text-xl">💊</span>
+                    Drug Interactions
+                  </div>
+                  <div class="text-xs text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
+                    Check for dangerous combinations
+                  </div>
+                </div>
+                <div
+                  class="text-xs font-mono text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/40 px-2 py-1 rounded"
+                >
+                  Ctrl+3
+                </div>
               </div>
-              <div class="text-xs text-gray-400">Ctrl+3</div>
-            </div>
-          </button>
+            </button>
 
-          <button
-            @click="runPatientExplanation"
-            class="w-full py-2 px-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm"
-          >
-            🗣 Explain to Patient (Ctrl+E)
-          </button>
+            <button
+              @click="runPatientExplanation"
+              class="w-full p-4 bg-[var(--main-color-500)]  text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-between"
+            >
+              <span class="flex items-center gap-2">
+                <span class="text-xl">🗣</span>
+                Explain to Patient
+              </span>
+              <span class="text-xs font-mono bg-white/20 px-2 py-1 rounded">Ctrl+E</span>
+            </button>
+          </div>
+
+          <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-700">
+            <div class="text-xs text-gray-500 dark:text-gray-400 space-y-1">
+              <p class="flex items-center gap-2">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    fill-rule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                Use keyboard shortcuts for faster access
+              </p>
+            </div>
+          </div>
         </aside>
       </div>
 
       <!-- Input Area -->
       <div
-        class="border-t border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-gray-900/70 backdrop-blur ml-[422px]"
+        class="border-t border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl ml-[320px] shadow-2xl"
       >
-        <div class="px-4 md:px-6 py-4">
-          <div class="flex items-end gap-2">
+        <div class="px-6 md:px-8 py-5">
+          <div class="flex items-end gap-3">
             <textarea
               v-model="newMessage"
               @keyup.enter.exact.prevent="sendMessage"
               rows="1"
-              placeholder="Type your message..."
-              class="flex-1 resize-none max-h-40 min-h-[48px] p-3 border border-gray-300 dark:border-gray-700 rounded-xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-[var(--main-color-500)] focus:border-transparent"
+              placeholder="Type your message here..."
+              class="flex-1 resize-none max-h-40 min-h-[56px] p-4 border-2 border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-[var(--main-color-400)] focus:border-[var(--main-color-400)] transition-all duration-200 shadow-sm"
             />
             <button
               @click="sendMessage"
               :disabled="isLoading || !newMessage.trim()"
-              class="inline-flex items-center justify-center gap-2 bg-[var(--main-color-500)] text-white px-5 py-3 rounded-xl hover:bg-[var(--main-color-600)] transition-colors disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
+              class="inline-flex items-center justify-center gap-2 bg-[var(--main-color-500)] text-white px-6 py-4 rounded-2xl hover:shadow-lg hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 shadow-md font-medium"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -260,7 +410,20 @@
               <span class="hidden sm:inline">Send</span>
             </button>
           </div>
-          <div class="mt-2 text-[11px] text-gray-500 dark:text-gray-400">Press Enter to send</div>
+          <div class="mt-3 flex items-center justify-between text-xs">
+            <span class="text-gray-500 dark:text-gray-400 flex items-center gap-1">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M13 10V3L4 14h7v7l9-11h-7z"
+                />
+              </svg>
+              Press Enter to send
+            </span>
+            <span class="text-gray-400 dark:text-gray-500">Powered by Gemini AI</span>
+          </div>
         </div>
       </div>
     </div>
@@ -681,13 +844,62 @@ ${text}
 </script>
 
 <style scoped>
-/* Additional styles if needed */
-/* Hide scrollbar but keep scroll functionality on WebKit */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+/* Custom scrollbar styling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.5);
+}
+
+/* Dark mode scrollbar */
+.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(75, 85, 99, 0.5);
+}
+
+.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(75, 85, 99, 0.7);
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out;
+}
+
+.message-item {
+  animation: fade-in 0.3s ease-out;
+}
+
+.chat-item {
+  animation: fade-in 0.2s ease-out;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow,
+    transform;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>

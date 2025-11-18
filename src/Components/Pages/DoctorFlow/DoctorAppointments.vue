@@ -360,7 +360,7 @@
           <div class="flex justify-end pt-2">
             <button
               @click="addMedication"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg hover:bg-[var(--main-color-600)] transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -509,7 +509,7 @@
           <div class="flex justify-end pt-2">
             <button
               @click="addRequirement"
-              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg hover:bg-[var(--main-color-600)] transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
