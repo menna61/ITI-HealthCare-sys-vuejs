@@ -240,71 +240,140 @@
 
         <!-- Prescription Tab -->
         <div v-if="activeTab === 'prescription'" class="space-y-4">
+          <!-- Title -->
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+              {{ $t("medications_list") || "Medications" }}
+            </h3>
+          </div>
+
+          <!-- Medications List -->
+          <div
+            v-if="medicalDetails.prescriptions.length === 0"
+            class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-12 w-12 mx-auto text-gray-400 mb-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+              />
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+              {{ $t("no_medications_added") || "No medications added yet" }}
+            </p>
+            <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">
+              {{ $t("click_add_medication_below") || "Click the button below to add a medication" }}
+            </p>
+          </div>
+
           <div
             v-for="(medication, index) in medicalDetails.prescriptions"
             :key="index"
-            class="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+            class="relative border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow"
           >
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Remove Button - Top Right Corner -->
+            <button
+              @click="removeMedication(index)"
+              class="absolute top-3 right-3 p-1.5 text-red-500 hover:text-white hover:bg-red-500 rounded-full transition-all duration-200"
+              :title="$t('remove') || 'Remove'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <!-- Medication Number Badge -->
+            <div class="mb-3">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200"
+              >
+                {{ $t("medication") || "Medication" }} #{{ index + 1 }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("medication_name_label") }}
                 </label>
                 <input
                   v-model="medication.name"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   :placeholder="$t('medication_name_placeholder')"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("dosage_label") }}
                 </label>
                 <input
                   v-model="medication.dosage"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   :placeholder="$t('dosage_placeholder')"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("frequency_label") }}
                 </label>
                 <input
                   v-model="medication.frequency"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   :placeholder="$t('frequency_placeholder')"
                 />
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("duration_label") }}
                 </label>
                 <input
                   v-model="medication.duration"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   :placeholder="$t('duration_placeholder')"
                 />
               </div>
             </div>
-            <div class="mt-4 flex justify-end">
-              <button
-                @click="removeMedication(index)"
-                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
-              >
-                {{ $t("remove") }}
-              </button>
-            </div>
           </div>
-          <div class="flex justify-center">
+
+          <!-- Add Medication Button at Bottom -->
+          <div class="flex justify-end pt-2">
             <button
               @click="addMedication"
-              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg hover:bg-[var(--main-color-600)] transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
               {{ $t("add_medication") }}
             </button>
           </div>
@@ -312,19 +381,84 @@
 
         <!-- Medical Requirements Tab -->
         <div v-if="activeTab === 'requirements'" class="space-y-4">
+          <!-- Title -->
+          <div class="mb-4">
+            <h3 class="text-lg font-medium text-gray-900 dark:text-white">
+              {{ $t("requirements_list") || "Medical Requirements" }}
+            </h3>
+          </div>
+
+          <!-- Requirements List -->
+          <div
+            v-if="medicalDetails.medicalRequirements.length === 0"
+            class="text-center py-12 bg-gray-50 dark:bg-gray-700/50 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-600"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-12 w-12 mx-auto text-gray-400 mb-3"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+              />
+            </svg>
+            <p class="text-gray-500 dark:text-gray-400 text-sm">
+              {{ $t("noRequirementsAdded") || "No requirements added yet" }}
+            </p>
+            <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">
+              {{
+                $t("click_add_requirement_below") || "Click the button below to add a requirement"
+              }}
+            </p>
+          </div>
+
           <div
             v-for="(requirement, index) in medicalDetails.medicalRequirements"
             :key="index"
-            class="border border-gray-200 dark:border-gray-600 rounded-lg p-4"
+            class="relative border border-gray-200 dark:border-gray-600 rounded-lg p-4 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow"
           >
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- Remove Button - Top Right Corner -->
+            <button
+              @click="removeRequirement(index)"
+              class="absolute top-3 right-3 p-1.5 text-red-500 hover:text-white hover:bg-red-500 rounded-full transition-all duration-200"
+              :title="$t('removeRequirement') || 'Remove'"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                  clip-rule="evenodd"
+                />
+              </svg>
+            </button>
+
+            <!-- Requirement Number Badge -->
+            <div class="mb-3">
+              <span
+                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200"
+              >
+                {{ $t("requirement") || "Requirement" }} #{{ index + 1 }}
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 pr-8">
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("requirementType") }}
                 </label>
                 <select
                   v-model="requirement.type"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">{{ $t("selectRequirementType") }}</option>
                   <option value="lab">{{ $t("labTest") }}</option>
@@ -333,12 +467,12 @@
                 </select>
               </div>
               <div>
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("priority") }}
                 </label>
                 <select
                   v-model="requirement.priority"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                 >
                   <option value="">{{ $t("selectPriority") }}</option>
                   <option value="urgent">{{ $t("urgent") }}</option>
@@ -347,48 +481,48 @@
                 </select>
               </div>
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("requirementName") }}
                 </label>
                 <input
                   v-model="requirement.name"
                   type="text"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   :placeholder="$t('enterRequirementName')"
                 />
               </div>
               <div class="md:col-span-2">
-                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                   {{ $t("requirementNotes") }}
                 </label>
                 <textarea
                   v-model="requirement.notes"
-                  class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
+                  class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white"
                   rows="2"
                   :placeholder="$t('enterRequirementNotes')"
                 ></textarea>
               </div>
             </div>
-            <div class="mt-4 flex justify-end">
-              <button
-                @click="removeRequirement(index)"
-                class="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors text-sm"
-              >
-                {{ $t("removeRequirement") }}
-              </button>
-            </div>
           </div>
-          <div
-            v-if="medicalDetails.medicalRequirements.length === 0"
-            class="text-center py-8 text-gray-500 dark:text-gray-400"
-          >
-            {{ $t("noRequirementsAdded") }}
-          </div>
-          <div class="flex justify-center">
+
+          <!-- Add Requirement Button at Bottom -->
+          <div class="flex justify-end pt-2">
             <button
               @click="addRequirement"
-              class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+              class="inline-flex items-center gap-2 px-4 py-2 bg-[var(--main-color-500)] text-white rounded-lg hover:bg-[var(--main-color-600)] transition-all duration-200 shadow-sm hover:shadow-md text-sm font-medium"
             >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fill-rule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clip-rule="evenodd"
+                />
+              </svg>
               {{ $t("addRequirement") }}
             </button>
           </div>
