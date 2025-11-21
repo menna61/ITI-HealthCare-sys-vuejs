@@ -480,5 +480,8 @@
   "requirements_list": "Medical Requirements",
   "click_add_requirement": "Click the button above to add a requirement",
   "click_add_requirement_below": "Click the button below to add a requirement",
-  "requirement": "Requirement"
+  "requirement": "Requirement",
+  "medical_history": "Medical History",
+  "payments": "Payments",
+  "confirm_logout": "Are you sure you want to logout?"
 }

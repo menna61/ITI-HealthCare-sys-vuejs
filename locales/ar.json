@@ -480,5 +480,8 @@
   "requirements_list": "الطلبات الطبية",
   "click_add_requirement": "اضغط على الزر أعلاه لإضافة طلب",
   "click_add_requirement_below": "اضغط على الزر أدناه لإضافة طلب",
-  "requirement": "طلب"
+  "requirement": "طلب",
+  "medical_history": "السجل الطبي",
+  "payments": "المدفوعات",
+  "confirm_logout": "هل أنت متأكد من تسجيل الخروج؟"
 }

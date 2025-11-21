@@ -1,7 +1,12 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="[$i18n.locale === 'ar' ? 'lg:mr-[302px]' : 'lg:ml-[302px]', 'w-dwh']">
     <main-nav />
-    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
+    <div
+      :class="[
+        $i18n.locale === 'ar' ? 'px-4 lg:pr-8 lg:pl-20' : 'px-4 lg:pl-8 lg:pr-20',
+        'mt-8 flex flex-col gap-6',
+      ]"
+    >
       <!-- Page title -->
       <div class="title flex flex-col gap-4">
         <h1 class="text-2xl font-bold dark:text-white">Medical History</h1>
@@ -18,7 +23,7 @@
         <div
           v-for="record in medicalHistory"
           :key="record.id"
-          class="bg-white dark:bg-gray-800 rounded-xl  border border-gray-200 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
         >
           <!-- Visit header -->
           <div

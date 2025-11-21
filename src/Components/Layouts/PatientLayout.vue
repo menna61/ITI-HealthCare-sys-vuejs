@@ -1,5 +1,5 @@
 <template>
-  <div class="flex w-full min-h-screen">
+  <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'" class="flex w-full min-h-screen">
     <side-menu-patient :isOpen="isSidebarOpen" />
     <div class="w-full">
       <!-- Mobile top bar with hamburger -->
