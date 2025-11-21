@@ -1,8 +1,13 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="[$i18n.locale === 'ar' ? 'lg:mr-[302px]' : 'lg:ml-[302px]', 'w-dwh']">
     <main-nav />
 
-    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
+    <div
+      :class="[
+        $i18n.locale === 'ar' ? 'px-4 lg:pr-8 lg:pl-20' : 'px-4 lg:pl-8 lg:pr-20',
+        'mt-8 flex flex-col gap-6',
+      ]"
+    >
       <!--Titles-->
       <div class="title flex flex-col gap-4">
         <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
@@ -134,7 +139,6 @@
                 <option value="">Select gender</option>
                 <option value="Male">Male</option>
                 <option value="Female">Female</option>
-               
               </select>
             </div>
             <div class="flex flex-col gap-2">

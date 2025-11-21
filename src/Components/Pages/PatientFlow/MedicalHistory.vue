@@ -1,11 +1,16 @@
 <template>
-  <div class="w-dwh lg:ml-[302px] ml-0">
+  <div :class="[$i18n.locale === 'ar' ? 'lg:mr-[302px]' : 'lg:ml-[302px]', 'w-dwh']">
     <main-nav />
-    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
+    <div
+      :class="[
+        $i18n.locale === 'ar' ? 'px-4 lg:pr-8 lg:pl-20' : 'px-4 lg:pl-8 lg:pr-20',
+        'mt-8 flex flex-col gap-6',
+      ]"
+    >
       <!-- Page title -->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Medical History</h1>
-        <p class="text-gray-500">View your complete medical history from all visits</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("medical_history") }}</h1>
+        <p class="text-gray-500">{{ $t("view_complete_medical_history") }}</p>
       </div>
 
       <!-- Loading state -->
@@ -18,7 +23,7 @@
         <div
           v-for="record in medicalHistory"
           :key="record.id"
-          class="bg-white dark:bg-gray-800 rounded-xl  border border-gray-200 dark:border-gray-700 overflow-hidden"
+          class="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
         >
           <!-- Visit header -->
           <div
@@ -101,7 +106,7 @@
               class="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
             >
               <h4 class="text-sm font-semibold text-gray-900 dark:text-white mb-2">
-                Patient Complaint
+                {{ $t("patient_complaint") }}
               </h4>
               <p class="text-sm text-gray-700 dark:text-gray-300">
                 {{ record.details.patientComplaint }}
@@ -113,7 +118,9 @@
               v-if="record.details.diagnosis"
               class="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4"
             >
-              <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">Diagnosis</h4>
+              <h4 class="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                {{ $t("diagnosis") }}
+              </h4>
               <p class="text-sm text-blue-800 dark:text-blue-200">{{ record.details.diagnosis }}</p>
             </div>
 
@@ -123,7 +130,7 @@
               class="bg-yellow-50 dark:bg-yellow-900/20 rounded-lg p-4"
             >
               <h4 class="text-sm font-semibold text-yellow-900 dark:text-yellow-100 mb-2">
-                Instructions
+                {{ $t("instructions") }}
               </h4>
               <p class="text-sm text-yellow-800 dark:text-yellow-200">
                 {{ record.details.instructions }}
@@ -135,7 +142,9 @@
               v-if="record.details.allergies"
               class="bg-red-50 dark:bg-red-900/20 rounded-lg p-4"
             >
-              <h4 class="text-sm font-semibold text-red-900 dark:text-red-100 mb-2">Allergies</h4>
+              <h4 class="text-sm font-semibold text-red-900 dark:text-red-100 mb-2">
+                {{ $t("allergies") }}
+              </h4>
               <p class="text-sm text-red-800 dark:text-red-200">{{ record.details.allergies }}</p>
             </div>
 
@@ -146,7 +155,7 @@
             >
               <div class="flex justify-between items-center mb-3">
                 <h4 class="text-sm font-semibold text-green-900 dark:text-green-100">
-                  Prescriptions
+                  {{ $t("prescription") }}
                 </h4>
                 <!-- <button
                   @click="downloadAsPDF(record)"
@@ -188,7 +197,7 @@
                     <div>
                       <span
                         class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide"
-                        >Medication</span
+                        >{{ $t("medication_name") }}</span
                       >
                       <p class="text-sm font-medium text-gray-900 dark:text-white">
                         {{ medication.name }}
@@ -197,7 +206,7 @@
                     <div>
                       <span
                         class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide"
-                        >Dosage</span
+                        >{{ $t("dosage") }}</span
                       >
                       <p class="text-sm text-gray-700 dark:text-gray-300">
                         {{ medication.dosage }}
@@ -206,7 +215,7 @@
                     <div>
                       <span
                         class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide"
-                        >Frequency</span
+                        >{{ $t("frequency") }}</span
                       >
                       <p class="text-sm text-gray-700 dark:text-gray-300">
                         {{ medication.frequency }}
@@ -215,7 +224,7 @@
                     <div>
                       <span
                         class="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide"
-                        >Duration</span
+                        >{{ $t("duration") }}</span
                       >
                       <p class="text-sm text-gray-700 dark:text-gray-300">
                         {{ medication.duration }}
@@ -560,9 +569,11 @@
             ></path>
           </svg>
         </div>
-        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">No Medical History</h3>
+        <h3 class="text-lg font-medium text-gray-900 dark:text-white mb-2">
+          {{ $t("no_medical_history") }}
+        </h3>
         <p class="text-gray-500 dark:text-gray-400">
-          You don't have any completed appointments with medical details yet.
+          {{ $t("no_medical_history_desc") }}
         </p>
       </div>
     </div>
