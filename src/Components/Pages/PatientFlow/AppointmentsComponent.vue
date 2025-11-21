@@ -45,25 +45,29 @@
             <div class="grid grid-cols-1 gap-6 mb-4">
               <div class="flex flex-col gap-6">
                 <div class="flex flex-col gap-2">
-                  <h1 class="h1 dark:text-white">Appointments</h1>
+                  <h1 class="h1 dark:text-white">{{ $t("appointments") }}</h1>
                   <div class="w-full flex justify-between">
-                    <h3 class="lastPaymentWord dark:text-white text-lg">Upcoming Appointments</h3>
-                    <span class="view dark:text-blue-500">View all</span>
+                    <h3 class="lastPaymentWord dark:text-white text-lg">
+                      {{ $t("upcoming_appointments") }}
+                    </h3>
+                    <span class="view dark:text-blue-500">{{ $t("view_all") }}</span>
                   </div>
                 </div>
 
-                <div v-if="loading" class="text-sm text-gray-500">Loading appointment...</div>
+                <div v-if="loading" class="text-sm text-gray-500">
+                  {{ $t("loading_appointment") }}
+                </div>
                 <div v-else-if="nextAppointment == null" class="text-sm text-gray-500">
-                  No appointments
+                  {{ $t("no_appointments_day") }}
                 </div>
                 <div
                   v-else
                   class="cardPayment cardPayment1 bg-blue-50 flex flex-col gap-4 rounded-xl h-[121px]"
                 >
                   <div class="flex justify-between">
-                    <h2 class="Internal">{{ nextAppointment.speciality || "Appointment" }}</h2>
+                    <h2 class="Internal">{{ nextAppointment.speciality || $t("appointments") }}</h2>
                     <div class="flex w-fit justify-end gap-2">
-                      <button class="Confirmed hover:cursor-pointer">Confirmed</button>
+                      <button class="Confirmed hover:cursor-pointer">{{ $t("confirmed") }}</button>
                     </div>
                   </div>
                   <div class="flex justify-start items-center w-full">

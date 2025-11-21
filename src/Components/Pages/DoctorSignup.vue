@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+  <div
+    :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
+    class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8"
+  >
     <div
       class="h-full cont w-full max-w-7xl p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-14 rounded-xl"
     >
@@ -16,10 +19,10 @@
 
           <div class="absolute bottom-16 left-0 right-0 px-8 z-20">
             <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">
-              Become part of our medical network
+              {{ $t("become_part_medical_network") }}
             </p>
             <p class="text-white text-xl">
-              Deliver better care with smart, easy-to-use tools built for doctors.
+              {{ $t("deliver_better_care") }}
             </p>
           </div>
         </div>
@@ -32,10 +35,10 @@
           <div class="stepper flex flex-col gap-4 sm:gap-6 lg:gap-8">
             <div class="top flex flex-col gap-2 sm:gap-3 lg:gap-4">
               <h1 class="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 dark:text-white">
-                Sign up as a doctor
+                {{ $t("signupdrole") }}
               </h1>
               <p class="text-gray-400 dark:text-gray-300 text-base sm:text-lg lg:text-xl">
-                Create your professional account
+                {{ $t("create_professional_account") }}
               </p>
             </div>
 
@@ -61,7 +64,8 @@
                         d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
                       />
                     </svg>
-                    Personal <span class="hidden sm:inline-flex sm:ms-2">Information</span>
+                    {{ $t("personal") }}
+                    <span class="hidden sm:inline-flex sm:ms-2">{{ $t("information") }}</span>
                   </span>
                 </li>
                 <li
@@ -82,7 +86,9 @@
                         d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"
                       />
                     </svg>
-                    <p :class="currentStep > 1 ? 'text-[#0CB8B6]' : 'text-gray-500'">Credentials</p>
+                    <p :class="currentStep > 1 ? 'text-[#0CB8B6]' : 'text-gray-500'">
+                      {{ $t("credentials") }}
+                    </p>
                   </span>
                 </li>
                 <li class="flex items-center">
@@ -162,7 +168,7 @@
                   <div class="inputs w-full flex flex-col gap-4">
                     <div class="name flex flex-col gap-4 items-center w-full">
                       <div class="fname flex flex-col gap-2 w-full">
-                        <label class="text-gray-900 dark:text-white">First name</label>
+                        <label class="text-gray-900 dark:text-white">{{ $t("First_name") }}</label>
                         <div
                           class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                         >
@@ -179,13 +185,13 @@
                           <input
                             v-model="firstName"
                             type="text"
-                            placeholder="Enter first name"
+                            :placeholder="$t('Enter_first_name')"
                             class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                           />
                         </div>
                       </div>
                       <div class="sname flex flex-col gap-2 w-full">
-                        <label class="text-gray-900 dark:text-white">Last name</label>
+                        <label class="text-gray-900 dark:text-white">{{ $t("Last_name") }}</label>
                         <div
                           class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                         >
@@ -202,7 +208,7 @@
                           <input
                             v-model="lastName"
                             type="text"
-                            placeholder="Enter last name"
+                            :placeholder="$t('Enter_last_name')"
                             class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                           />
                         </div>
@@ -210,7 +216,7 @@
                     </div>
                     <div class="phone,email flex flex-col gap-4 items-center w-full">
                       <div class="email flex flex-col gap-2 w-full">
-                        <label class="text-gray-900 dark:text-white">Email</label>
+                        <label class="text-gray-900 dark:text-white">{{ $t("Email") }}</label>
                         <div
                           class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                         >
@@ -227,13 +233,15 @@
                           <input
                             v-model="email"
                             type="text"
-                            placeholder="Enter email"
+                            :placeholder="$t('Enter_email')"
                             class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                           />
                         </div>
                       </div>
                       <div class="sname flex flex-col gap-2 w-full">
-                        <label class="text-gray-900 dark:text-white">Phone number</label>
+                        <label class="text-gray-900 dark:text-white">{{
+                          $t("Phone_number")
+                        }}</label>
                         <div
                           class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
                           :class="
@@ -261,14 +269,13 @@
                           />
                         </div>
                         <p v-if="phoneNumberError" class="text-red-500 dark:text-red-400 text-sm">
-                          Please enter a valid phone number (e.g., 01123456789, +20123456789,
-                          +20153456789, or 0103456789)
+                          {{ $t("phone_validation_error") }}
                         </p>
                       </div>
                     </div>
                     <div class="pass flex flex-col xl:flex-row gap-4 items-center w-full">
                       <div class="pass flex flex-col gap-2 w-full">
-                        <label class="text-gray-900 dark:text-white">Password</label>
+                        <label class="text-gray-900 dark:text-white">{{ $t("Password") }}</label>
                         <div
                           class="flex gap-2 h-12 px-4 border rounded-lg items-center bg-white dark:bg-gray-700"
                           :class="
@@ -291,7 +298,7 @@
                             v-model="password"
                             @input="validatePasswordOnInput"
                             :type="showPassword ? 'text' : 'password'"
-                            placeholder="Enter your password"
+                            :placeholder="$t('Enter_password')"
                             class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                           />
                           <!-- Eye icon when password is hidden -->
@@ -322,9 +329,7 @@
                           </svg>
                         </div>
                         <p v-if="passwordError" class="text-red-500 dark:text-red-400 text-sm">
-                          Password must be at least 6 characters long and include at least one
-                          uppercase letter, one lowercase letter, one number, and one special
-                          character.
+                          {{ $t("password_validation_error") }}
                         </p>
                       </div>
                     </div>
@@ -342,14 +347,16 @@
                 <div class="inputs w-full flex flex-col gap-4">
                   <div class="name flex flex-col gap-4 items-center w-full">
                     <div class="fname flex flex-col gap-2 w-full">
-                      <label class="text-gray-900 dark:text-white">Years of experience</label>
+                      <label class="text-gray-900 dark:text-white">{{
+                        $t("years_of_experience")
+                      }}</label>
                       <div
                         class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                       >
                         <input
                           v-model="yearsOfExperience"
                           type="text"
-                          placeholder="Enter years of experience"
+                          :placeholder="$t('enter_years_experience')"
                           class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                         />
                       </div>
@@ -370,7 +377,7 @@
                   </div>
                   <div class="phone,email flex flex-col gap-4 items-center w-full">
                     <div class="email flex flex-col gap-2 w-full">
-                      <label class="text-gray-900 dark:text-white">Clinic name</label>
+                      <label class="text-gray-900 dark:text-white">{{ $t("clinic_name") }}</label>
                       <div
                         class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                       >
@@ -383,14 +390,14 @@
                       </div>
                     </div>
                     <div class="sname flex flex-col gap-2 w-full">
-                      <label class="text-gray-900 dark:text-white">Clinic address</label>
+                      <label class="text-gray-900 dark:text-white">{{ $t("clinicAddress") }}</label>
                       <div
                         class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700"
                       >
                         <input
                           v-model="clinicAddress"
                           type="text"
-                          placeholder="Enter clinic address"
+                          :placeholder="$t('enter_clinic_address')"
                           class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400"
                         />
                       </div>
@@ -437,7 +444,7 @@
                     </div>
 
                     <div class="pass flex flex-col gap-2 w-full relative">
-                      <label class="text-gray-900 dark:text-white">Speciality</label>
+                      <label class="text-gray-900 dark:text-white">{{ $t("speciality") }}</label>
                       <div
                         class="flex gap-2 h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg items-center bg-white dark:bg-gray-700 cursor-pointer"
                         @click="showSpeciality"
@@ -455,7 +462,7 @@
                         <input
                           v-model="selectedSpeciality"
                           type="text"
-                          placeholder="Select your speciality"
+                          :placeholder="$t('select_speciality')"
                           class="focus:outline-none w-full h-12 bg-transparent text-gray-900 dark:text-white dark:placeholder-gray-400 cursor-pointer"
                           readonly
                         />
@@ -539,7 +546,7 @@
                   d="M169.4 297.4C156.9 309.9 156.9 330.2 169.4 342.7L361.4 534.7C373.9 547.2 394.2 547.2 406.7 534.7C419.2 522.2 419.2 501.9 406.7 489.4L237.3 320L406.6 150.6C419.1 138.1 419.1 117.8 406.6 105.3C394.1 92.8 373.8 92.8 361.3 105.3L169.3 297.3z"
                 />
               </svg>
-              <p>{{ currentStep > 1 ? "Previous" : "Next" }}</p>
+              <p>{{ currentStep > 1 ? $t("previous") : $t("next") }}</p>
             </button>
 
             <button

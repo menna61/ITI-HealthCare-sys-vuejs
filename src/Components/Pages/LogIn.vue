@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+  <div
+    :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
+    class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8"
+  >
     <div
       class="h-full cont w-full max-w-7xl p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-14 rounded-xl"
     >
@@ -15,8 +18,8 @@
           />
 
           <div class="absolute bottom-16 left-0 right-0 px-8 z-20">
-            <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">Welcome back</p>
-            <p class="text-white text-xl">access your healthcare account</p>
+            <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">{{ $t("welcome_back") }}</p>
+            <p class="text-white text-xl">{{ $t("access_healthcare_account") }}</p>
           </div>
         </div>
       </div>

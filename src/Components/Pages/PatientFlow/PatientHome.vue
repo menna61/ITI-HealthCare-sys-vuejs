@@ -6,20 +6,30 @@
 
       <!--Page content-->
       <div
-        class="relative flex items-center justify-start rounded-4xl h-80 bg-cover bg-center"
+        class="relative flex items-center rounded-4xl h-80 bg-cover bg-center overflow-hidden"
+        :class="[$i18n.locale === 'ar' ? 'justify-start' : 'justify-start']"
         style="background-image: url('/images/bgHome.png')"
       >
-        <div class="absolute right-4 md:right-20">
+        <div
+          :class="[$i18n.locale === 'ar' ? 'left-4 md:left-20' : 'right-4 md:right-20', 'absolute']"
+        >
           <img src="/images/bgHomePhone.png" class="max-w-full h-56 md:h-80" loading="lazy" />
         </div>
-        <div class="flex flex-col justify-around items-start pl-6 py-4">
+        <div
+          :class="[
+            $i18n.locale === 'ar' ? 'pr-6 items-end text-right' : 'pl-6 items-start text-left',
+            'flex flex-col justify-around py-4 z-10',
+          ]"
+        >
           <p v-if="currentPatient != null" class="text-gray-100 text-xl">
-            Hi. {{ currentPatient.firstName }}
+            {{ $t("patient_home_greeting") }} {{ currentPatient.firstName }}
           </p>
           <h1 class="h1 text-white md:w-3/4 text-3xl">
-            Have You Had a Routine Health Check This Month?
+            {{ $t("patient_home_title") }}
           </h1>
-          <button class="btnBooking my-2 rounded-xl mt-4">Booking Now</button>
+          <router-link to="/patient/doctors" class="btnBooking my-2 rounded-xl mt-4 inline-block">{{
+            $t("patient_home_booking")
+          }}</router-link>
         </div>
       </div>
 

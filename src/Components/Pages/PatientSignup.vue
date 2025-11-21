@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
+  <div
+    :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'"
+    class="flex items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8"
+  >
     <div
       class="h-full cont w-full max-w-7xl p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800 flex flex-col lg:flex-row gap-6 sm:gap-8 lg:gap-14 rounded-xl"
     >
@@ -16,9 +19,9 @@
 
           <div class="absolute bottom-16 left-0 right-0 px-8 z-20">
             <p class="text-4xl font-bold text-white mb-4 max-w-[600px]">
-              Join our healthcare network
+              {{ $t("join_healthcare_network") }}
             </p>
-            <p class="text-white text-xl">Your health, our priority.</p>
+            <p class="text-white text-xl">{{ $t("your_health_our_priority") }}</p>
           </div>
         </div>
       </div>
@@ -63,7 +66,9 @@
               >
                 <div class="or flex gap-2 items-center justify-center">
                   <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
-                  <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base">or</p>
+                  <p class="text-gray-600 dark:text-gray-300 text-sm sm:text-base">
+                    {{ $t("or") }}
+                  </p>
                   <div class="w-full h-0.5 bg-gray-100 dark:bg-gray-600"></div>
                 </div>
 
@@ -132,8 +137,7 @@
                           v-if="phoneNumberError"
                           class="text-red-500 dark:text-red-400 text-xs sm:text-sm"
                         >
-                          Please enter a valid phone number (e.g., 01123456789, +20123456789,
-                          +20103456789 or 0103456789)
+                          {{ $t("phone_validation_error") }}
                         </p>
                       </div>
                     </div>
@@ -217,9 +221,7 @@
                         v-if="passwordError"
                         class="text-red-500 dark:text-red-400 text-xs sm:text-sm"
                       >
-                        Password must be at least 6 characters long and include at least one
-                        uppercase letter, one lowercase letter, one number, and one special
-                        character.
+                        {{ $t("password_validation_error") }}
                       </p>
                     </div>
 
@@ -288,7 +290,7 @@
     </div>
 
     <!-- Terms and Conditions Modal -->
-    <Modal v-model="showTermsModal" title="Terms and conditions">
+    <Modal v-model="showTermsModal" :title="$t('terms_and_conditions')">
       <div class="flex flex-col gap-4 text-gray-700 dark:text-gray-300">
         <ul class="flex flex-col gap-3 list-disc list-inside">
           <li>{{ $t("terms_cancel_12h") }}</li>

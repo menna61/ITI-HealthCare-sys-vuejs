@@ -2,19 +2,19 @@
   <div class="flex h-auto overflow-hidden w-full">
     <div class="w-full px-0 col-span-1 flex flex-col items-start justify-start rounded-sm gap-6">
       <div class="flex flex-col gap-2 w-full">
-        <h1 class="h1 dark:text-white">Payment</h1>
+        <h1 class="h1 dark:text-white">{{ $t("payments") }}</h1>
         <div class="w-full flex justify-between items-center">
-          <h3 class="lastPaymentWord dark:text-white text-lg">Last Payment</h3>
-          <span class="view dark:text-blue-500">View all</span>
+          <h3 class="lastPaymentWord dark:text-white text-lg">{{ $t("last_payment") }}</h3>
+          <span class="view dark:text-blue-500">{{ $t("view_all") }}</span>
         </div>
       </div>
 
-      <div v-if="loading" class="text-sm text-gray-500">Loading payment...</div>
-      <div v-else-if="!lastPayment" class="text-sm text-gray-500">No payments</div>
+      <div v-if="loading" class="text-sm text-gray-500">{{ $t("loading_payment") }}</div>
+      <div v-else-if="!lastPayment" class="text-sm text-gray-500">{{ $t("no_payments") }}</div>
       <div v-else class="cardPayment cardPayment1 w-full flex flex-col gap-4 rounded-xl">
         <div class="flex justify-between w-full">
-          <h2 class="Internal">{{ lastPayment.speciality || "Payment" }}</h2>
-          <button class="done hover:cursor-pointer">Done</button>
+          <h2 class="Internal">{{ lastPayment.speciality || $t("payments") }}</h2>
+          <button class="done hover:cursor-pointer">{{ $t("completed") }}</button>
         </div>
         <div class="flex justify-start items-center w-full">
           <div class="imgDoc mx-2">

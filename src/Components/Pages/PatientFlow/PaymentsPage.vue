@@ -4,8 +4,8 @@
     <div :class="[$i18n.locale === 'ar' ? 'pr-8 pl-20' : 'pl-8 pr-20', 'mt-8 flex flex-col gap-6']">
       <!--Page titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">Payments</h1>
-        <p class="text-gray-500 dark:text-gray-400">Manage your payments</p>
+        <h1 class="text-2xl font-bold dark:text-white">{{ $t("payments") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t("manage_payments") }}</p>
       </div>
 
       <!--Page content-->
