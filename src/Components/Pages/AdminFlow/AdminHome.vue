@@ -299,6 +299,7 @@ import {
   doc,
   addDoc,
   getDoc,
+  onSnapshot,
 } from "firebase/firestore";
 import emailjs from "@emailjs/browser";
 import {
@@ -555,10 +556,35 @@ export default {
         const bookingsCollection = collection(db, "bookings");
         const q = query(bookingsCollection, orderBy("createdAt", "desc"), limit(5));
         const querySnapshot = await getDocs(q);
-        this.recentActivities = querySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
+
+        // Fetch patient names for each booking
+        const activitiesWithNames = await Promise.all(
+          querySnapshot.docs.map(async (docSnap) => {
+            const booking = { id: docSnap.id, ...docSnap.data() };
+
+            // Get patient name
+            let patientName = booking.patientName || "Unknown Patient";
+            try {
+              if (booking.patientId) {
+                const patientRef = doc(db, "patients", booking.patientId);
+                const patientSnap = await getDoc(patientRef);
+                if (patientSnap.exists()) {
+                  const p = patientSnap.data();
+                  patientName = `${p.firstName || ""} ${p.lastName || ""}`.trim() || patientName;
+                }
+              }
+            } catch (err) {
+              console.error("Error fetching patient name:", err);
+            }
+
+            return {
+              ...booking,
+              patientName,
+            };
+          })
+        );
+
+        this.recentActivities = activitiesWithNames;
       } catch (error) {
         console.error("Error fetching recent activities:", error);
       }

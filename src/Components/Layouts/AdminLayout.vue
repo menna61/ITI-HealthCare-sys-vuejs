@@ -1,27 +1,11 @@
 <template>
-  <div class="flex w-full min-h-screen">
-    <!-- Sidebar -->
-    <side-menu-admin
-      :class="{
-        'fixed inset-0 z-50 bg-white dark:bg-gray-800': isMobileMenuOpen,
-        'hidden md:block': !isMobileMenuOpen,
-      }"
+  <div :dir="$i18n.locale === 'ar' ? 'rtl' : 'ltr'" class="flex w-full min-h-screen">
+    <side-menu-admin :menuOpen="isMobileMenuOpen" @toggle="isMobileMenuOpen = !isMobileMenuOpen" />
+    <div
+      class="w-full transition-all duration-300"
+      :class="$i18n.locale === 'ar' ? 'lg:mr-[302px]' : 'lg:ml-[302px]'"
     >
-      <div class="md:hidden p-4">
-        <button @click="isMobileMenuOpen = false" class="text-red-500">✕ Close</button>
-      </div>
-    </side-menu-admin>
-
-    <!-- Main Content -->
-    <div class="w-full md:ml-[302px]">
-      <div class="md:hidden p-4 bg-gray-100 dark:bg-gray-900">
-        <button @click="isMobileMenuOpen = true" class="text-gray-700 dark:text-white">
-          ☰ Menu
-        </button>
-      </div>
-      <div class="flex-1">
-        <RouterView></RouterView>
-      </div>
+      <RouterView></RouterView>
     </div>
   </div>
 </template>

@@ -877,6 +877,23 @@ export default {
             `${doctorData.firstName || ""} ${doctorData.lastName || ""}`.trim() || "Doctor";
         }
 
+        // Get patient real name
+        let patientFullName = appointment.name;
+        try {
+          if (appointment.patientId) {
+            const patientRef = doc(db, "patients", appointment.patientId);
+            const patientSnap = await getDoc(patientRef);
+            if (patientSnap.exists()) {
+              const patientData = patientSnap.data();
+              patientFullName =
+                `${patientData.firstName || ""} ${patientData.lastName || ""}`.trim() ||
+                appointment.name;
+            }
+          }
+        } catch (err) {
+          console.error("Error fetching patient name:", err);
+        }
+
         // Add transaction record for admin
         const adminTransactionsRef = collection(db, "admin", "wallet", "transactions");
         const transactionData = {
@@ -885,10 +902,10 @@ export default {
           bookingId: appointment.id,
           doctorId: user.uid,
           doctorName: doctorName,
-          patientName: appointment.name,
+          patientName: patientFullName,
           service: appointment.type,
           date: new Date(),
-          description: `5% commission from booking with ${appointment.name}`,
+          description: `5% commission from booking with ${patientFullName}`,
         };
 
         await addDoc(adminTransactionsRef, transactionData);

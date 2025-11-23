@@ -7,9 +7,8 @@
       <img :src="currentLanguage.img" alt="" />
     </div>
     <div
-      class="absolute dark:text-white degrees w-fit p-4 shadow-xl rounded-lg right-[156px] top-20 flex flex-col gap-4 bg-white z-[100000] dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
-      :class="[  $i18n.locale==='ar' && $route.path==='/dashboard' ? 'left-[10px]':'' , isRTL ? 'left-4' : 'right-4', $route.path === '/' ? 'right-[366px]' : '' , $i18n.locale === 'ar' ? 'left-[344px]' : '']"
-      
+      class="absolute dark:text-white degrees w-fit p-4 shadow-xl rounded-lg top-20 flex flex-col gap-4 bg-white z-[100000] dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+      :class="getDropdownPosition"
       v-show="langShow"
     >
       <!-- Add .stop to prevent event bubbling -->
@@ -57,8 +56,21 @@ export default {
     },
     changeLanguage(language) {
       this.$i18n.locale = language.code;
+      localStorage.setItem("lang", language.code);
       this.langShow = false;
+
+      // Force update document direction
+      document.documentElement.setAttribute("dir", language.code === "ar" ? "rtl" : "ltr");
+      document.documentElement.setAttribute("lang", language.code);
     },
+  },
+  mounted() {
+    // Close dropdown when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!this.$el.contains(e.target)) {
+        this.langShow = false;
+      }
+    });
   },
   computed: {
     currentLanguage() {
@@ -73,6 +85,33 @@ export default {
         return (document.dir || document.documentElement.getAttribute("dir")) === "rtl";
       }
       return false;
+    },
+    getDropdownPosition() {
+      const isArabic = this.$i18n.locale === "ar";
+      const currentPath = this.$route.path;
+
+      // For admin pages
+      if (currentPath.startsWith("/admin")) {
+        return isArabic ? "left-4" : "right-4";
+      }
+
+      // For dashboard pages
+      if (currentPath.startsWith("/dashboard")) {
+        return isArabic ? "left-4" : "right-4";
+      }
+
+      // For patient pages
+      if (currentPath.startsWith("/patient")) {
+        return isArabic ? "left-4" : "right-4";
+      }
+
+      // For landing page
+      if (currentPath === "/") {
+        return isArabic ? "left-[344px]" : "right-[366px]";
+      }
+
+      // Default positioning
+      return isArabic ? "left-4" : "right-[156px]";
     },
   },
 };
