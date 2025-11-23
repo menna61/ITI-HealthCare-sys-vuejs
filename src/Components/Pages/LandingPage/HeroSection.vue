@@ -1,6 +1,6 @@
 <template>
   <div class="cont flex flex-col md:flex-row justify-between items-center" id="hero">
-    <div class="left md:w-1/2">
+    <div class="left md:w-1/2 hero-text">
       <h1
         class="w-full md:w-[600px] leading-16 mb-4 text-capitalize text-4xl md:text-6xl font-semibold text-gray-900 dark:text-white"
         v-html="
@@ -18,7 +18,7 @@
       </router-link>
     </div>
     <div
-      class="right w-full md:w-1/2 flex justify-center md:justify-end relative mt-8 md:mt-0"
+      class="right w-full md:w-1/2 flex justify-center md:justify-end relative mt-8 md:mt-0 hero-image"
       :class="{ 'justify-center md:justify-end': $i18n.locale === 'ar' }"
     >
       <img
@@ -37,7 +37,37 @@
 <script>
 export default {
   name: "HeroSection",
+  mounted() {
+    setTimeout(() => {
+      document.querySelector(".hero-text")?.classList.add("animate-in");
+      setTimeout(() => {
+        document.querySelector(".hero-image")?.classList.add("animate-in");
+      }, 200);
+    }, 100);
+  },
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.hero-text {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 1s ease-out, transform 1s ease-out;
+}
+
+.hero-text.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.hero-image {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 1s ease-out 0.3s, transform 1s ease-out 0.3s;
+}
+
+.hero-image.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+</style>
