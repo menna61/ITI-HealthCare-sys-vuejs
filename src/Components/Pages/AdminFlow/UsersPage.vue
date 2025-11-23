@@ -54,7 +54,7 @@
                   {{ patient.email }}
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                  {{ patient.phoneNumber || "-" }}
+                  {{ patient.phoneNumber || patient.phone || "-" }}
                 </td>
                 <td
                   class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-center gap-2"
@@ -194,7 +194,16 @@
 </template>
 
 <script>
-import { collection, getDocs, doc, deleteDoc, query, where, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  doc,
+  deleteDoc,
+  query,
+  where,
+  updateDoc,
+  onSnapshot,
+} from "firebase/firestore";
 import { db } from "@/firebase";
 import UiModal from "@/Components/UI/Modal.vue";
 import MainNav from "@/Components/Layouts/MainNav.vue";
@@ -227,16 +236,25 @@ export default {
       return Math.ceil(this.patients.length / this.itemsPerPage);
     },
   },
-  async mounted() {
-    await this.fetchPatients();
+  mounted() {
+    this.listenToPatients();
+  },
+  beforeUnmount() {
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
   },
   methods: {
-    async fetchPatients() {
+    listenToPatients() {
       try {
-        const querySnapshot = await getDocs(collection(db, "patients"));
-        this.patients = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        const patientsRef = collection(db, "patients");
+
+        // Use onSnapshot for real-time updates
+        this.unsubscribe = onSnapshot(patientsRef, (querySnapshot) => {
+          this.patients = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+        });
       } catch (error) {
-        console.error("Error fetching patients:", error);
+        console.error("Error listening to patients:", error);
       }
     },
 

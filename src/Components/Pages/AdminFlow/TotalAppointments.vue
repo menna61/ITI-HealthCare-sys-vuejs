@@ -1,69 +1,189 @@
 <template>
   <div class="w-full dark:bg-gray-900 min-h-screen transition-all duration-300">
     <main-nav />
-    <div class="pl-4 md:pl-8 pr-4 md:pr-20 mt-8 flex flex-col gap-6">
-      <!--Page titles-->
-      <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold dark:text-white">{{ $t("allAppointments") }}</h1>
-        <p class="text-gray-500 dark:text-gray-400">{{ $t("viewAllAppointments") }}</p>
+    <div class="pl-4 md:pl-8 pr-4 md:pr-8 lg:pr-20 mt-8 flex flex-col gap-6 overflow-hidden">
+      <!-- Page titles -->
+      <div class="title flex flex-col gap-4 px-4">
+        <h1 class="text-xl sm:text-2xl font-bold dark:text-white">{{ $t("allAppointments") }}</h1>
+        <p class="text-gray-500 text-sm sm:text-base dark:text-gray-400">
+          {{ $t("viewAllAppointments") }}
+        </p>
       </div>
 
-      <!--Page content-->
-      <div v-if="loading" class="text-center animate-fade-in">{{ $t("loadingAppointments") }}</div>
-      <div v-else-if="appointments.length === 0" class="text-center animate-fade-in">
+      <!-- Loading state -->
+      <div v-if="loading" class="text-center animate-fade-in dark:text-white px-4">
+        {{ $t("loadingAppointments") }}
+      </div>
+
+      <!-- Empty state -->
+      <div
+        v-else-if="appointments.length === 0"
+        class="text-center animate-fade-in dark:text-white px-4"
+      >
         {{ $t("noAppointments") }}
       </div>
-      <div v-else class="flex flex-col gap-6">
+
+      <!-- Appointments table -->
+      <div v-else class="tableAppointments px-4">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gradient-to-r from-blue-500 to-purple-600">
+              <tr>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("doctorName") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("elpatient") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("speciality") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("service") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("date") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("time") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("status") }}
+                </th>
+                <th
+                  class="py-4 px-6 text-left font-semibold text-white uppercase tracking-wider whitespace-nowrap"
+                >
+                  {{ $t("actions") }}
+                </th>
+              </tr>
+            </thead>
+            <tbody
+              class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700 text-left"
+            >
+              <tr
+                v-for="(appointment, index) in paginatedAppointments"
+                :key="appointment.id"
+                class="hover:from-blue-50 hover:to-indigo-50 dark:hover:from-gray-700 dark:hover:to-gray-600 cursor-pointer transition-all duration-500 animate-fadeInUp hover:scale-[1.02] hover:shadow-lg"
+                :style="{ animationDelay: `${index * 0.1}s` }"
+              >
+                <td
+                  class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  {{ appointment.doctorName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ appointment.patientName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ appointment.speciality }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ appointment.service }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ appointment.date }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
+                  {{ appointment.time }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                  <span
+                    v-if="appointment.status === 'confirmed'"
+                    class="status-badge status-confirmed"
+                  >
+                    {{ $t("confirmed") }}
+                  </span>
+                  <span
+                    v-else-if="appointment.status === 'pending'"
+                    class="status-badge status-pending"
+                  >
+                    {{ $t("pending") }}
+                  </span>
+                  <span
+                    v-else-if="appointment.status === 'cancelled'"
+                    class="status-badge status-cancelled"
+                  >
+                    {{ $t("canceled") }}
+                  </span>
+                  <span
+                    v-else-if="appointment.status === 'completed'"
+                    class="status-badge status-completed"
+                  >
+                    {{ $t("completed") }}
+                  </span>
+                  <span v-else class="status-badge status-default">
+                    {{ appointment.status }}
+                  </span>
+                </td>
+                <td
+                  class="px-1 py-4 whitespace-nowrap text-sm font-medium flex justify-center gap-2"
+                >
+                  <button
+                    @click.stop="removeFromView(appointment.id)"
+                    class="text-red-600 hover:text-red-900 dark:text-red-400 dark:hover:text-red-300 transition-colors duration-200 p-1 rounded-full hover:bg-red-100 dark:hover:bg-red-900"
+                    :title="$t('delete')"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Pagination -->
+      <div v-if="!loading && appointments.length > 0" class="flex justify-center mt-6 px-4">
         <div
-          v-for="(appointment, index) in appointments"
-          :key="appointment.id"
-          class="cardPayment cardPayment1 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 flex flex-col gap-4 rounded-xl h-[121px] shadow-md hover:shadow-lg transition-all duration-300 transform hover:scale-[1.01] animate-slide-in-up"
-          :style="{ animationDelay: `${index * 0.1}s` }"
+          class="flex items-center flex-wrap gap-2"
+          :class="$i18n.locale === 'ar' ? 'flex-row-reverse' : 'flex-row'"
         >
-          <div class="flex justify-between">
-            <h2 class="Internal dark:text-gray-200">{{ appointment.speciality }}</h2>
-            <div class="flex w-fit justify-end gap-2">
-              <button
-                v-if="appointment.status === 'Confirmed'"
-                class="Confirmed hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-gray-600 dark:text-gray-300"
-              >
-                {{ $t("confirmed") }}
-              </button>
-              <button
-                v-else-if="appointment.status === 'Pending'"
-                class="Pending hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-blue-800 dark:text-blue-300"
-              >
-                {{ $t("pending") }}
-              </button>
-              <button
-                v-else
-                class="Canceled hover:cursor-pointer transition-all duration-300 hover:scale-105 dark:bg-red-800 dark:text-red-300"
-              >
-                {{ $t("canceled") }}
-              </button>
-            </div>
-          </div>
-          <div class="flex justify-start items-center w-full">
-            <div class="imgDoc mx-2">
-              <img :src="appointment.doctorImage" alt="" />
-            </div>
-            <div class="w-full">
-              <div class="flex justify-between w-full">
-                <h2 class="nameDoc dark:text-gray-100">{{ appointment.doctorName }}</h2>
-                <span class="done dark:bg-green-800 dark:text-green-300"
-                  >{{ $t("sessionType") }} : {{ appointment.service }}</span
-                >
-              </div>
-              <div class="flex flex-row justify-between">
-                <span class="time dark:text-gray-400"
-                  >{{ appointment.time }}, {{ appointment.date }}</span
-                >
-                <span class="linkVido dark:text-gray-300"
-                  >{{ $t("patient") }}: {{ appointment.patientName }}</span
-                >
-              </div>
-            </div>
-          </div>
+          <button
+            @click="prevPage"
+            :disabled="currentPage === 1"
+            class="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors text-sm sm:text-base"
+          >
+            {{ $t("previous") }}
+          </button>
+          <span
+            class="px-3 sm:px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm sm:text-base"
+          >
+            {{ $t("pageOf", { current: currentPage, total: totalPages }) }}
+          </span>
+          <button
+            @click="nextPage"
+            :disabled="currentPage === totalPages"
+            class="px-3 sm:px-4 py-2 bg-blue-500 text-white rounded-lg disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed hover:bg-blue-600 transition-colors text-sm sm:text-base"
+          >
+            {{ $t("next") }}
+          </button>
         </div>
       </div>
     </div>
@@ -73,7 +193,7 @@
 <script>
 import MainNav from "@/Components/Layouts/MainNav.vue";
 import { db } from "@/firebase";
-import { collection, doc, getDoc, onSnapshot } from "firebase/firestore";
+import { collection, doc, getDoc, onSnapshot, deleteDoc } from "firebase/firestore";
 
 export default {
   name: "TotalAppointments",
@@ -82,7 +202,19 @@ export default {
     return {
       appointments: [],
       loading: true,
+      currentPage: 1,
+      itemsPerPage: 10,
     };
+  },
+  computed: {
+    paginatedAppointments() {
+      const start = (this.currentPage - 1) * this.itemsPerPage;
+      const end = start + this.itemsPerPage;
+      return this.appointments.slice(start, end);
+    },
+    totalPages() {
+      return Math.ceil(this.appointments.length / this.itemsPerPage);
+    },
   },
   mounted() {
     this.listenToAllAppointments();
@@ -101,7 +233,6 @@ export default {
 
               // Get doctor details
               let doctorName = booking.doctorName || "Unknown Doctor";
-              let doctorImage = "https://via.placeholder.com/45x40/cccccc/000000?text=Doctor";
               try {
                 if (booking.doctorId) {
                   const doctorRef = doc(db, "doctors", booking.doctorId);
@@ -109,7 +240,6 @@ export default {
                   if (doctorSnap.exists()) {
                     const d = doctorSnap.data();
                     doctorName = `${d.firstName || ""} ${d.lastName || ""}`.trim() || doctorName;
-                    doctorImage = d.image || doctorImage;
                   }
                 }
               } catch (err) {
@@ -134,7 +264,6 @@ export default {
               return {
                 id: booking.id,
                 doctorName,
-                doctorImage,
                 service: booking.service,
                 speciality: booking.speciality || "Unknown Speciality",
                 date: booking.date,
@@ -152,6 +281,32 @@ export default {
       } catch (error) {
         console.error("Error listening to appointments:", error);
         this.loading = false;
+      }
+    },
+    prevPage() {
+      if (this.currentPage > 1) this.currentPage--;
+    },
+    nextPage() {
+      if (this.currentPage < this.totalPages) this.currentPage++;
+    },
+    async removeFromView(appointmentId) {
+      try {
+        // Delete appointment from database
+        await deleteDoc(doc(db, "bookings", appointmentId));
+
+        console.log("✅ Appointment deleted successfully from database");
+
+        // The onSnapshot listener will automatically update the UI
+        // But we can also manually remove it for immediate feedback
+        this.appointments = this.appointments.filter((app) => app.id !== appointmentId);
+
+        // Adjust current page if needed
+        if (this.paginatedAppointments.length === 0 && this.currentPage > 1) {
+          this.currentPage--;
+        }
+      } catch (error) {
+        console.error("❌ Error deleting appointment:", error);
+        alert("Failed to delete appointment. Please try again.");
       }
     },
   },
@@ -175,10 +330,10 @@ export default {
   }
 }
 
-@keyframes slideInUp {
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(20px);
   }
   to {
     opacity: 1;
@@ -190,153 +345,57 @@ export default {
   animation: fadeIn 0.6s ease-out;
 }
 
-.animate-slide-in-up {
-  animation: slideInUp 0.5s ease-out forwards;
-  opacity: 0;
+.animate-fadeInUp {
+  animation: fadeInUp 0.6s ease-out forwards;
 }
 
-/* Typography */
-.h1 {
-  font-size: 25px;
-  line-height: 35px;
-  font-weight: 600;
-}
-.lastPaymentWord {
-  font-weight: 600;
-  color: #5271ff;
-}
-.view {
-  font-weight: 400;
-  font-size: 16px;
-  color: #f4f8f6;
-}
-.cardPayment {
-  width: 100%;
-  padding: 15px;
-}
-
-.view {
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 19px;
-  color: #027a48;
-}
-
-.Internal {
-  font-weight: 600;
-  font-size: 18px;
-  line-height: 19px;
-  color: #212d66;
-}
-
-.Confirmed,
-.Pending,
-.Canceled {
-  padding: 3px 10px;
-  color: #05603a;
-  background: #d1fadf;
-  border-radius: 18px;
-}
-.done {
-  padding: 3px 10px;
-  color: #05603a;
-  background: #d1fadf;
-  border-radius: 18px;
+/* Status badges */
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
   font-size: 12px;
-  margin: 1px 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
-.Pending {
+
+.status-confirmed {
+  color: #667085;
+  background: linear-gradient(135deg, #f0f1f3 0%, #e5e7eb 100%);
+  border: 2px solid #d1d5db;
+}
+
+.status-pending {
   color: #0cb8b6;
-  background: #e7f8f8;
-  font-size: 12px;
-}
-.Canceled {
-  color: #f01818;
-  background: #ffefef;
-  font-size: 12px;
-  margin: 0px 5px;
-}
-.Confirmed {
-  color: #667085;
-  background: #f0f1f3;
-  font-size: 12px;
+  background: linear-gradient(135deg, #e7f8f8 0%, #ccf3f2 100%);
+  border: 2px solid #0cb8b6;
 }
 
-.imgDoc {
-  width: 45px;
-  height: 40px;
-  border-radius: 50%;
-}
-.imgDoc img {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-}
-.price {
-  font-weight: 500;
-  font-size: 15px;
-  color: #667085;
-}
-.time {
-  font-weight: 600;
-  font-size: 12px;
-  color: #667085;
-  line-height: 14px;
-}
-.nameDoc {
-  font-weight: 500;
-  font-size: 16px;
-  color: #101828;
-}
-.linkVido {
-  font-size: 12px;
-  font-weight: 500;
-  padding: 1px 5px;
-}
-.cancelword {
+.status-cancelled {
   color: #f01818;
-  font-size: 14px;
-  padding: 2px 12px;
-  cursor: pointer;
+  background: linear-gradient(135deg, #ffefef 0%, #fecaca 100%);
+  border: 2px solid #f87171;
+}
+
+.status-completed {
+  color: #05603a;
+  background: linear-gradient(135deg, #d1fadf 0%, #a7f3d0 100%);
+  border: 2px solid #34d399;
+}
+
+.status-default {
+  color: #6b7280;
+  background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+  border: 2px solid #d1d5db;
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
-  .h1 {
-    font-size: 20px;
-    line-height: 26px;
-  }
-  .cardPayment {
-    padding: 10px;
-  }
-}
-
 @media (max-width: 768px) {
-  .cardPayment {
-    flex-direction: column;
-    height: auto;
-    padding: 12px;
-  }
-  .imgDoc {
-    width: 50px;
-    height: 50px;
-  }
-  .nameDoc {
-    font-size: 14px;
-  }
-  .time,
-  .linkVido {
-    font-size: 11px;
-  }
-  .Internal {
-    font-size: 16px;
-  }
-  .Confirmed,
-  .Pending,
-  .Canceled,
-  .done {
-    font-size: 11px;
-    padding: 2px 8px;
+  .status-badge {
+    font-size: 10px;
+    padding: 4px 8px;
   }
 }
 </style>

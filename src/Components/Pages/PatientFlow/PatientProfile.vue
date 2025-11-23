@@ -247,11 +247,10 @@ export default {
           this.firstName = data.firstName || "";
           this.lastName = data.lastName || "";
           this.email = data.email || "";
-          this.phoneNumber = data.phone || "";
+          this.phoneNumber = data.phoneNumber || data.phone || "";
           this.dateOfBirth = data.dateOfBirth || "";
           this.gender = data.gender || "";
           this.address = data.address || "";
-
           this.profileImageUrl = data.profileImageUrl || "";
         } else {
           this.errorMsg = "Patient data not found.";
@@ -320,11 +319,11 @@ export default {
         await updateDoc(docRef, {
           firstName: this.firstName,
           lastName: this.lastName,
-          phone: this.phoneNumber,
+          phoneNumber: this.phoneNumber,
+          phone: this.phoneNumber, // Keep both for compatibility
           dateOfBirth: this.dateOfBirth,
           gender: this.gender,
           address: this.address,
-
           profileImageUrl: this.profileImageUrl,
         });
 

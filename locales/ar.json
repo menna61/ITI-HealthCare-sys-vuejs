@@ -143,7 +143,7 @@
   "view": "عرض",
   "previous": "السابق",
   "next": "التالي",
-  "pageOf": "الصفحة {{current}} من {{total}}",
+  "pageOf": "الصفحة {current} من {total}",
   "patientDetails": "👤 تفاصيل المريض",
   "doctorName": "الطبيب",
   "deleteUser": "حذف المستخدم",
