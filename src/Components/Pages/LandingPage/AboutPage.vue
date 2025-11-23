@@ -1,10 +1,7 @@
-
-
-
 <template>
   <div class="cont flex flex-col md:flex-row justify-between items-center" id="about">
     <!--Left section - img-->
-    <div class="left relative order-2 md:order-1">
+    <div class="left relative order-2 md:order-1 about-image">
       <div class="relative w-fit z-10">
         <img
           src="../../../assets/doctor1.png"
@@ -25,7 +22,7 @@
     </div>
 
     <!--Right section-->
-    <div class="right flex flex-col w-full md:w-1/2 order-1 md:order-2 mb-8 md:mb-0">
+    <div class="right flex flex-col w-full md:w-1/2 order-1 md:order-2 mb-8 md:mb-0 about-content">
       <div
         class="w-fit px-4 h-8 rounded-2xl flex items-center justify-center tag bg-[#CEF1F0] dark:bg-gray-700 mb-4"
       >
@@ -58,48 +55,82 @@
             {{ $t(landingData.about.recoverpatientsKey) }}
           </p>
         </div>
-
-       
       </div>
     </div>
   </div>
 </template>
 
 <script>
-
-import landingData from '@/assets/landingData.json';
+import landingData from "@/assets/landingData.json";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/firebase";
 
-    export default {
-        name:"AboutPage",
-        data() {
-            return {
-                landingData,
-                doctorCount: 0,
-                patientCount: 0
-            };
-        },
-        async mounted() {
-            await this.fetchCounts();
-        },
-        methods: {
-            async fetchCounts() {
-                try {
-                    // Fetch doctors count
-                    const doctorsSnapshot = await getDocs(collection(db, "doctors"));
-                    this.doctorCount = doctorsSnapshot.size;
+export default {
+  name: "AboutPage",
+  data() {
+    return {
+      landingData,
+      doctorCount: 0,
+      patientCount: 0,
+    };
+  },
+  async mounted() {
+    await this.fetchCounts();
+    this.initScrollAnimation();
+  },
+  methods: {
+    async fetchCounts() {
+      try {
+        // Fetch doctors count
+        const doctorsSnapshot = await getDocs(collection(db, "doctors"));
+        this.doctorCount = doctorsSnapshot.size;
 
-                    // Fetch patients count
-                    const patientsSnapshot = await getDocs(collection(db, "patients"));
-                    this.patientCount = patientsSnapshot.size;
-                } catch (error) {
-                    console.error("Error fetching counts:", error);
-                }
+        // Fetch patients count
+        const patientsSnapshot = await getDocs(collection(db, "patients"));
+        this.patientCount = patientsSnapshot.size;
+      } catch (error) {
+        console.error("Error fetching counts:", error);
+      }
+    },
+    initScrollAnimation() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.querySelector(".about-image")?.classList.add("animate-in");
+              entry.target.querySelector(".about-content")?.classList.add("animate-in");
             }
-        }
-    }
+          });
+        },
+        { threshold: 0.2 }
+      );
 
+      observer.observe(this.$el);
+    },
+  },
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+.about-image {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.about-image.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.about-content {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.8s ease-out 0.2s, transform 0.8s ease-out 0.2s;
+}
+
+.about-content.animate-in {
+  opacity: 1;
+  transform: translateX(0);
+}
+</style>
