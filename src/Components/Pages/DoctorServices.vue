@@ -1,11 +1,11 @@
 <template>
   <div :class="$i18n.locale === 'ar' ? 'lg:ml-0 , lg:mr-[302px]' : 'lg:ml-[302px]'" class="w-dwh">
     <main-nav />
-    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6 ">
+    <div class="px-4 lg:pl-8 lg:pr-20 mt-8 flex flex-col gap-6">
       <!--Page top-->
       <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <!--Titles-->
-        <div class="title flex flex-col gap-4 ">
+        <div class="title flex flex-col gap-4">
           <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $t("services") }}</h1>
           <p class="text-gray-500 dark:text-gray-400">{{ $t("track_services") }}</p>
         </div>
@@ -39,14 +39,14 @@
         </button>
       </div>
 
-      <div class="content flex gap-6 w-full flex-wrap ">
+      <div class="content flex gap-6 w-full flex-wrap">
         <div
           v-for="service in services"
           :key="service.id"
           class="relative bg-white dark:bg-gray-800 rounded-xl p-4 flex flex-col gap-4 justify-between w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)] overflow-hidden"
         >
           <!-- Top Row: Text left + Icons right -->
-          <div class="flex justify-between items-start gap-6 ">
+          <div class="flex justify-between items-start gap-6">
             <!-- Text -->
             <div class="flex flex-col gap-2">
               <h5 class="text-lg font-bold tracking-tight text-gray-900 dark:text-white">
@@ -180,7 +180,9 @@
           @click="openServiceModal"
           :class="[
             'relative bg-white dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 flex flex-col gap-4 justify-center items-center cursor-pointer hover:border-blue-400 dark:hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition w-full sm:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]',
-            isApproved && status !== 'rejected' ? 'cursor-pointer' : 'cursor-not-allowed opacity-50'
+            isApproved && status !== 'rejected'
+              ? 'cursor-pointer'
+              : 'cursor-not-allowed opacity-50',
           ]"
         >
           <svg
@@ -196,7 +198,9 @@
               d="M12 4v16m8-8H4"
             />
           </svg>
-          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">{{ $t("add_new_service") }}</p>
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">
+            {{ $t("add_new_services") }}
+          </p>
         </div>
 
         <!-- Service Modal -->
@@ -356,7 +360,7 @@ export default {
     },
     toggleActionsMenu(service) {
       // Close all other menus first
-      this.services.forEach(s => {
+      this.services.forEach((s) => {
         if (s.id !== service.id) {
           s.showActionsMenu = false;
         }
