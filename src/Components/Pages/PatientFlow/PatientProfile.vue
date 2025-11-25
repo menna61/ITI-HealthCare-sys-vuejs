@@ -10,8 +10,8 @@
     >
       <!--Titles-->
       <div class="title flex flex-col gap-4">
-        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">Profile</h1>
-        <p class="text-gray-500 dark:text-gray-400">Manage your data</p>
+        <h1 class="text-2xl font-bold text-gray-900 dark:text-white">{{ $t("profile") }}</h1>
+        <p class="text-gray-500 dark:text-gray-400">{{ $t("manage_profile_data") }}</p>
       </div>
 
       <!-- Profile Form -->
@@ -64,7 +64,7 @@
               class="text-sm text-gray-500 dark:text-gray-400 cursor-pointer hover:text-gray-700 dark:hover:text-gray-300"
               @click="triggerFileInput"
             >
-              Click to change profile image
+              {{ $t("click_change_profile_image") }}
             </p>
             <input
               ref="fileInput"
@@ -78,42 +78,48 @@
           <!-- Personal Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">First Name</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("First_name")
+              }}</label>
               <input
                 v-model="firstName"
                 type="text"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Enter first name"
+                :placeholder="$t('Enter_first_name')"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Last Name</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("Last_name")
+              }}</label>
               <input
                 v-model="lastName"
                 type="text"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Enter last name"
+                :placeholder="$t('Enter_last_name')"
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("Email")
+              }}</label>
               <input
                 v-model="email"
                 type="email"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Enter email"
+                :placeholder="$t('Enter_email')"
                 readonly
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Phone Number</label
-              >
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("Phone_number")
+              }}</label>
               <input
                 v-model="phoneNumber"
                 type="text"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Enter phone number"
+                :placeholder="$t('Enter_phone_number')"
               />
             </div>
           </div>
@@ -121,9 +127,9 @@
           <!-- Additional Information -->
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                >Date of Birth</label
-              >
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("date_of_birth")
+              }}</label>
               <input
                 v-model="dateOfBirth"
                 type="date"
@@ -131,23 +137,27 @@
               />
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("Gender")
+              }}</label>
               <select
                 v-model="gender"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               >
-                <option value="">Select gender</option>
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
+                <option value="">{{ $t("Select_gender") }}</option>
+                <option value="Male">{{ $t("Male") }}</option>
+                <option value="Female">{{ $t("Female") }}</option>
               </select>
             </div>
             <div class="flex flex-col gap-2">
-              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">Address</label>
+              <label class="text-sm font-medium text-gray-700 dark:text-gray-300">{{
+                $t("address")
+              }}</label>
               <input
                 v-model="address"
                 type="text"
                 class="h-12 px-4 border border-gray-200 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-                placeholder="Enter address"
+                :placeholder="$t('enter_address')"
               />
             </div>
           </div>
@@ -190,9 +200,9 @@
                     d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                   />
                 </svg>
-                Saving...
+                {{ $t("saving") }}
               </span>
-              <span v-else>Save Changes</span>
+              <span v-else>{{ $t("save_changes") }}</span>
             </button>
           </div>
         </form>
@@ -248,16 +258,16 @@ export default {
           this.lastName = data.lastName || "";
           this.email = data.email || "";
           this.phoneNumber = data.phoneNumber || data.phone || "";
-          this.dateOfBirth = data.dateOfBirth || "";
+          this.dateOfBirth = data.birthdate || data.dateOfBirth || "";
           this.gender = data.gender || "";
           this.address = data.address || "";
           this.profileImageUrl = data.profileImageUrl || "";
         } else {
-          this.errorMsg = "Patient data not found.";
+          this.errorMsg = this.$t("patient_data_not_found");
         }
       } catch (error) {
         console.error("Error fetching patient data:", error);
-        this.errorMsg = "Failed to load profile data.";
+        this.errorMsg = this.$t("failed_load_profile");
       }
     },
     triggerFileInput() {
@@ -291,15 +301,17 @@ export default {
         if (response.ok && data.secure_url) {
           this.profileImageUrl = data.secure_url;
           console.log("Image uploaded successfully:", this.profileImageUrl);
-          this.successMsg = "Profile image updated successfully!";
+          this.successMsg = this.$t("profile_image_updated");
           this.errorMsg = ""; // Clear any previous error
         } else {
           console.error("Upload failed:", data.error?.message || data);
-          this.errorMsg = `Failed to upload image: ${data.error?.message || "Unknown error"}`;
+          this.errorMsg = `${this.$t("failed_upload_image")}: ${
+            data.error?.message || this.$t("unknown_error")
+          }`;
         }
       } catch (error) {
         console.error("Error uploading image:", error);
-        this.errorMsg = `Failed to upload image: ${error.message}`;
+        this.errorMsg = `${this.$t("failed_upload_image")}: ${error.message}`;
       }
     },
 
@@ -311,7 +323,7 @@ export default {
       try {
         const user = auth.currentUser;
         if (!user) {
-          this.errorMsg = "User not authenticated.";
+          this.errorMsg = this.$t("user_not_authenticated");
           return;
         }
 
@@ -321,16 +333,17 @@ export default {
           lastName: this.lastName,
           phoneNumber: this.phoneNumber,
           phone: this.phoneNumber, // Keep both for compatibility
-          dateOfBirth: this.dateOfBirth,
+          birthdate: this.dateOfBirth,
+          dateOfBirth: this.dateOfBirth, // Keep both for compatibility
           gender: this.gender,
           address: this.address,
           profileImageUrl: this.profileImageUrl,
         });
 
-        this.successMsg = "Profile updated successfully!";
+        this.successMsg = this.$t("profile_updated_successfully");
       } catch (error) {
         console.error("Error updating profile:", error);
-        this.errorMsg = "Failed to update profile. Please try again.";
+        this.errorMsg = this.$t("failed_update_profile");
       } finally {
         this.loading = false;
       }

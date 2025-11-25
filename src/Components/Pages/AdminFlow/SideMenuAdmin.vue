@@ -31,12 +31,16 @@
 
     <!-- القائمة الجانبية -->
     <div
-      class="sidebar w-[302px] bg-[#212D66] dark:bg-gray-800 pt-10 flex flex-col items-center gap-20 h-screen fixed top-0 z-50 shadow-2xl transform transition-transform duration-300"
+      class="sidebar w-[302px] bg-[#212D66] dark:bg-gray-800 pt-10 flex flex-col items-center gap-20 h-screen fixed top-0 shadow-2xl transform transition-transform duration-300"
       :class="[
-        isRTL ? 'right-0 lg:translate-x-0' : 'left-0 lg:translate-x-0',
-        isRTL && !menuOpen ? 'translate-x-full' : '',
-        !isRTL && !menuOpen ? '-translate-x-full' : '',
-        menuOpen ? 'translate-x-0' : '',
+        isRTL ? 'right-0' : 'left-0',
+        {
+          'translate-x-full': isRTL && !menuOpen,
+          '-translate-x-full': !isRTL && !menuOpen,
+          'translate-x-0': menuOpen,
+          'lg:translate-x-0': true,
+          'z-50': true,
+        },
       ]"
     >
       <img src="../../../assets/pattern.svg" alt="" class="absolute bottom-0" />
