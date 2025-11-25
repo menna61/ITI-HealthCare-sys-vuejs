@@ -122,6 +122,28 @@
       >
         <div class="px-6 md:px-8 py-4 flex items-center justify-between">
           <div class="flex items-center gap-4">
+            <!-- Back Button -->
+            <button
+              @click="goBack"
+              class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 text-gray-700 dark:text-gray-300"
+              :title="$t('Back')"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              <span class="hidden sm:inline font-medium">{{ $t("Back") }}</span>
+            </button>
             <div class="relative">
               <img
                 :src="aiIcon"
@@ -354,7 +376,7 @@
 
             <button
               @click="runPatientExplanation"
-              class="w-full p-4 bg-[var(--main-color-500)]  text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-between"
+              class="w-full p-4 bg-[var(--main-color-500)] text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-between"
             >
               <span class="flex items-center gap-2">
                 <span class="text-xl">🗣</span>
@@ -472,6 +494,10 @@ export default {
     window.removeEventListener("keydown", this.handleShortcuts);
   },
   methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+
     startNewChat() {
       this.currentChat = {
         id: Date.now().toString(),
