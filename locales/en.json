@@ -489,6 +489,8 @@
   "patient_home_booking": "Booking Now",
   "manage_payments": "Manage your payments",
   "manage_wallet": "Manage your balance and transactions",
+  "current_balance": "Current Balance",
+  "transaction_history": "Transaction History",
   "last_payment": "Last Payment",
   "view_all": "View All",
   "loading_payment": "Loading payment...",
@@ -580,5 +582,11 @@
   "please_select_text": "Please select text in the chat, or type a message to use with the tool",
   "select_text_for_explanation": "Select text (diagnosis/prescription/notes) or ensure there is a patient message",
   "explain_to_patient_running": "Explain to Patient: Running...",
-  "error_explaining_to_patient": "Error explaining to patient"
+  "error_explaining_to_patient": "Error explaining to patient",
+  "Back": "Back",
+  "pro": "Pro",
+  "thinking": "🤔 Thinking...",
+  "ready_to_help": "✨ Ready to help",
+  "New": "New",
+  "search": "Search..."
 }

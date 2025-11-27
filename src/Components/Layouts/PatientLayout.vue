@@ -155,9 +155,12 @@ export default {
     });
     // Close notifications when clicking outside
     document.addEventListener("click", this.handleClickOutside);
+    // Listen for other dropdowns opening
+    window.addEventListener("dropdown-opened", this.handleOtherDropdownOpened);
   },
   beforeUnmount() {
     document.removeEventListener("click", this.handleClickOutside);
+    window.removeEventListener("dropdown-opened", this.handleOtherDropdownOpened);
   },
   methods: {
     handleClickOutside(event) {
@@ -169,10 +172,18 @@ export default {
         this.showNotifications = false;
       }
     },
+    handleOtherDropdownOpened(event) {
+      // Close notifications if another dropdown opened
+      if (event.detail !== "notification") {
+        this.showNotifications = false;
+      }
+    },
     async toggleNotifications(event) {
       event.stopPropagation();
       this.showNotifications = !this.showNotifications;
+      // Emit event to close other dropdowns
       if (this.showNotifications) {
+        window.dispatchEvent(new CustomEvent("dropdown-opened", { detail: "notification" }));
         await this.markNotificationsRead();
         this.fetchNotifications();
       }
