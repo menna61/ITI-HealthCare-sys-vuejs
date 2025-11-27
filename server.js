@@ -54,8 +54,8 @@ app.post("/create-checkout-session", async (req, res) => {
         },
       ],
       success_url:
-        "https://fastidious-jelly-b1b358.netlify.app/#/patient/appointments?payment=success",
-      cancel_url: "https://fastidious-jelly-b1b358.netlify.app/#/cancel",
+        "https://medilink22.netlify.app/#/patient/appointments?payment=success",
+      cancel_url: "https://medilink22.netlify.app.netlify.app/#/cancel",
     });
 
     res.json({ url: session.url });
