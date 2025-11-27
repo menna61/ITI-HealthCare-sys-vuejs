@@ -17,12 +17,12 @@ exports.handler = async (event, context) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer ${OPENAI_API_KEY}",
+        Authorization: `Bearer ${OPENAI_API_KEY}`,
       },
       body: JSON.stringify({
         model: "gpt-3.5-turbo",
         messages: [{ role: "user", content: message }],
-      })
+      }),
     });
 
     const data = await response.json();
@@ -38,11 +38,10 @@ exports.handler = async (event, context) => {
         body: JSON.stringify({ error: "No response from OpenAI" }),
       };
     }
-
   } catch (err) {
     return {
       statusCode: 500,
       body: JSON.stringify({ error: err.message }),
-    };
-  }
+    };
+  }
 };
