@@ -1,10 +1,15 @@
 <template>
   <div
+    :dir="isRTL ? 'rtl' : 'ltr'"
     class="flex h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-slate-900 dark:to-gray-950"
   >
     <!-- Sidebar for Chat History -->
     <div
-      class="hidden md:flex md:w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl border-r border-gray-200/50 dark:border-gray-700/50 flex-col fixed top-[66px] h-full shadow-xl"
+      class="hidden md:flex md:w-80 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl flex-col fixed top-[66px] h-full shadow-xl"
+      :class="[
+        isRTL ? 'right-0 border-l' : 'left-0 border-r',
+        'border-gray-200/50 dark:border-gray-700/50',
+      ]"
     >
       <div
         class="p-5 border-b border-gray-200/50 dark:border-gray-700/50 flex items-center justify-between bg-gradient-to-r from-[var(--main-color-50)] to-transparent dark:from-gray-800"
@@ -23,7 +28,7 @@
               d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
             />
           </svg>
-          Conversations
+          {{ $t("conversations") }}
         </h2>
         <button
           @click="startNewChat"
@@ -38,7 +43,7 @@
           >
             <path d="M12 5v14m-7-7h14" stroke-width="2" stroke-linecap="round" />
           </svg>
-          <span class="text-sm">New</span>
+          <span class="text-sm">{{ $t("new_chat") }}</span>
         </button>
       </div>
       <div class="flex-1 overflow-y-auto p-4 space-y-3 custom-scrollbar">
@@ -56,8 +61,12 @@
               d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
             />
           </svg>
-          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">No conversations yet</p>
-          <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">Start a new chat to begin</p>
+          <p class="text-gray-500 dark:text-gray-400 text-sm font-medium">
+            {{ $t("no_conversations_yet") }}
+          </p>
+          <p class="text-gray-400 dark:text-gray-500 text-xs mt-1">
+            {{ $t("start_new_chat_to_begin") }}
+          </p>
         </div>
         <div v-else>
           <div
@@ -74,8 +83,13 @@
                   : 'bg-gray-50/80 dark:bg-gray-700/60 hover:bg-white dark:hover:bg-gray-600 border-transparent hover:border-gray-200 dark:hover:border-gray-600 hover:shadow-md',
               ]"
             >
-              <p class="text-sm font-medium text-gray-900 dark:text-white truncate pr-8">
-                {{ chat.messages && chat.messages[0] ? chat.messages[0].text : "New Chat" }}
+              <p
+                class="text-sm font-medium text-gray-900 dark:text-white truncate"
+                :class="isRTL ? 'pl-8' : 'pr-8'"
+              >
+                {{
+                  chat.messages && chat.messages[0] ? chat.messages[0].text : $t("new_chat_title")
+                }}
               </p>
               <p class="text-xs text-gray-500 dark:text-gray-400 mt-1.5 flex items-center gap-1">
                 <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,8 +105,9 @@
             </button>
             <button
               @click.stop="deleteChat(index)"
-              class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-red-500 hover:bg-red-600 text-white rounded-lg p-1.5 hover:scale-110 shadow-lg"
-              title="Delete chat"
+              class="absolute top-3 opacity-0 group-hover:opacity-100 transition-all duration-200 bg-red-500 hover:bg-red-600 text-white rounded-lg p-1.5 hover:scale-110 shadow-lg"
+              :class="isRTL ? 'left-3' : 'right-3'"
+              :title="$t('delete_chat')"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -122,6 +137,29 @@
       >
         <div class="px-6 md:px-8 py-4 flex items-center justify-between">
           <div class="flex items-center gap-4">
+            <!-- Back Button -->
+            <button
+              @click="goBack"
+              class="inline-flex items-center gap-2 px-3 py-2 rounded-xl bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-200 text-gray-700 dark:text-gray-300"
+              :title="$t('Back')"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="w-5 h-5"
+                :class="isRTL ? 'rotate-180' : ''"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                />
+              </svg>
+              <span class="hidden sm:inline font-medium">{{ $t("Back") }}</span>
+            </button>
             <div class="relative">
               <img
                 :src="aiIcon"
@@ -137,33 +175,37 @@
               <h1
                 class="text-base md:text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2"
               >
-                Your AI Assistant
+                {{ $t("your_ai_assistant") }}
                 <span
                   class="text-xs font-normal px-2 py-0.5 bg-[var(--main-color-100)] dark:bg-[var(--main-color-900)] text-[var(--main-color-700)] dark:text-[var(--main-color-300)] rounded-full"
-                  >Pro</span
+                  >{{ $t("pro") }}</span
                 >
               </h1>
               <div class="flex items-center gap-2 mt-0.5">
                 <span class="text-xs text-gray-600 dark:text-gray-400 font-medium">{{
-                  isLoading ? "🤔 Thinking..." : "✨ Ready to help"
+                  isLoading ? $t("thinking") : $t("ready_to_help")
                 }}</span>
               </div>
             </div>
           </div>
-          <button
-            class="md:hidden inline-flex items-center gap-2 bg-[var(--main-color-500)] text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 font-medium"
-            @click="startNewChat"
-          >
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            New Chat
-          </button>
+          <div class="flex items-center gap-2">
+            <!-- Language Switcher -->
+            <lang-drop />
+            <button
+              class="md:hidden inline-flex items-center gap-2 bg-[var(--main-color-500)] text-white px-4 py-2 rounded-xl hover:shadow-lg transition-all duration-200 font-medium"
+              @click="startNewChat"
+            >
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              {{ $t("new_chat") }}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -171,7 +213,8 @@
         <!-- Chat Messages -->
         <div
           ref="messagesPane"
-          class="flex-1 overflow-y-auto px-6 md:px-8 py-8 space-y-6 ml-[320px] mr-[340px] mt-[80px] custom-scrollbar"
+          class="flex-1 overflow-y-auto px-6 md:px-8 py-8 space-y-6 mt-[80px] custom-scrollbar"
+          :class="isRTL ? 'mr-[320px] ml-[340px]' : 'ml-[320px] mr-[340px]'"
         >
           <!-- Empty state -->
           <div
@@ -190,23 +233,23 @@
                 ></div>
               </div>
               <h3 class="mt-6 text-2xl font-bold text-gray-900 dark:text-white">
-                Start a conversation
+                {{ $t("start_a_conversation") }}
               </h3>
               <p class="mt-3 text-base text-gray-600 dark:text-gray-400 leading-relaxed">
-                Ask anything about health, appointments, or general queries.
+                {{ $t("ask_anything_about_health") }}
               </p>
               <div class="mt-6 flex flex-wrap gap-2 justify-center">
                 <span
                   class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
-                  >💊 Prescriptions</span
+                  >{{ $t("prescriptions") }}</span
                 >
                 <span
                   class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
-                  >🩺 Diagnoses</span
+                  >{{ $t("diagnoses") }}</span
                 >
                 <span
                   class="px-3 py-1.5 bg-white dark:bg-gray-800 rounded-full text-xs font-medium text-gray-700 dark:text-gray-300 shadow-sm border border-gray-200 dark:border-gray-700"
-                  >💬 Patient Care</span
+                  >{{ $t("patient_care") }}</span
                 >
               </div>
             </div>
@@ -265,15 +308,15 @@
             >
               <div class="flex items-center gap-1.5">
                 <span
-                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-500)] dark:bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 0ms"
                 ></span>
                 <span
-                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-500)] dark:bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 150ms"
                 ></span>
                 <span
-                  class="w-2.5 h-2.5 bg-[var(--main-color-400)] rounded-full animate-bounce"
+                  class="w-2.5 h-2.5 bg-[var(--main-color-500)] dark:bg-[var(--main-color-400)] rounded-full animate-bounce"
                   style="animation-delay: 300ms"
                 ></span>
               </div>
@@ -283,7 +326,11 @@
 
         <!-- Right Tools Panel -->
         <aside
-          class="hidden xl:flex xl:w-80 flex-col border-l border-gray-200/50 dark:border-gray-700/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl p-6 gap-4 fixed right-0 shadow-xl"
+          class="hidden xl:flex xl:w-80 flex-col bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl p-6 gap-4 fixed shadow-xl"
+          :class="[
+            isRTL ? 'left-0 border-r' : 'right-0 border-l',
+            'border-gray-200/50 dark:border-gray-700/50',
+          ]"
         >
           <div class="space-y-2">
             <h3 class="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
@@ -300,10 +347,10 @@
                   d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
                 />
               </svg>
-              AI Medical Tools
+              {{ $t("ai_medical_tools") }}
             </h3>
             <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
-              Select text in chat or type a message, then click a tool to analyze.
+              {{ $t("select_text_or_type") }}
             </p>
           </div>
 
@@ -316,10 +363,10 @@
                 <div class="flex-1">
                   <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <span class="text-xl">🩺</span>
-                    Diagnoses & Tests
+                    {{ $t("diagnoses_and_tests") }}
                   </div>
                   <div class="text-xs text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
-                    Analyze symptoms → suggest conditions
+                    {{ $t("analyze_symptoms") }}
                   </div>
                 </div>
                 <div
@@ -338,10 +385,10 @@
                 <div class="flex-1">
                   <div class="font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     <span class="text-xl">💊</span>
-                    Drug Interactions
+                    {{ $t("drug_interactions") }}
                   </div>
                   <div class="text-xs text-gray-600 dark:text-gray-400 mt-1.5 leading-relaxed">
-                    Check for dangerous combinations
+                    {{ $t("check_dangerous_combinations") }}
                   </div>
                 </div>
                 <div
@@ -354,11 +401,11 @@
 
             <button
               @click="runPatientExplanation"
-              class="w-full p-4 bg-[var(--main-color-500)]  text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-between"
+              class="w-full p-4 bg-[var(--main-color-500)] text-white rounded-xl text-sm font-semibold shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-200 flex items-center justify-between"
             >
               <span class="flex items-center gap-2">
                 <span class="text-xl">🗣</span>
-                Explain to Patient
+                {{ $t("explain_to_patient") }}
               </span>
               <span class="text-xs font-mono bg-white/20 px-2 py-1 rounded">Ctrl+E</span>
             </button>
@@ -374,7 +421,7 @@
                     clip-rule="evenodd"
                   />
                 </svg>
-                Use keyboard shortcuts for faster access
+                {{ $t("use_keyboard_shortcuts") }}
               </p>
             </div>
           </div>
@@ -383,7 +430,8 @@
 
       <!-- Input Area -->
       <div
-        class="border-t border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl ml-[320px] shadow-2xl"
+        class="border-t border-gray-200/50 dark:border-gray-800/50 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl shadow-2xl"
+        :class="isRTL ? 'mr-[320px]' : 'ml-[320px]'"
       >
         <div class="px-6 md:px-8 py-5">
           <div class="flex items-end gap-3">
@@ -391,7 +439,7 @@
               v-model="newMessage"
               @keyup.enter.exact.prevent="sendMessage"
               rows="1"
-              placeholder="Type your message here..."
+              :placeholder="$t('type_your_message_here')"
               class="flex-1 resize-none max-h-40 min-h-[56px] p-4 border-2 border-gray-200 dark:border-gray-700 rounded-2xl bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-[var(--main-color-400)] focus:border-[var(--main-color-400)] transition-all duration-200 shadow-sm"
             />
             <button
@@ -404,10 +452,11 @@
                 viewBox="0 0 24 24"
                 fill="currentColor"
                 class="w-5 h-5"
+                :class="isRTL ? 'rotate-180' : ''"
               >
                 <path d="M3.4 20.4 22 12 3.4 3.6 3 10l12 2-12 2z" />
               </svg>
-              <span class="hidden sm:inline">Send</span>
+              <span class="hidden sm:inline">{{ $t("send") }}</span>
             </button>
           </div>
           <div class="mt-3 flex items-center justify-between text-xs">
@@ -420,9 +469,9 @@
                   d="M13 10V3L4 14h7v7l9-11h-7z"
                 />
               </svg>
-              Press Enter to send
+              {{ $t("press_enter_to_send") }}
             </span>
-            <span class="text-gray-400 dark:text-gray-500">Powered by Gemini AI</span>
+            <span class="text-gray-400 dark:text-gray-500">{{ $t("powered_by_gemini_ai") }}</span>
           </div>
         </div>
       </div>
@@ -446,9 +495,13 @@
 */
 import aiIcon from "../../assets/aiicon.svg";
 import startImg from "../../assets/startnow.png";
+import LangDrop from "../LangDrop.vue";
 
 export default {
   name: "GeminiChat",
+  components: {
+    LangDrop,
+  },
   data() {
     return {
       chatHistory: [],
@@ -463,6 +516,11 @@ export default {
       startImg,
     };
   },
+  computed: {
+    isRTL() {
+      return this.$i18n.locale === "ar";
+    },
+  },
   mounted() {
     this.loadChatHistory();
     this.startNewChat();
@@ -472,6 +530,10 @@ export default {
     window.removeEventListener("keydown", this.handleShortcuts);
   },
   methods: {
+    goBack() {
+      this.$router.go(-1);
+    },
+
     startNewChat() {
       this.currentChat = {
         id: Date.now().toString(),
@@ -500,9 +562,36 @@ export default {
         await this.getGeminiResponse();
       } catch (error) {
         console.error("Error getting Gemini response:", error);
+        let errorMessage = this.isRTL
+          ? "😔 عذراً، حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى."
+          : "😔 Sorry, an unexpected error occurred. Please try again.";
+
+        // Check if it's an API key error
+        if (error.message.includes("API key")) {
+          errorMessage = this.isRTL
+            ? "🔑 عذراً، لم يتم العثور على مفتاح API. يرجى التواصل مع الدعم الفني لتفعيل الخدمة."
+            : "🔑 Sorry, API key not found. Please contact technical support to activate the service.";
+        } else if (error.message.includes("400")) {
+          errorMessage = this.isRTL
+            ? "⚠️ عذراً، هناك مشكلة في الطلب. يرجى إعادة صياغة سؤالك والمحاولة مرة أخرى."
+            : "⚠️ Sorry, there was an issue with your request. Please rephrase your question and try again.";
+        } else if (error.message.includes("429")) {
+          errorMessage = this.isRTL
+            ? "⏳ عذراً، تم تجاوز الحد المسموح من الطلبات. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى."
+            : "⏳ Sorry, too many requests. Please wait a moment and try again.";
+        } else if (error.message.includes("403")) {
+          errorMessage = this.isRTL
+            ? "🚫 عذراً، هناك مشكلة في صلاحيات الوصول. يرجى التواصل مع الدعم الفني."
+            : "🚫 Sorry, there's an access permission issue. Please contact technical support.";
+        } else if (error.message.includes("500") || error.message.includes("503")) {
+          errorMessage = this.isRTL
+            ? "🔧 عذراً، الخدمة غير متاحة حالياً. يرجى المحاولة بعد قليل."
+            : "🔧 Sorry, the service is temporarily unavailable. Please try again later.";
+        }
+
         this.currentChat.messages.push({
           sender: "ai",
-          text: "Sorry, I encountered an error. Please try again.",
+          text: errorMessage,
           createdAt: new Date(),
         });
       } finally {
@@ -520,10 +609,10 @@ export default {
           'Set your Gemini API key in localStorage: localStorage.setItem("gemini_api_key", "YOUR_KEY")'
         );
 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
       const contents = this.currentChat.messages.map((msg) => ({
-        role: msg.sender === "user" ? "user" : "system",
+        role: msg.sender === "user" ? "user" : "model",
         parts: [{ text: msg.text }],
       }));
 
@@ -537,10 +626,12 @@ export default {
 
       if (!response.ok) {
         const txt = await response.text();
+        console.error("Gemini API Error:", txt);
         throw new Error(`API request failed with status ${response.status}: ${txt}`);
       }
 
       const data = await response.json();
+      console.log("Gemini API Response:", data);
 
       const aiText =
         data &&
@@ -552,7 +643,10 @@ export default {
           ? data.candidates[0].content.parts[0].text
           : null;
 
-      if (!aiText) throw new Error("Invalid response structure from Gemini API");
+      if (!aiText) {
+        console.error("Invalid response structure:", data);
+        throw new Error("Invalid response structure from Gemini API");
+      }
 
       this.currentChat.messages.push({ sender: "ai", text: aiText, createdAt: new Date() });
     },
@@ -640,12 +734,12 @@ export default {
     async runFeature(feature) {
       const text = this.getRelevantText();
       if (!text) {
-        alert("Please select text in the chat, or type a message to use with the tool.");
+        alert(this.$t("please_select_text"));
         return;
       }
 
       // push a small assistant message to show tool running
-      const runningLabel = `${this.humanFeatureName(feature)}: Running...`;
+      const runningLabel = `${this.humanFeatureName(feature)}: ${this.$t("running")}`;
       this.currentChat.messages.push({ sender: "ai", text: runningLabel, createdAt: new Date() });
       this.isLoading = true;
       this.saveCurrentChat();
@@ -664,13 +758,11 @@ export default {
       } catch (err) {
         console.error(err);
         // replace running label with error
-        const lastIndex = this.currentChat.messages
-          .map((m) => m.text)
-          .lastIndexOf(`${this.humanFeatureName(feature)}: Running...`);
+        const lastIndex = this.currentChat.messages.map((m) => m.text).lastIndexOf(runningLabel);
         if (lastIndex >= 0) this.currentChat.messages.splice(lastIndex, 1);
         this.currentChat.messages.push({
           sender: "ai",
-          text: `Error running ${this.humanFeatureName(feature)}: ${err.message}`,
+          text: `${this.$t("error_running")} ${this.humanFeatureName(feature)}: ${err.message}`,
           createdAt: new Date(),
         });
       } finally {
@@ -683,15 +775,15 @@ export default {
     humanFeatureName(feature) {
       switch (feature) {
         case "prescription":
-          return "Prescription Formatter";
+          return this.$t("prescription_formatter");
         case "diagnose":
-          return "Diagnosis Helper";
+          return this.$t("diagnosis_helper");
         case "interactions":
-          return "Drug Interaction Checker";
+          return this.$t("drug_interaction_checker");
         case "soap":
-          return "SOAP Generator";
+          return this.$t("soap_generator");
         default:
-          return "Tool";
+          return this.$t("tool");
       }
     },
 
@@ -734,11 +826,11 @@ Return plain text with clear S/O/A/P headings.`;
     async runPatientExplanation() {
       const text = this.getRelevantText();
       if (!text) {
-        alert("Select text (diagnosis/prescription/notes) or ensure there is a patient message.");
+        alert(this.$t("select_text_for_explanation"));
         return;
       }
 
-      const runningLabel = `Explain to Patient: Running...`;
+      const runningLabel = this.$t("explain_to_patient_running");
       this.currentChat.messages.push({ sender: "ai", text: runningLabel, createdAt: new Date() });
       this.isLoading = true;
       this.saveCurrentChat();
@@ -765,7 +857,7 @@ ${text}
         if (lastIndex >= 0) this.currentChat.messages.splice(lastIndex, 1);
         this.currentChat.messages.push({
           sender: "ai",
-          text: `Error explaining to patient: ${err.message}`,
+          text: `${this.$t("error_explaining_to_patient")}: ${err.message}`,
           createdAt: new Date(),
         });
       } finally {
@@ -780,10 +872,10 @@ ${text}
       const apiKey = localStorage.getItem("gemini_api_key") || window.__GEMINI_API_KEY__ || "";
       if (!apiKey)
         throw new Error(
-          'Set your Gemini API key in localStorage: localStorage.setItem("gemini_api_key", "AIzaSyAwD5bS77vogG-DqDltTYv5tnpq_fFqWRE")'
+          'Set your Gemini API key in localStorage: localStorage.setItem("gemini_api_key", "YOUR_KEY")'
         );
 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
 
       const contents = [{ role: "user", parts: [{ text: promptText }] }];
       const body = { contents };
@@ -796,10 +888,12 @@ ${text}
 
       if (!resp.ok) {
         const errText = await resp.text();
+        console.error("Gemini API Error:", errText);
         throw new Error(`Gemini API error ${resp.status}: ${errText}`);
       }
 
       const data = await resp.json();
+      console.log("Gemini API Response:", data);
 
       const aiText =
         data &&
@@ -811,7 +905,10 @@ ${text}
           ? data.candidates[0].content.parts[0].text
           : null;
 
-      if (!aiText) throw new Error("Invalid response from Gemini API");
+      if (!aiText) {
+        console.error("Invalid response structure:", data);
+        throw new Error("Invalid response from Gemini API");
+      }
       return aiText;
     },
 
@@ -901,5 +998,43 @@ ${text}
   transition-property: background-color, border-color, color, fill, stroke, opacity, box-shadow,
     transform;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+</style>
+
+<style scoped>
+.custom-scrollbar::-webkit-scrollbar {
+  width: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.5);
+  border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(156, 163, 175, 0.7);
+}
+
+.message-item {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-in;
 }
 </style>

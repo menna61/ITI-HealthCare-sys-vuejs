@@ -90,6 +90,11 @@ export default {
       const isArabic = this.$i18n.locale === "ar";
       const currentPath = this.$route.path;
 
+      // For Gemini Chat page
+      if (currentPath === "/gemini-chat") {
+        return isArabic ? "left-4" : "right-4";
+      }
+
       // For admin pages
       if (currentPath.startsWith("/admin")) {
         return isArabic ? "left-4" : "right-4";

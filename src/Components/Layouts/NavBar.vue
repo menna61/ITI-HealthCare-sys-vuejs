@@ -50,11 +50,10 @@
           </form>
 
           <!-- 🔽 Overlay Dropdown -->
-          
         </div>
 
         <!-- 🔔 Notifications & User Section -->
-        <div class="right flex flex-row flex-wrap gap-3 sm:gap-4 items-center">
+        <div class="right hidden lg:flex flex-row flex-wrap gap-3 sm:gap-4 items-center">
           <div
             v-if="
               !isAuthPages &&
@@ -86,8 +85,16 @@
             <!-- 📜 Notifications popup -->
             <div
               v-if="showNotifications"
-              class="fixed top-20 right-[284px] w-64 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-[100000] dark:text-white"
-              :class="this.$route.path === '/admin' ? 'top-[50px] right-[223px]' : ''"
+              class="fixed top-20 w-64 bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg z-[100000] dark:text-white"
+              :class="[
+                this.$route.path === '/admin'
+                  ? $i18n.locale === 'ar'
+                    ? 'top-[50px] left-[223px]'
+                    : 'top-[50px] right-[223px]'
+                  : $i18n.locale === 'ar'
+                  ? 'left-[284px]'
+                  : 'right-[284px]',
+              ]"
             >
               <div
                 v-if="notifications.length === 0"
@@ -183,25 +190,25 @@
       </div>
     </nav>
     <div
-            v-if="searchQuery && recommendations.length > 0"
-            ref="dropdown"
-            :style="dropdownStyle"
-            class="absolute left-[350px] mt-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999]"
-          >
-            <ul class="divide-y divide-gray-100 dark:divide-gray-600">
-              <li
-                v-for="rec in recommendations"
-                :key="rec.path"
-                class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
-                @click="navigateTo(rec.fullPath)"
-              >
-                <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
-                <span class="block text-xs text-gray-500 dark:text-gray-400">
-                  {{ rec.fullPath }}
-                </span>
-              </li>
-            </ul>
-          </div>
+      v-if="searchQuery && recommendations.length > 0"
+      ref="dropdown"
+      :style="dropdownStyle"
+      class="absolute left-[350px] mt-4 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-[99999]"
+    >
+      <ul class="divide-y divide-gray-100 dark:divide-gray-600">
+        <li
+          v-for="rec in recommendations"
+          :key="rec.path"
+          class="p-3 hover:bg-gray-50 dark:hover:bg-gray-600 cursor-pointer"
+          @click="navigateTo(rec.fullPath)"
+        >
+          <span class="text-sm text-gray-900 dark:text-white">{{ rec.name }}</span>
+          <span class="block text-xs text-gray-500 dark:text-gray-400">
+            {{ rec.fullPath }}
+          </span>
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -378,7 +385,6 @@ export default {
   computed: {
     dropdownStyle() {
       return {
-       
         top: `${this.dropdownRect.top}px`,
         width: `${this.dropdownRect.width}px`,
       };
