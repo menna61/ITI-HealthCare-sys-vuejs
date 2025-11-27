@@ -53,6 +53,10 @@ export default {
   methods: {
     showLang() {
       this.langShow = !this.langShow;
+      // Emit event to close other dropdowns
+      if (this.langShow) {
+        window.dispatchEvent(new CustomEvent("dropdown-opened", { detail: "language" }));
+      }
     },
     changeLanguage(language) {
       this.$i18n.locale = language.code;
@@ -63,14 +67,28 @@ export default {
       document.documentElement.setAttribute("dir", language.code === "ar" ? "rtl" : "ltr");
       document.documentElement.setAttribute("lang", language.code);
     },
-  },
-  mounted() {
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
+    handleClickOutside(e) {
       if (!this.$el.contains(e.target)) {
         this.langShow = false;
       }
-    });
+    },
+    handleOtherDropdownOpened(event) {
+      // Close this dropdown if another one opened
+      if (event.detail !== "language") {
+        this.langShow = false;
+      }
+    },
+  },
+  mounted() {
+    // Close dropdown when clicking outside
+    document.addEventListener("click", this.handleClickOutside);
+    // Listen for other dropdowns opening
+    window.addEventListener("dropdown-opened", this.handleOtherDropdownOpened);
+  },
+  beforeUnmount() {
+    // Clean up event listener
+    document.removeEventListener("click", this.handleClickOutside);
+    window.removeEventListener("dropdown-opened", this.handleOtherDropdownOpened);
   },
   computed: {
     currentLanguage() {

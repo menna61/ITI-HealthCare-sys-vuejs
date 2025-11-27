@@ -12,7 +12,7 @@
       <div
         class="wallet-card p-6 rounded-xl bg-white dark:bg-gray-800 shadow-md dark:border dark:border-gray-700"
       >
-        <h2 class="text-xl font-semibold mb-4 dark:text-white">Current Balance</h2>
+        <h2 class="text-xl font-semibold mb-4 dark:text-white">{{ $t("current_balance") }}</h2>
         <p class="text-3xl font-bold text-green-600 dark:text-green-400">
           ${{ walletBalance.toFixed(2) }}
         </p>
@@ -20,7 +20,7 @@
 
       <!--Transaction history-->
       <div class="transactions">
-        <h2 class="text-xl font-semibold mb-4 dark:text-white">Transaction History</h2>
+        <h2 class="text-xl font-semibold mb-4 dark:text-white">{{ $t("transaction_history") }}</h2>
         <div class="transactions-list flex flex-col gap-4">
           <div
             v-for="transaction in transactions"
