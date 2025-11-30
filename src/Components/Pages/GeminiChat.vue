@@ -560,25 +560,16 @@ export default {
 
     async getGeminiResponse() {
       // Uses entire conversation as context
-      const apiKey = localStorage.getItem("gemini_api_key") || window.__GEMINI_API_KEY__ || "";
-      if (!apiKey)
-        throw new Error(
-          'Set your Gemini API key in localStorage: localStorage.setItem("gemini_api_key", "YOUR_KEY")'
-        );
+      const lastUserMessage = [...this.currentChat.messages]
+        .reverse()
+        .find((msg) => msg.sender === "user");
 
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      if (!lastUserMessage) throw new Error("No user message found");
 
-      const contents = this.currentChat.messages.map((msg) => ({
-        role: msg.sender === "user" ? "user" : "system",
-        parts: [{ text: msg.text }],
-      }));
-
-      const requestBody = { contents };
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch("/.netlify/functions/openai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(requestBody),
+        body: JSON.stringify({ message: lastUserMessage.text }),
       });
 
       if (!response.ok) {
@@ -588,19 +579,9 @@ export default {
 
       const data = await response.json();
 
-      const aiText =
-        data &&
-        data.candidates &&
-        data.candidates[0] &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts[0]
-          ? data.candidates[0].content.parts[0].text
-          : null;
+      if (!data.response) throw new Error("Invalid response structure from Gemini API");
 
-      if (!aiText) throw new Error("Invalid response structure from Gemini API");
-
-      this.currentChat.messages.push({ sender: "ai", text: aiText, createdAt: new Date() });
+      this.currentChat.messages.push({ sender: "ai", text: data.response, createdAt: new Date() });
     },
 
     formatDate(date) {
@@ -823,21 +804,10 @@ ${text}
 
     /* ------------------- Gemini call helper ------------------- */
     async callGeminiWithPrompt(promptText) {
-      const apiKey = localStorage.getItem("gemini_api_key") || window.__GEMINI_API_KEY__ || "";
-      if (!apiKey)
-        throw new Error(
-          'Set your Gemini API key in localStorage: localStorage.setItem("gemini_api_key", "AIzaSyAwD5bS77vogG-DqDltTYv5tnpq_fFqWRE")'
-        );
-
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
-
-      const contents = [{ role: "user", parts: [{ text: promptText }] }];
-      const body = { contents };
-
-      const resp = await fetch(apiUrl, {
+      const resp = await fetch("/.netlify/functions/openai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
+        body: JSON.stringify({ message: promptText }),
       });
 
       if (!resp.ok) {
@@ -847,18 +817,8 @@ ${text}
 
       const data = await resp.json();
 
-      const aiText =
-        data &&
-        data.candidates &&
-        data.candidates[0] &&
-        data.candidates[0].content &&
-        data.candidates[0].content.parts &&
-        data.candidates[0].content.parts[0]
-          ? data.candidates[0].content.parts[0].text
-          : null;
-
-      if (!aiText) throw new Error("Invalid response from Gemini API");
-      return aiText;
+      if (!data.response) throw new Error("Invalid response from Gemini API");
+      return data.response;
     },
 
     /* ------------------- Keyboard shortcuts ------------------- */
