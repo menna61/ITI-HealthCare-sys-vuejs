@@ -1,5 +1,3 @@
-const fetch = require("node-fetch");
-
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") {
     return {
@@ -45,7 +43,6 @@ exports.handler = async (event) => {
       statusCode: 500,
       body: JSON.stringify({ error: "No response from Gemini", details: data }),
     };
-
   } catch (err) {
     return {
       statusCode: 500,
